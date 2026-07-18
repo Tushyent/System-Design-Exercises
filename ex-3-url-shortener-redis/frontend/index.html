@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener with Redis</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>URL Shortener</h1>
+    <p class="subtitle">with Redis caching</p>
+
+    <div class="card">
+      <div class="input-group">
+        <input type="url" id="longUrl" placeholder="Enter your long URL here..." autofocus>
+        <button id="shortenBtn">Shorten</button>
+      </div>
+      <div id="error" class="error hidden"></div>
+    </div>
+
+    <div id="result" class="card result-card hidden">
+      <p class="label">Your shortened URL:</p>
+      <div class="output-group">
+        <input type="text" id="shortUrl" readonly>
+        <button id="copyBtn">Copy</button>
+      </div>
+      <p class="hint">This URL will redirect you to the original link.</p>
+    </div>
+
+    <div id="cacheInfo" class="card cache-card hidden">
+      <p class="label">Cache Details</p>
+      <div class="cache-row">
+        <span class="cache-key">Cache Status:</span>
+        <span id="cacheStatus" class="cache-value">-</span>
+      </div>
+      <div class="cache-row">
+        <span class="cache-key">Response Time:</span>
+        <span id="responseTime" class="cache-value">-</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
