@@ -1,0 +1,95 @@
+services:
+  configsvr:
+    image: mongo:7.0
+    container_name: configsvr
+    command: mongod --configsvr --replSet configReplSet --port 27019 --bind_ip_all
+    ports:
+      - 27019:27019
+    networks:
+      - mongo-network
+    volumes:
+      - configsvr_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--port", "27019", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  shard1:
+    image: mongo:7.0
+    container_name: shard1
+    command: mongod --shardsvr --replSet shard1RS --port 27018 --bind_ip_all
+    ports:
+      - 27018:27018
+    networks:
+      - mongo-network
+    volumes:
+      - shard1_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--port", "27018", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  shard2:
+    image: mongo:7.0
+    container_name: shard2
+    command: mongod --shardsvr --replSet shard2RS --port 27028 --bind_ip_all
+    ports:
+      - 27028:27028
+    networks:
+      - mongo-network
+    volumes:
+      - shard2_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--port", "27028", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  mongos:
+    image: mongo:7.0
+    container_name: mongos
+    command: mongos --configdb configReplSet/configsvr:27019 --port 27017 --bind_ip_all
+    ports:
+      - 27017:27017
+    depends_on:
+      configsvr:
+        condition: service_healthy
+      shard1:
+        condition: service_healthy
+      shard2:
+        condition: service_healthy
+    networks:
+      - mongo-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--port", "27017", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  standalone:
+    image: mongo:7.0
+    container_name: standalone
+    command: mongod --port 27030 --bind_ip_all
+    ports:
+      - 27030:27030
+    networks:
+      - mongo-network
+    volumes:
+      - standalone_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--port", "27030", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+networks:
+  mongo-network:
+    driver: bridge
+
+volumes:
+  configsvr_data:
+  shard1_data:
+  shard2_data:
+  standalone_data:

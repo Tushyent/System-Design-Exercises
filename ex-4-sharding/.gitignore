@@ -1,0 +1,28 @@
+# OS
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Docker volumes (runtime)
+data/
+
+# Generated Word documents
+*.docx
+
+# Docs folder (reference materials, screenshots, scripts)
+Docs/
+generated_media/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+venv/
+.venv/
+
+# Temp / log files
+*.log
+*.txt
+tmp/
+temp/
