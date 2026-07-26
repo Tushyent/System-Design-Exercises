@@ -20,3 +20,4 @@
 | 1 | [ex-1-system-design-basics](./ex-1-system-design-basics/) | Java project setup, System Design Basics |
 | 2 | [ex-2-url-shortener](./ex-2-url-shortener/) | URL Shortener — Spring Boot + MongoDB + vanilla JS frontend |
 | 3 | [ex-3-url-shortener-redis](./ex-3-url-shortener-redis/) | URL Shortener with Redis caching — Spring Boot + MongoDB + Redis + vanilla JS frontend |
+| 4 | [ex-4-sharding](./ex-4-sharding/) | MongoDB Horizontal Sharding — Docker Compose sharded cluster with performance comparison |
