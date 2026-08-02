@@ -1,0 +1,21 @@
+target/
+*.class
+.env
+
+# IDE / Eclipse metadata
+.classpath
+.project
+.factorypath
+.settings/
+
+# Docker bind-mount data
+mongo-data/
+
+# Lab report source images (already embedded in SD_A5.docx / SD_A5.pdf)
+assets/
+
+# Generated Word documents (report sources)
+*.docx
+
+# MS Office lock / temp files
+~$*.docx
