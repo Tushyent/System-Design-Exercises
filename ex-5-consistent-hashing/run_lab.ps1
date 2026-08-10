@@ -14,11 +14,21 @@ $nodes = @(
 )
 foreach ($node in $nodes) {
     Write-Host -NoNewline "Waiting for $($node.name)..."
+    $waited = 0
     while ($true) {
-        $result = docker exec $($node.name) mongosh --quiet --eval "db.adminCommand('ping').ok" 2>&1
-        if ($result -match "1") { break }
+        if ($waited -gt 120) {
+            throw "Timed out waiting for $($node.name) on port $($node.port)"
+        }
+        try {
+            $client = New-Object System.Net.Sockets.TcpClient
+            $connected = $client.ConnectAsync("localhost", $node.port).Wait(2000)
+            $ready = $connected -and $client.Connected
+            $client.Close()
+            if ($ready) { break }
+        } catch { }
         Write-Host -NoNewline "."
         Start-Sleep -Seconds 2
+        $waited += 2
     }
     Write-Host " Ready!"
 }
