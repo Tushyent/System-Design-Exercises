@@ -1,0 +1,48 @@
+# --- Maven ---
+target/
+*.jar
+*.war
+*.zip
+*.tar.gz
+
+# --- IDE ---
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.classpath
+.project
+*.class
+bin/
+out/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# --- Logs ---
+*.log
+app.log
+
+# --- Data / runtime dirs ---
+redis-data/
+__pycache__/
+*.pyc
+
+# --- Chart / report intermediates ---
+/assets/**/*.png
+/reports/**
+
+# --- Internal report / doc tooling (NOT part of the lab deliverable) ---
+# gen_report.py / capture_screenshots.py build SD_A6.docx and its evidence
+# screenshots from the observed data; they are kept local-only.
+scripts/gen_report.py
+scripts/capture_screenshots.py
+
+# --- Generated Word document (report source; only the PDF is committed) ---
+*.docx
+~$*.docx

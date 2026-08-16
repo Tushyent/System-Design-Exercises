@@ -1,0 +1,31 @@
+services:
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - 6379:6379
+    volumes:
+      - ./redis-data:/data
+    restart: unless-stopped
+    networks:
+      - rl-net
+
+  # Optional: run the Spring Boot app in Docker (self-contained demo).
+  # Build: docker compose up --build -d
+  app:
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: "6379"
+      RATELIMIT_CAPACITY: "10"
+      RATELIMIT_REFILL_PER_SECOND: "5"
+    depends_on:
+      - redis
+    networks:
+      - rl-net
+
+networks:
+  rl-net:
+    driver: bridge
