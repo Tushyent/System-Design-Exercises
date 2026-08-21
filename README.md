@@ -1,7 +1,7 @@
 # System Design Exercises
 
 **Course:** System Design Lab  
-**Subject Code:** CS3461  
+**Subject Code:** UCS3513  
 **Team:** Blastorz  
 
 ## Team Members
@@ -23,3 +23,4 @@
 | 4 | [ex-4-sharding](./ex-4-sharding/) | MongoDB Horizontal Sharding — Docker Compose sharded cluster with performance comparison |
 | 5 | [ex-5-consistent-hashing](./ex-5-consistent-hashing/) | Application-Level Consistent Hashing — Spring Boot hash ring over standalone MongoDB nodes |
 | 6 | [ex-6-rate-limiter](./ex-6-rate-limiter/) | Token Bucket API Rate Limiter — Spring Boot + Redis + Lua atomic script, HTTP 429 with Retry-After |
+| 7 | [ex-7-autocomplete](./ex-7-autocomplete/) | Autocomplete Search System — Trie-based prefix tree matching in Java + Redis JSON cache + dynamic cache invalidation |

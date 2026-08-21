@@ -52,6 +52,7 @@ You can build, deploy, run live demonstrations, and benchmark performance in a s
    python scripts/load_test.py concurrent    # Threaded stress test
    ```
 
+*   **Web Interface**: [http://localhost:8080/](http://localhost:8080/) (Google-style minimal UI)
 *   **Swagger Documentation**: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
 ---
