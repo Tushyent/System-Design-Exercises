@@ -1,0 +1,106 @@
+{
+	"info": {
+		"_postman_id": "8c4ab1b3-568e-4a61-b58d-6975a40a5a3a",
+		"name": "Autocomplete API",
+		"description": "Postman Collection for UCS3513 System Design Laboratory - Lab Exercise 7",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET Autocomplete Suggestions (Cache Miss / Trie Fallback)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/autocomplete?prefix=app&limit=5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"autocomplete"
+					],
+					"query": [
+						{
+							"key": "prefix",
+							"value": "app",
+							"description": "Search term prefix"
+						},
+						{
+							"key": "limit",
+							"value": "5",
+							"description": "Max suggestions count"
+						}
+					]
+				},
+				"description": "Retrieves suggestions for the prefix 'app'. The first time this request is sent, it will query the Trie and log a CACHE_MISS. Subsequent requests will log a CACHE_HIT."
+			},
+			"response": []
+		},
+		{
+			"name": "GET Autocomplete Suggestions (Cache Hit Verification)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/autocomplete?prefix=app&limit=5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"autocomplete"
+					],
+					"query": [
+						{
+							"key": "prefix",
+							"value": "app"
+						},
+						{
+							"key": "limit",
+							"value": "5"
+						}
+					]
+				},
+				"description": "Retrieves suggestions for the prefix 'app'. Since it was cached in the previous step, it returns results under 1ms from Redis."
+			},
+			"response": []
+		},
+		{
+			"name": "POST Submit Search Query (Increments Frequency & Invalidate Cache)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"word\": \"apple\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/autocomplete/search",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"autocomplete",
+						"search"
+					]
+				},
+				"description": "Simulates selection of the search suggestion 'apple'. This increments its search frequency in the Trie and evicts all its matching prefixes ('', 'a', 'ap', 'app', 'appl', 'apple') from the Redis cache."
+			},
+			"response": []
+		}
+	]
+}
