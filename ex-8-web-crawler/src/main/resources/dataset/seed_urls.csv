@@ -1,0 +1,7 @@
+id,category,seed_url,domain,max_depth,description
+1,Local Mock Portal,http://localhost:8080/mock-web/index.html,localhost,3,Main mock portal containing multi-domain interconnected web graph
+2,Mock Technology Section,http://localhost:8080/mock-web/tech.html,localhost,2,Sub-graph focused on AI, ML, NLP, Cloud, and Docker
+3,Mock Sports Section,http://localhost:8080/mock-web/sports.html,localhost,2,Sub-graph covering Football and Cricket news
+4,Mock Cyclic Loop Test,http://localhost:8080/mock-web/cyclic-a.html,localhost,3,Cyclic graph to evaluate visited-set deduplication
+5,Mock Domain Boundary Test,http://localhost:8080/mock-web/external-links.html,localhost,2,Test domain constraints and external link filtering
+6,Public Web Seed,https://example.com,example.com,1,Standard public RFC 2606 reference domain for crawler validation

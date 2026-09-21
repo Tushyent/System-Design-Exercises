@@ -1,0 +1,155 @@
+{
+  "info": {
+    "name": "Web Crawler REST API - Lab Exercise 8",
+    "description": "Postman Collection for testing Lab Exercise 8: Web Crawler for Automated Web Content Discovery (Spring Boot + Redis).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Start Asynchronous Crawl Job",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"seedUrls\": [\"http://localhost:8080/mock-web/index.html\"],\n  \"maxDepth\": 3,\n  \"maxPages\": 50,\n  \"workers\": 4,\n  \"politenessDelayMs\": 50\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/crawler/start",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "crawler", "start"]
+        }
+      }
+    },
+    {
+      "name": "2. Get Crawler Status & Metrics",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8080/api/crawler/status",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "crawler", "status"]
+        }
+      }
+    },
+    {
+      "name": "3. Crawl Single URL (Synchronous)",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "http://localhost:8080/api/crawler/crawl-single?url=http://localhost:8080/mock-web/tech.html",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "crawler", "crawl-single"],
+          "query": [
+            { "key": "url", "value": "http://localhost:8080/mock-web/tech.html" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "4. List All Crawled Pages",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8080/api/crawler/pages",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "crawler", "pages"]
+        }
+      }
+    },
+    {
+      "name": "5. Get Single Page Details from Redis",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8080/api/crawler/page?url=http://localhost:8080/mock-web/tech.html",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "crawler", "page"],
+          "query": [
+            { "key": "url", "value": "http://localhost:8080/mock-web/tech.html" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "6. Inspect Visited URLs Set (Redis)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8080/api/crawler/visited",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "crawler", "visited"]
+        }
+      }
+    },
+    {
+      "name": "7. Peek URL Frontier Queue",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8080/api/crawler/queue?limit=20",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "crawler", "queue"],
+          "query": [
+            { "key": "limit", "value": "20" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "8. Stop Crawl Job",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "http://localhost:8080/api/crawler/stop",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "crawler", "stop"]
+        }
+      }
+    },
+    {
+      "name": "9. Reset Crawler State & Clear Redis",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "http://localhost:8080/api/crawler/reset",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "crawler", "reset"]
+        }
+      }
+    },
+    {
+      "name": "10. Get Mock Web Dataset URLs",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8080/api/crawler/mock-urls",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "crawler", "mock-urls"]
+        }
+      }
+    }
+  ]
+}

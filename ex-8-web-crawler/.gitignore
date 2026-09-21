@@ -1,0 +1,38 @@
+# --- Maven ---
+target/
+*.jar
+*.war
+*.zip
+*.tar.gz
+
+# --- IDE ---
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.classpath
+.project
+*.class
+bin/
+out/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# --- Logs ---
+*.log
+app.log
+app.err.log
+
+# --- Data / runtime dirs ---
+redis-data/
+__pycache__/
+*.pyc
+
+# --- Word lock files ---
+~$*.docx

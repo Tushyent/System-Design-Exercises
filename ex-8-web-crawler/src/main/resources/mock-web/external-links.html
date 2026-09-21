@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>External References & Boundary Test</title>
+</head>
+<body>
+    <h1>External Links & Boundary Test</h1>
+    <p>This page contains external links and non-HTML assets to test crawler validation rules:</p>
+    <ul>
+        <li><a href="https://example.com">Public RFC 2606 Example Domain (External)</a></li>
+        <li><a href="https://httpbin.org/get">External HTTP Test API</a></li>
+        <li><a href="ftp://ftp.example.com/file.iso">Disallowed FTP Protocol</a></li>
+        <li><a href="mailto:crawler@ssn.edu.in">Mailto Scheme (Ignored)</a></li>
+        <li><a href="javascript:void(0)">Javascript Scheme (Ignored)</a></li>
+        <li><a href="/mock-web/archive.zip">Binary Archive (.zip extension)</a></li>
+        <li><a href="/mock-web/report.pdf">Binary Document (.pdf extension)</a></li>
+        <li><a href="/mock-web/index.html">Valid Internal Home Link</a></li>
+    </ul>
+</body>
+</html>

@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /mock-web/private-admin.html
+Disallow: /mock-web/secret/
+Allow: /mock-web/
+Crawl-delay: 1
+Sitemap: http://localhost:8080/mock-web/sitemap.xml

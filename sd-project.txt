@@ -1,0 +1,4 @@
+functional and non functional requirements
+based on requirements select the tools and technolgies
+design choices and tradeoffs
+
