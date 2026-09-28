@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class CrawlerProperties {
 
     /** Default maximum crawling depth */
-    private int defaultMaxDepth = 3;
+    private int defaultMaxDepth = 7;
 
     /** Default maximum pages to crawl in a batch */
     private int defaultMaxPages = 50;

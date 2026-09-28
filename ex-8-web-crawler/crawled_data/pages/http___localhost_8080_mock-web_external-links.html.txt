@@ -1,1 +1,0 @@
-External Links & Boundary Test This page contains external links and non-HTML assets to test crawler validation rules: Public RFC 2606 Example Domain (External) External HTTP Test API Disallowed FTP Protocol Mailto Scheme (Ignored) Javascript Scheme (Ignored) Binary Archive (.zip extension) Binary Document (.pdf extension) Valid Internal Home Link

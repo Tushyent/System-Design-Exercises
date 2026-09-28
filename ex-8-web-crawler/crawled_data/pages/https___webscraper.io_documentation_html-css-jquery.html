@@ -1,0 +1,1102 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <script src="https://app.termly.io/resource-blocker/04d89d8c-0d17-44fe-bead-65034ef2b40c"></script><!-- Google Tag Manager -->
+  <script nonce="YBvHNzCECrtjYuTYDHEVF3YXvtJcrfmb">(function (w, d, s, l, i) {
+		w[l] = w[l] || [];
+		w[l].push({
+			'gtm.start':
+				new Date().getTime(), event: 'gtm.js'
+		});
+		var f = d.getElementsByTagName(s)[0],
+			j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+		j.async = true;
+		j.src =
+			'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+		f.parentNode.insertBefore(j, f);
+	})(window, document, 'script', 'dataLayer', 'GTM-NVFPDWB');</script><!-- End Google Tag Manager -->
+  <title>HTML, CSS and jQuery for Web Scraper | Web Scraper Documentation</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="keywords" content="html css and jquery for web scraper, selector, attribute, iframe, javascript, load more">
+  <meta name="description" content="Use this guide to understand page structure and write reliable manual selectors without relying on an external HTML, CSS or jQuery reference.">
+  <link rel="icon" sizes="128x128" href="/favicon.png" type="image/png">
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32" type="image/x-icon">
+  <link rel="apple-touch-icon" href="/logo-icon.png" type="image/png">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/app.css?id=721c606e7b41c98fed44e82a7a3f74a3">
+  <link rel="stylesheet" href="/css/ws-icons.font.css?id=ec07a6547e9f26dd0a05acf4cf8b8609">
+  <link rel="canonical" href="https://webscraper.io/documentation/html-css-jquery">
+  <meta property="og:title" content="HTML, CSS and jQuery for Web Scraper | Web Scraper Documentation">
+  <meta property="og:description" content="Use this guide to understand page structure and write reliable manual selectors without relying on an external HTML, CSS or jQuery reference.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://webscraper.io/documentation/html-css-jquery">
+  <meta property="og:image" content="https://webscraper.io/webscraper-logo-header.png">
+  <script nonce="YBvHNzCECrtjYuTYDHEVF3YXvtJcrfmb">
+		if (document.cookie.indexOf('announcement_dismissed=1') > -1) document.documentElement.classList.add('announcement-dismissed')
+	</script>
+  <script defer src="/js/app.js?id=9aefa6ccaac23dd7a6624602b2f9c6da"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@8.5.1/themes/satellite-min.css" crossorigin="anonymous">
+ </head>
+ <body class="ws-v2">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript>
+   <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NVFPDWB" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  </noscript><!-- End Google Tag Manager (noscript) -->
+  <script type="text/javascript" nonce="YBvHNzCECrtjYuTYDHEVF3YXvtJcrfmb">
+		!function (e, t, n) {
+			function a() {
+				var e = t.getElementsByTagName("script")[0],
+					n = t.createElement("script");
+				n.type = "text/javascript", n.async = !0, n.src = "https://beacon-v2.helpscout.net", e.parentNode.insertBefore(n, e)
+			}
+
+			if (e.Beacon = n = function (t, n, a) {
+				e.Beacon.readyQueue.push({method: t, options: n, data: a})
+			}, n.readyQueue = [], "complete" === t.readyState) return a();
+			e.attachEvent ? e.attachEvent("onload", a) : e.addEventListener("load", a, !1)
+		}(window, document, window.Beacon || function () {
+		});
+	</script>
+  <script type="text/javascript" nonce="YBvHNzCECrtjYuTYDHEVF3YXvtJcrfmb">
+		window.Beacon('init', '1c5f94f4-1403-4003-925a-ae1a295b7d38')
+	</script>
+  <header class="v2-header">
+   <div class="v2-announcement alert alert-dismissible fade show m-0" role="alert">
+    <div class="container text-center">
+     <a href="https://cloud.webscraper.io/register?utm_source=cloud-landing&amp;utm_medium=announcement-bar" class="v2-announcement__link"> <span>Web Scraper Cloud</span> <span class="full-announcement d-none d-lg-inline">replaces your complex scraping stack.</span> <span class="mobile-announcement d-inline d-lg-none">-</span> <span class="v2-announcement-try">Try it free for 7 days</span>
+      <svg class="v2-button-icon-right" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+       <path d="M10 14.25L15 9L10 3.75M15 9L3 9" stroke="#00303D" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+      </svg></a>
+     <button type="button" class="v2-announcement__close d-none d-lg-inline" data-bs-dismiss="alert" aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+       <path d="M13.5 4.5L4.5 13.5M13.5 13.5L4.5 4.5" stroke="#00303D" stroke-width="1.4" stroke-linecap="round" />
+      </svg></button>
+    </div>
+   </div>
+   <nav class="navbar navbar-expand-xl navbar-dark v2-navbar" aria-label="Primary">
+    <div class="container">
+     <a class="navbar-brand v2-navbar__brand" href="/"> <img src="/img/logo-v2.svg" alt="Web Scraper" width="116" height="38"> </a>
+     <div class="d-flex">
+      <a href="https://cloud.webscraper.io/" class="v2-btn v2-btn--white d-inline d-xl-none"> Cloud login </a>
+      <button class="navbar-toggler v2-navbar__toggler" type="button" data-bs-toggle="collapse" data-bs-target="#v2-navbar-collapse" aria-controls="v2-navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+       <svg class="closed-icon" width="18" height="14" viewBox="0 0 18 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3.75 0.75H13.75M0.75 6.75H16.75H3.75M3.75 12.75H13.75" stroke="#00D1E7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+       </svg>
+       <svg class="open-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12.75 0.750003L0.75 12.75M12.75 12.75L0.750001 0.75" stroke="#00D1E7" stroke-width="1.5" stroke-linecap="round" />
+       </svg></button>
+     </div>
+     <div class="collapse navbar-collapse v2-navbar__collapse" id="v2-navbar-collapse">
+      <div class="mobile-menu-divider"></div>
+      <ul class="navbar-nav v2-navbar__nav">
+       <li class="nav-item"><a class="nav-link v2-navbar__link" href="/">Web Scraper Cloud</a></li>
+       <li class=" nav-item"><a class="nav-link v2-navbar__link" href="/web-scraper-extension">Extension</a></li>
+       <li class="nav-item"><a class="nav-link v2-navbar__link" id="pricing-nav-link" href="/pricing">Pricing</a></li>
+       <li class="nav-item"><a class="nav-link v2-navbar__link" href="/marketplace">Marketplace</a></li>
+       <li class="nav-item dropdown">
+        <button class="nav-link v2-navbar__link dropdown-toggle" id="v2-solutions-dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">Solutions 
+         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 6L8.00081 10.58L13 6" stroke="#F4F9FC" stroke-opacity="0.7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+         </svg></button>
+        <ul class="dropdown-menu v2-dropdown-menu v2-dropdown-menu--solutions" aria-labelledby="v2-solutions-dropdown">
+         <li><a class="dropdown-item v2-dropdown-item" href="/solutions/ecommerce-web-scraping">
+           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F4F9FC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="8" cy="21" r="1" /> <circle cx="19" cy="21" r="1" /> <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
+           </svg> E-commerce </a></li>
+         <li><a class="dropdown-item v2-dropdown-item" href="/solutions/competitor-price-monitoring">
+           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F4F9FC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" /> <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" /> <path d="M12 18V6" />
+           </svg> Competitor price monitoring </a></li>
+         <li><a class="dropdown-item v2-dropdown-item" href="/solutions/marketplace-data-scraping">
+           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F4F9FC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 21v-5a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v5" /> <path d="M17.774 10.31a1.12 1.12 0 0 0-1.549 0 2.5 2.5 0 0 1-3.451 0 1.12 1.12 0 0 0-1.548 0 2.5 2.5 0 0 1-3.452 0 1.12 1.12 0 0 0-1.549 0 2.5 2.5 0 0 1-3.77-3.248l2.889-4.184A2 2 0 0 1 7 2h10a2 2 0 0 1 1.653.873l2.895 4.192a2.5 2.5 0 0 1-3.774 3.244" /> <path d="M4 10.95V19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8.05" />
+           </svg> Marketplace data scraping </a></li>
+         <li><a class="dropdown-item v2-dropdown-item" href="/solutions/map-monitoring">
+           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F4F9FC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /> <path d="m9 12 2 2 4-4" />
+           </svg> MAP </a></li>
+         <li><a class="dropdown-item v2-dropdown-item" href="/solutions/market-research-web-scraping">
+           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F4F9FC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 16v5" /> <path d="M16 14.639V21" /> <path d="M20 10.656V21" /> <path d="m22 3-8.646 8.646a.5.5 0 0 1-.708 0L9.354 8.354a.5.5 0 0 0-.707 0L2 15" /> <path d="M4 18.463V21" /> <path d="M8 14.656V21" />
+           </svg> Market research </a></li>
+         <li><a class="dropdown-item v2-dropdown-item" href="/solutions/lead-generation-web-scraping">
+           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F4F9FC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="10" cy="8" r="5" /> <path d="M2 21a8 8 0 0 1 10.434-7.62" /> <circle cx="18" cy="18" r="3" /> <path d="m22 22-1.9-1.9" />
+           </svg> Lead generation </a></li>
+         <li><a class="dropdown-item v2-dropdown-item" href="/solutions/real-estate-data-extraction">
+           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F4F9FC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 12h4" /> <path d="M10 8h4" /> <path d="M14 21v-3a2 2 0 0 0-4 0v3" /> <path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2" /> <path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16" />
+           </svg> Real estate data extraction </a></li>
+         <li><a class="dropdown-item v2-dropdown-item" href="/solutions/web-data-for-ai-training">
+           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F4F9FC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" /> <path d="M9 13a4.5 4.5 0 0 0 3-4" /> <path d="M6.003 5.125A3 3 0 0 0 6.401 6.5" /> <path d="M3.477 10.896a4 4 0 0 1 .585-.396" /> <path d="M6 18a4 4 0 0 1-1.967-.516" /> <path d="M12 13h4" /> <path d="M12 18h6a2 2 0 0 1 2 2v1" /> <path d="M12 8h8" /> <path d="M16 8V5a2 2 0 0 1 2-2" /> <circle cx="16" cy="13" r=".5" /> <circle cx="18" cy="3" r=".5" /> <circle cx="20" cy="21" r=".5" /> <circle cx="20" cy="8" r=".5" />
+           </svg> Web data for AI </a></li>
+         <li><a class="dropdown-item v2-dropdown-item" href="/solutions/web-data-for-rag-ai-agents">
+           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F4F9FC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 8V4H8" /> <rect width="16" height="12" x="4" y="8" rx="2" /> <path d="M2 14h2" /> <path d="M20 14h2" /> <path d="M15 13v2" /> <path d="M9 13v2" />
+           </svg> Web data for RAG AI agents </a></li>
+        </ul></li>
+       <li class="nav-item dropdown">
+        <button class="nav-link v2-navbar__link dropdown-toggle" id="v2-learn-dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">Learn 
+         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 6L8.00081 10.58L13 6" stroke="#F4F9FC" stroke-opacity="0.7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+         </svg></button>
+        <ul class="dropdown-menu v2-dropdown-menu" aria-labelledby="v2-learn-dropdown">
+         <li><a class="dropdown-item v2-dropdown-item" href="/documentation">
+           <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7.70025 0.5V2.9C7.70025 3.34183 8.05842 3.7 8.50025 3.7H10.9003M3.30025 3.7H4.90025M3.30025 6.1H8.10025M3.30025 8.5H8.10025M9.70025 1.7C9.3442 1.38143 8.97473 1.00359 8.74148 0.758186C8.58627 0.59489 8.37183 0.5 8.14654 0.5H2.10006C1.21641 0.5 0.500068 1.21634 0.500062 2.09999L0.5 11.7C0.499994 12.5836 1.21634 13.3 2.09999 13.3L9.30002 13.3C10.1837 13.3 10.9 12.5837 10.9 11.7L10.9002 3.21855C10.9002 3.014 10.8222 2.81736 10.6802 2.67009C10.4177 2.39776 9.9793 1.94968 9.70025 1.7Z" stroke="#F4F9FC" stroke-linecap="round" stroke-linejoin="round" />
+           </svg> Documentation </a></li>
+         <li><a class="dropdown-item v2-dropdown-item" href="/tutorials">
+           <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6.57034 2.72222H4.737M9.0835 6.42448L12.1834 7.95141C12.5048 8.14701 12.842 8.03174 12.8333 7.62376L12.8116 2.22736C12.7842 1.78445 12.5228 1.66359 12.1379 1.86828L9.07476 3.26038M2 9.16667H7.57033C8.39876 9.16667 9.07033 8.50339 9.07033 7.68519L9.0835 5.78503L9.07033 1.98148C9.07033 1.16328 8.39876 0.5 7.57033 0.5H2C1.17157 0.5 0.5 1.16328 0.5 1.98148V7.68519C0.5 8.50339 1.17157 9.16667 2 9.16667Z" stroke="#F4F9FC" stroke-opacity="0.7" stroke-linecap="round" stroke-linejoin="round" />
+           </svg> Video Tutorials </a></li>
+         <li><a class="dropdown-item v2-dropdown-item" href="/test-sites">
+           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0.9 4.1H12.9M2.1 13.3C1.21634 13.3 0.5 12.5837 0.5 11.7V2.1C0.5 1.21634 1.21634 0.5 2.1 0.5H11.7C12.5837 0.5 13.3 1.21634 13.3 2.1V11.7C13.3 12.5837 12.5837 13.3 11.7 13.3H2.1Z" stroke="#F4F9FC" stroke-opacity="0.7" stroke-linecap="round" />
+           </svg> Test Sites </a></li>
+         <li><a class="dropdown-item v2-dropdown-item" href="https://forum.webscraper.io/" target="_blank" rel="noopener">
+           <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1.83322 5.83333C1.83322 2.88781 4.22083 0.5 7.16611 0.5C10.1114 0.5 12.499 2.88781 12.499 5.83333C12.499 6.60002 12.3372 7.32891 12.046 7.98775L12.5 11.1662L9.77638 10.4852C9.00481 10.9192 8.11436 11.1667 7.16611 11.1667M0.500632 9.16667C0.500632 9.64584 0.601722 10.1014 0.783736 10.5132L0.5 12.4997L2.2021 12.0741C2.68429 12.3453 3.24077 12.5 3.83337 12.5C5.67399 12.5 7.16611 11.0076 7.16611 9.16667C7.16611 7.32572 5.67399 5.83333 3.83337 5.83333C1.99275 5.83333 0.500632 7.32572 0.500632 9.16667Z" stroke="#F4F9FC" stroke-opacity="0.7" stroke-linecap="round" stroke-linejoin="round" />
+           </svg> Forum </a></li>
+        </ul></li>
+      </ul>
+      <div class="v2-navbar__actions">
+       <a href="https://chromewebstore.google.com/detail/web-scraper-free-web-scra/jnhgnonknehpejjnehehllkliplmbmhn?hl=en" target="_blank" rel="noopener" class="v2-btn v2-btn--primary-700 d-none d-xl-inline-flex install-extension"> <i class="browser-icon ws-icon ws-icon-chrome-500" aria-hidden="true"></i> Install extension </a> <a href="https://cloud.webscraper.io/" class="v2-btn v2-btn--white d-none d-xl-inline-flex"> Cloud login </a>
+      </div>
+     </div>
+    </div>
+   </nav>
+  </header>
+  <div>
+   <main>
+    <div class="container documentation">
+     <div class="row">
+      <div class="col-lg-3 sidebar">
+       <div class="navbar-light sidebar" role="navigation">
+        <div class="documentation-navigation-heading">
+         Documentation
+        </div>
+        <div class="sidebar-nav navbar-collapse documentation-nav">
+         <ul class="nav flex-column" id="side-menu">
+          <li class="nav-item">
+           <button class="nav-link documentation-nav-toggle documentation-nav-level-1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#getting-started" aria-expanded="false" aria-controls="getting-started">Getting started</button>
+           <ul class="nav flex-column collapse" id="getting-started">
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation">
+              <div class="nav-link-title">
+               Web Scraper documentation
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/installation">
+              <div class="nav-link-title">
+               Install Web Scraper
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/open-web-scraper">
+              <div class="nav-link-title">
+               Open Web Scraper
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/scraping-a-site">
+              <div class="nav-link-title">
+               Scrape a website
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/ai-sitemap-wizard">
+              <div class="nav-link-title">
+               AI Sitemap Wizard
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/advanced-sitemap-builder">
+              <div class="nav-link-title">
+               Advanced Sitemap Builder
+              </div></a></li>
+           </ul></li>
+          <li class="nav-item">
+           <button class="nav-link documentation-nav-toggle documentation-nav-level-1" type="button" data-bs-toggle="collapse" data-bs-target="#build-a-sitemap" aria-expanded="true" aria-controls="build-a-sitemap">Build a sitemap</button>
+           <ul class="nav flex-column collapse show" id="build-a-sitemap">
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/sitemaps">
+              <div class="nav-link-title">
+               Sitemaps and selector trees
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/sitemaps/start-urls">
+              <div class="nav-link-title">
+               Start URLs and URL ranges
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/sitemaps/selecting-elements">
+              <div class="nav-link-title">
+               Select elements on a page
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/sitemaps/preview-and-validate">
+              <div class="nav-link-title">
+               Preview and validate a sitemap
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/css-selector">
+              <div class="nav-link-title">
+               CSS selectors
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2 active" href="/documentation/html-css-jquery">
+              <div class="nav-link-title">
+               HTML, CSS and jQuery for Web Scraper
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/website-state-setup-2f-sign-in">
+              <div class="nav-link-title">
+               Website State Setup / Sign-in
+              </div></a></li>
+           </ul></li>
+          <li class="nav-item">
+           <button class="nav-link documentation-nav-toggle documentation-nav-level-1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#selector-reference" aria-expanded="false" aria-controls="selector-reference">Selector reference</button>
+           <ul class="nav flex-column collapse" id="selector-reference">
+            <li class="nav-item">
+             <button class="nav-link documentation-nav-toggle documentation-nav-level-2" type="button" data-bs-toggle="collapse" data-bs-target="#selector-reference-overview" aria-expanded="true" aria-controls="selector-reference-overview">Overview</button>
+             <ul class="nav flex-column collapse show" id="selector-reference-overview">
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/selectors">
+                <div class="nav-link-title">
+                 Selectors
+                </div></a></li>
+             </ul></li>
+            <li class="nav-item">
+             <button class="nav-link documentation-nav-toggle documentation-nav-level-2" type="button" data-bs-toggle="collapse" data-bs-target="#selector-reference-data-extraction-selectors" aria-expanded="true" aria-controls="selector-reference-data-extraction-selectors">Data extraction selectors</button>
+             <ul class="nav flex-column collapse show" id="selector-reference-data-extraction-selectors">
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/selectors/text-selector">
+                <div class="nav-link-title">
+                 Text selector
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/selectors/image-selector">
+                <div class="nav-link-title">
+                 Image selector
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/selectors/table-selector">
+                <div class="nav-link-title">
+                 Table selector
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/selectors/element-attribute-selector">
+                <div class="nav-link-title">
+                 Element attribute selector
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/selectors/html-selector">
+                <div class="nav-link-title">
+                 HTML selector
+                </div></a></li>
+             </ul></li>
+            <li class="nav-item">
+             <button class="nav-link documentation-nav-toggle documentation-nav-level-2" type="button" data-bs-toggle="collapse" data-bs-target="#selector-reference-navigation-selectors" aria-expanded="true" aria-controls="selector-reference-navigation-selectors">Navigation selectors</button>
+             <ul class="nav flex-column collapse show" id="selector-reference-navigation-selectors">
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/selectors/link-selector">
+                <div class="nav-link-title">
+                 Link selector
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/selectors/sitemap-xml-selector">
+                <div class="nav-link-title">
+                 Sitemap.xml Link selector
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/selectors/pagination-selector">
+                <div class="nav-link-title">
+                 Pagination selector
+                </div></a></li>
+             </ul></li>
+            <li class="nav-item">
+             <button class="nav-link documentation-nav-toggle documentation-nav-level-2" type="button" data-bs-toggle="collapse" data-bs-target="#selector-reference-element-selectors" aria-expanded="true" aria-controls="selector-reference-element-selectors">Element selectors</button>
+             <ul class="nav flex-column collapse show" id="selector-reference-element-selectors">
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/selectors/element-selector">
+                <div class="nav-link-title">
+                 Element selector
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/selectors/element-click-selector">
+                <div class="nav-link-title">
+                 Element click selector
+                </div></a></li>
+             </ul></li>
+           </ul></li>
+          <li class="nav-item">
+           <button class="nav-link documentation-nav-toggle documentation-nav-level-1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#run-sitemaps-locally" aria-expanded="false" aria-controls="run-sitemaps-locally">Run sitemaps locally</button>
+           <ul class="nav flex-column collapse" id="run-sitemaps-locally">
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/local-scraping">
+              <div class="nav-link-title">
+               Run a sitemap locally
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/local-scraping/preview-data">
+              <div class="nav-link-title">
+               Preview local scraped data
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/local-scraping/export-data">
+              <div class="nav-link-title">
+               Export local scraped data
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/local-scraping/import-export-sitemaps">
+              <div class="nav-link-title">
+               Import and export sitemaps
+              </div></a></li>
+           </ul></li>
+          <li class="nav-item">
+           <button class="nav-link documentation-nav-toggle documentation-nav-level-1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#guides" aria-expanded="false" aria-controls="guides">Guides</button>
+           <ul class="nav flex-column collapse" id="guides">
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/guides">
+              <div class="nav-link-title">
+               Scraping workflow guides
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/guides/scrape-listing-pages">
+              <div class="nav-link-title">
+               Scrape listing pages
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/guides/scrape-listing-and-detail-pages">
+              <div class="nav-link-title">
+               Scrape listing and detail pages
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/guides/scrape-multiple-categories">
+              <div class="nav-link-title">
+               Scrape multiple categories
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/guides/pagination-load-more-infinite-scroll">
+              <div class="nav-link-title">
+               Pagination, load more and infinite scrolling
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/guides/click-tabs-buttons-and-variants">
+              <div class="nav-link-title">
+               Click tabs, buttons and product variants
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/guides/iframes-and-shadow-dom">
+              <div class="nav-link-title">
+               Scrape iframes and shadow DOM
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/guides/scrape-urls-from-sitemap-xml">
+              <div class="nav-link-title">
+               Scrape URLs from sitemap.xml
+              </div></a></li>
+           </ul></li>
+          <li class="nav-item">
+           <button class="nav-link documentation-nav-toggle documentation-nav-level-1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#web-scraper-cloud" aria-expanded="false" aria-controls="web-scraper-cloud">Web Scraper Cloud</button>
+           <ul class="nav flex-column collapse" id="web-scraper-cloud">
+            <li class="nav-item">
+             <button class="nav-link documentation-nav-toggle documentation-nav-level-2" type="button" data-bs-toggle="collapse" data-bs-target="#web-scraper-cloud-overview" aria-expanded="true" aria-controls="web-scraper-cloud-overview">Overview</button>
+             <ul class="nav flex-column collapse show" id="web-scraper-cloud-overview">
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud">
+                <div class="nav-link-title">
+                 Web Scraper Cloud
+                </div></a></li>
+             </ul></li>
+            <li class="nav-item">
+             <button class="nav-link documentation-nav-toggle documentation-nav-level-2" type="button" data-bs-toggle="collapse" data-bs-target="#web-scraper-cloud-automatization" aria-expanded="true" aria-controls="web-scraper-cloud-automatization">Automatization</button>
+             <ul class="nav flex-column collapse show" id="web-scraper-cloud-automatization">
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/api">
+                <div class="nav-link-title">
+                 API
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/api/webhooks">
+                <div class="nav-link-title">
+                 Webhook notifications
+                </div></a></li>
+             </ul></li>
+            <li class="nav-item">
+             <button class="nav-link documentation-nav-toggle documentation-nav-level-2" type="button" data-bs-toggle="collapse" data-bs-target="#web-scraper-cloud-sitemaps" aria-expanded="true" aria-controls="web-scraper-cloud-sitemaps">Sitemaps</button>
+             <ul class="nav flex-column collapse show" id="web-scraper-cloud-sitemaps">
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/sitemap-sync">
+                <div class="nav-link-title">
+                 Sitemap sync
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/import-sitemap">
+                <div class="nav-link-title">
+                 Import a sitemap into Web Scraper Cloud
+                </div></a></li>
+             </ul></li>
+            <li class="nav-item">
+             <button class="nav-link documentation-nav-toggle documentation-nav-level-2" type="button" data-bs-toggle="collapse" data-bs-target="#web-scraper-cloud-run-and-monitor-jobs" aria-expanded="true" aria-controls="web-scraper-cloud-run-and-monitor-jobs">Run and monitor jobs</button>
+             <ul class="nav flex-column collapse show" id="web-scraper-cloud-run-and-monitor-jobs">
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/run-scraping-job">
+                <div class="nav-link-title">
+                 Run a Cloud scraping job
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/monitor-jobs">
+                <div class="nav-link-title">
+                 Monitor scraping jobs
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/data-quality-control">
+                <div class="nav-link-title">
+                 Data quality control
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/scheduler">
+                <div class="nav-link-title">
+                 Scheduler
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/troubleshooting">
+                <div class="nav-link-title">
+                 Troubleshoot Cloud scraping jobs
+                </div></a></li>
+             </ul></li>
+            <li class="nav-item">
+             <button class="nav-link documentation-nav-toggle documentation-nav-level-2" type="button" data-bs-toggle="collapse" data-bs-target="#web-scraper-cloud-configuration-and-limits" aria-expanded="true" aria-controls="web-scraper-cloud-configuration-and-limits">Configuration and limits</button>
+             <ul class="nav flex-column collapse show" id="web-scraper-cloud-configuration-and-limits">
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/drivers">
+                <div class="nav-link-title">
+                 Fast driver and FullJS driver
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/proxies">
+                <div class="nav-link-title">
+                 Proxy configuration
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/credits-and-limits">
+                <div class="nav-link-title">
+                 URL credits, parallel tasks and limits
+                </div></a></li>
+             </ul></li>
+            <li class="nav-item">
+             <button class="nav-link documentation-nav-toggle documentation-nav-level-2" type="button" data-bs-toggle="collapse" data-bs-target="#web-scraper-cloud-parser" aria-expanded="true" aria-controls="web-scraper-cloud-parser">Parser</button>
+             <ul class="nav flex-column collapse show" id="web-scraper-cloud-parser">
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/parser">
+                <div class="nav-link-title">
+                 Parser
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/parser/replace-text">
+                <div class="nav-link-title">
+                 Replace text parser
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/parser/regex-match">
+                <div class="nav-link-title">
+                 Regex match parser
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/parser/append-and-prepend-text">
+                <div class="nav-link-title">
+                 Append and prepend text parser
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/parser/strip-html">
+                <div class="nav-link-title">
+                 Strip HTML parser
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/parser/remove-whitespaces">
+                <div class="nav-link-title">
+                 Remove whitespaces parser
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/parser/remove-column">
+                <div class="nav-link-title">
+                 Remove column parser
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/parser/virtual-column">
+                <div class="nav-link-title">
+                 Virtual column parser
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/parser/convert-unix-timestamp">
+                <div class="nav-link-title">
+                 Convert UNIX timestamp parser
+                </div></a></li>
+             </ul></li>
+            <li class="nav-item">
+             <button class="nav-link documentation-nav-toggle documentation-nav-level-2" type="button" data-bs-toggle="collapse" data-bs-target="#web-scraper-cloud-exports-and-notifications" aria-expanded="true" aria-controls="web-scraper-cloud-exports-and-notifications">Exports and notifications</button>
+             <ul class="nav flex-column collapse show" id="web-scraper-cloud-exports-and-notifications">
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/data-export">
+                <div class="nav-link-title">
+                 Data export
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/image-export">
+                <div class="nav-link-title">
+                 Image export
+                </div></a></li>
+              <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-3" href="/documentation/web-scraper-cloud/notifications">
+                <div class="nav-link-title">
+                 Notifications
+                </div></a></li>
+             </ul></li>
+           </ul></li>
+          <li class="nav-item">
+           <button class="nav-link documentation-nav-toggle documentation-nav-level-1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#troubleshooting" aria-expanded="false" aria-controls="troubleshooting">Troubleshooting</button>
+           <ul class="nav flex-column collapse" id="troubleshooting">
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/troubleshooting">
+              <div class="nav-link-title">
+               Troubleshooting
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/troubleshooting/no-data">
+              <div class="nav-link-title">
+               No data was extracted
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/troubleshooting/wrong-elements-selected">
+              <div class="nav-link-title">
+               Wrong elements or values were selected
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/troubleshooting/empty-failed-no-value-pages">
+              <div class="nav-link-title">
+               Empty, failed and no-value pages
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/troubleshooting/javascript-content-not-loading">
+              <div class="nav-link-title">
+               JavaScript content does not load
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/troubleshooting/pagination-stops-early">
+              <div class="nav-link-title">
+               Pagination stops early
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/troubleshooting/sitemap-stopped-working">
+              <div class="nav-link-title">
+               A sitemap stopped working
+              </div></a></li>
+            <li class="nav-item"><a class="nav-link nav-link-native documentation-nav-level-2" href="/documentation/troubleshooting/website-blocking">
+              <div class="nav-link-title">
+               The website blocks the scraper
+              </div></a></li>
+           </ul></li>
+         </ul>
+         <script nonce="YBvHNzCECrtjYuTYDHEVF3YXvtJcrfmb">
+							(function () {
+								var collapsed;
+								try {
+									collapsed = JSON.parse(localStorage.getItem('documentation_collapsed_groups') || '[]');
+								} catch (error) {
+									return;
+								}
+								collapsed.forEach(function (id) {
+									var group = document.getElementById(id);
+									// Only groups nested inside a section are remembered, and the
+									// group holding the current page always stays open.
+									if (!group || !group.parentElement.closest('.collapse') || group.querySelector('.nav-link.active')) {
+										return;
+									}
+									group.classList.remove('show');
+									var toggle = group.parentElement.querySelector(':scope > .documentation-nav-toggle');
+									if (toggle) {
+										toggle.classList.add('collapsed');
+										toggle.setAttribute('aria-expanded', 'false');
+									}
+								});
+							}());
+						</script>
+        </div>
+       </div>
+      </div>
+      <div class="col-lg-9 documentation">
+       <div id="algoliaSearch">
+        <div id="searchbox"></div>
+        <div id="hits" class="d-none"></div>
+       </div>
+       <h1>HTML, CSS and jQuery for Web Scraper</h1>
+       <h2>How Web Scraper reads a web page</h2>
+       <p>Web pages are represented as a tree of HTML elements called the Document Object Model, or DOM. Web Scraper selectors locate elements in this tree and then extract data, follow links, group repeated records or interact with the page.</p>
+       <p>When working in the browser extension, inspect the rendered page in Developer Tools. A website can modify the DOM after the initial HTML loads, so the elements visible in Developer Tools may differ from the original page source.</p>
+       <h2>HTML elements</h2>
+       <p>An HTML element usually consists of a tag, optional attributes and content.</p>
+       <pre><code class="language-html">&lt;a class="product-link" href="/products/123" data-sku="ABC-123"&gt;
+  Example product
+&lt;/a&gt;</code></pre>
+       <p>In this example:</p>
+       <ul>
+        <li><code>a</code> is the element type.</li>
+        <li><code>class="product-link"</code> assigns the element to a class.</li>
+        <li><code>href="/products/123"</code> contains the link destination.</li>
+        <li><code>data-sku="ABC-123"</code> is a custom data attribute.</li>
+        <li><code>Example product</code> is the element's text content.</li>
+       </ul>
+       <h2>Common HTML elements</h2>
+       <table>
+        <thead>
+         <tr>
+          <th>Element</th>
+          <th>Typical use</th>
+          <th>Web scraping relevance</th>
+         </tr>
+        </thead>
+        <tbody>
+         <tr>
+          <td><code>div</code></td>
+          <td>Generic block or container</td>
+          <td>Frequently wraps products, cards, sections and repeated records.</td>
+         </tr>
+         <tr>
+          <td><code>span</code></td>
+          <td>Inline content</td>
+          <td>Often contains prices, labels, statuses or short values.</td>
+         </tr>
+         <tr>
+          <td><code>a</code></td>
+          <td>Link</td>
+          <td>Usually contains an <code>href</code> that can be followed with a Link selector.</td>
+         </tr>
+         <tr>
+          <td><code>img</code></td>
+          <td>Image</td>
+          <td>Usually contains image information in <code>src</code>, <code>srcset</code> or related attributes.</td>
+         </tr>
+         <tr>
+          <td><code>button</code></td>
+          <td>Interactive control</td>
+          <td>May load more records, change variants, open tabs or trigger navigation.</td>
+         </tr>
+         <tr>
+          <td><code>ul</code>, <code>ol</code>, <code>li</code></td>
+          <td>Lists</td>
+          <td>Common structures for navigation, categories, specifications and repeated items.</td>
+         </tr>
+         <tr>
+          <td><code>table</code>, <code>tr</code>, <code>td</code>, <code>th</code></td>
+          <td>Tabular data</td>
+          <td>Useful for specifications, comparison tables and structured records.</td>
+         </tr>
+         <tr>
+          <td><code>input</code>, <code>select</code>, <code>option</code></td>
+          <td>Form controls</td>
+          <td>May represent search fields, filters or product variation controls.</td>
+         </tr>
+        </tbody>
+       </table>
+       <h2>Common HTML attributes</h2>
+       <table>
+        <thead>
+         <tr>
+          <th>Attribute</th>
+          <th>Example</th>
+          <th>Use when scraping</th>
+         </tr>
+        </thead>
+        <tbody>
+         <tr>
+          <td><code>id</code></td>
+          <td><code>id="product-list"</code></td>
+          <td>Useful when the ID is stable and unique.</td>
+         </tr>
+         <tr>
+          <td><code>class</code></td>
+          <td><code>class="product-card featured"</code></td>
+          <td>The most common way to target groups of similar elements.</td>
+         </tr>
+         <tr>
+          <td><code>href</code></td>
+          <td><code>href="/product/123"</code></td>
+          <td>Contains a link destination.</td>
+         </tr>
+         <tr>
+          <td><code>src</code></td>
+          <td><code>src="/images/item.jpg"</code></td>
+          <td>Common source for images and other embedded resources.</td>
+         </tr>
+         <tr>
+          <td><code>alt</code></td>
+          <td><code>alt="Black running shoe"</code></td>
+          <td>May contain useful image description text.</td>
+         </tr>
+         <tr>
+          <td><code>title</code></td>
+          <td><code>title="In stock"</code></td>
+          <td>Can contain additional metadata not shown as normal text.</td>
+         </tr>
+         <tr>
+          <td><code>data-*</code></td>
+          <td><code>data-sku="ABC-123"</code></td>
+          <td>Often contains stable identifiers, state or structured values.</td>
+         </tr>
+         <tr>
+          <td><code>name</code>, <code>value</code></td>
+          <td><code>value="blue"</code></td>
+          <td>Frequently used by forms, filters and variation controls.</td>
+         </tr>
+        </tbody>
+       </table>
+       <h2>Parent, child and descendant relationships</h2>
+       <p>HTML elements are nested. The surrounding element is the parent, an element directly inside it is a child, and any element further inside it is a descendant.</p>
+       <pre><code class="language-html">&lt;div class="product-card"&gt;
+  &lt;a class="product-link" href="/product/123"&gt;
+    &lt;span class="product-name"&gt;Example product&lt;/span&gt;
+  &lt;/a&gt;
+  &lt;span class="price"&gt;$19.99&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+       <p>Here, <code>.product-card</code> is the parent of <code>.product-link</code> and <code>.price</code>. The <code>.product-name</code> element is a descendant of <code>.product-card</code> and a child of <code>.product-link</code>.</p>
+       <p>This relationship matters because child selectors in a Web Scraper sitemap execute within the context returned by their parent selector.</p>
+       <h2>Repeated HTML structures</h2>
+       <p>Listing pages commonly repeat the same wrapper structure for every record.</p>
+       <pre><code class="language-html">&lt;div class="product-card"&gt;...first product...&lt;/div&gt;
+&lt;div class="product-card"&gt;...second product...&lt;/div&gt;
+&lt;div class="product-card"&gt;...third product...&lt;/div&gt;</code></pre>
+       <p>An Element selector can target <code>.product-card</code> and return each matching element as a separate parent context. Child selectors such as <code>.product-name</code> and <code>.price</code> then extract values within each product card rather than across the entire page.</p>
+       <h2>CSS selector basics</h2>
+       <p>A CSS selector describes which HTML elements should match. Web Scraper can generate selectors with the point-and-click interface, or you can enter a selector manually.</p>
+       <table>
+        <thead>
+         <tr>
+          <th>Pattern</th>
+          <th>Example</th>
+          <th>Matches</th>
+         </tr>
+        </thead>
+        <tbody>
+         <tr>
+          <td>Element type</td>
+          <td><code>div</code></td>
+          <td>All <code>div</code> elements.</td>
+         </tr>
+         <tr>
+          <td>Class</td>
+          <td><code>.product-card</code></td>
+          <td>Elements containing the <code>product-card</code> class.</td>
+         </tr>
+         <tr>
+          <td>ID</td>
+          <td><code>#product-list</code></td>
+          <td>The element with the matching ID.</td>
+         </tr>
+         <tr>
+          <td>Element and class</td>
+          <td><code>a.product-link</code></td>
+          <td>Link elements with the <code>product-link</code> class.</td>
+         </tr>
+         <tr>
+          <td>Multiple classes</td>
+          <td><code>.product-card.featured</code></td>
+          <td>Elements that contain both classes.</td>
+         </tr>
+         <tr>
+          <td>Descendant</td>
+          <td><code>.product-card .price</code></td>
+          <td>Elements with class <code>price</code> anywhere inside <code>.product-card</code>.</td>
+         </tr>
+         <tr>
+          <td>Direct child</td>
+          <td><code>.product-card &gt; .price</code></td>
+          <td>Elements with class <code>price</code> that are direct children of <code>.product-card</code>.</td>
+         </tr>
+         <tr>
+          <td>Adjacent sibling</td>
+          <td><code>.label + .value</code></td>
+          <td>The first <code>.value</code> immediately after <code>.label</code>.</td>
+         </tr>
+         <tr>
+          <td>General sibling</td>
+          <td><code>.label ~ .value</code></td>
+          <td>Matching <code>.value</code> siblings that appear after <code>.label</code>.</td>
+         </tr>
+        </tbody>
+       </table>
+       <h2>Attribute selectors</h2>
+       <p>Attribute selectors are useful when a stable class is unavailable or when the value is stored directly in an HTML attribute.</p>
+       <table>
+        <thead>
+         <tr>
+          <th>Selector</th>
+          <th>Meaning</th>
+         </tr>
+        </thead>
+        <tbody>
+         <tr>
+          <td><code>[data-sku]</code></td>
+          <td>Elements that have a <code>data-sku</code> attribute.</td>
+         </tr>
+         <tr>
+          <td><code>[data-state="active"]</code></td>
+          <td>Elements whose <code>data-state</code> value exactly equals <code>active</code>.</td>
+         </tr>
+         <tr>
+          <td><code>[href^="/product/"]</code></td>
+          <td>Elements whose <code>href</code> starts with <code>/product/</code>.</td>
+         </tr>
+         <tr>
+          <td><code>[href$=".pdf"]</code></td>
+          <td>Elements whose <code>href</code> ends with <code>.pdf</code>.</td>
+         </tr>
+         <tr>
+          <td><code>[class*="product"]</code></td>
+          <td>Elements whose class attribute contains the text <code>product</code>.</td>
+         </tr>
+        </tbody>
+       </table>
+       <p>Prefer exact and stable attributes when possible. Partial attribute matching is useful when only part of an attribute value remains consistent.</p>
+       <h2>Combine selector conditions</h2>
+       <p>Selector parts can be combined to make a match more specific.</p>
+       <pre><code class="language-css">div.product-card[data-state="active"] a.product-link</code></pre>
+       <p>This selects <code>a.product-link</code> elements inside active <code>div.product-card</code> elements.</p>
+       <p>Use the shortest selector that reliably identifies the required elements. Long selectors copied from the full DOM hierarchy are usually harder to maintain.</p>
+       <h2>Target alternative elements with a comma</h2>
+       <p>Separate CSS selectors with a comma when the same field can appear under different markup.</p>
+       <pre><code class="language-css">.price, .original-price</code></pre>
+       <p>This matches elements that satisfy either selector. Matching elements are returned in document order, not in the order the selector expressions are written. If <code>.original-price</code> appears before <code>.price</code> in the HTML, it is matched first even though <code>.price</code> is written first.</p>
+       <p>See <a href="/documentation/css-selector">CSS selectors</a> for the full Web Scraper multiple-record and first-record behavior.</p>
+       <h2>Exclude elements with <code>:not()</code></h2>
+       <p>Use <code>:not()</code> when a stable condition identifies elements that should be excluded.</p>
+       <pre><code class="language-css">.product-card:not(.sponsored)</code></pre>
+       <p>This matches product cards that do not have the <code>sponsored</code> class.</p>
+       <h2>jQuery selector extensions</h2>
+       <p>Web Scraper supports jQuery-style selector extensions in addition to browser CSS selector syntax. For scraping, the most useful extensions are text filtering and descendant filtering.</p>
+       <p>These expressions are selectors. Do not enter JavaScript or jQuery program code into a Web Scraper selector field.</p>
+       <h2>Select elements by text with <code>:contains()</code></h2>
+       <pre><code class="language-css">button:contains("Load more")</code></pre>
+       <p>This matches button elements containing the text <code>Load more</code>. Text matching is case-sensitive, so use the text as it appears in the rendered page.</p>
+       <p>You can combine it with normal CSS syntax:</p>
+       <pre><code class="language-css">.filters button:contains("In stock")</code></pre>
+       <h2>Select elements that contain another element with <code>:has()</code></h2>
+       <pre><code class="language-css">.product-card:has(.price)</code></pre>
+       <p>This matches product cards that contain an element matching <code>.price</code>.</p>
+       <p>The selector inside <code>:has()</code> is evaluated as a descendant condition. This is useful when the parent wrapper has no unique class or attribute of its own.</p>
+       <h2>Combine jQuery conditions with <code>:not()</code></h2>
+       <p>jQuery conditions can be inverted when the element should be selected only when specific content is absent.</p>
+       <pre><code class="language-css">.product-card:not(:has(.out-of-stock))</code></pre>
+       <p>This matches product cards that do not contain an element with the <code>out-of-stock</code> class.</p>
+       <pre><code class="language-css">button:not(:contains("Sold out"))</code></pre>
+       <p>This matches buttons that do not contain the text <code>Sold out</code>.</p>
+       <h2>Chain selector conditions</h2>
+       <p>CSS and jQuery conditions can be combined when a single condition is not specific enough.</p>
+       <pre><code class="language-css">.product-card:has(.price):not(:has(.sponsored)) a.product-link</code></pre>
+       <p>This selects product links from product cards that contain a price and do not contain a sponsored marker.</p>
+       <p>Keep chained selectors readable. If the expression becomes difficult to understand, consider using an Element selector to establish the parent context and simpler child selectors inside it.</p>
+       <h2>Web Scraper parent selector</h2>
+       <p>Use <code>_parent_</code> from a child selector when you need to select the exact element returned by its parent Element selector.</p>
+       <p>For example, an Element selector may return each product wrapper while a child Element Attribute selector uses <code>_parent_</code> to extract a <code>data-sku</code> attribute from that wrapper itself.</p>
+       <h2>Select inside an iframe</h2>
+       <pre><code class="language-css">iframe:iframe .selector-within-iframe</code></pre>
+       <p>The first part selects the iframe element. <code>:iframe</code> enters the iframe document, and the selector after it targets elements inside that document.</p>
+       <p>Browser and site restrictions can prevent access to some iframe content.</p>
+       <h2>Select inside a shadow root</h2>
+       <pre><code class="language-css">.shadow-host:shadow-root .selector-within-shadow-root</code></pre>
+       <p>The first part selects the shadow host. <code>:shadow-root</code> enters the shadow root, and the remaining selector targets content inside it.</p>
+       <h2>Selector context in a sitemap</h2>
+       <p>A selector does not always run against the entire page. Child selectors run within the context returned by their parent selector.</p>
+       <p>For example, if an Element selector returns individual <code>.product-card</code> wrappers, a child Text selector can simply use:</p>
+       <pre><code class="language-css">.price</code></pre>
+       <p>Web Scraper evaluates <code>.price</code> separately inside each product card. You do not need to repeat the complete page-level selector path.</p>
+       <h2>Recommended selector patterns</h2>
+       <table>
+        <thead>
+         <tr>
+          <th>Goal</th>
+          <th>Example selector</th>
+         </tr>
+        </thead>
+        <tbody>
+         <tr>
+          <td>Select repeated product wrappers</td>
+          <td><code>.product-card</code></td>
+         </tr>
+         <tr>
+          <td>Select a product link inside a wrapper</td>
+          <td><code>a.product-link</code></td>
+         </tr>
+         <tr>
+          <td>Select one of two possible price classes</td>
+          <td><code>.price, .original-price</code></td>
+         </tr>
+         <tr>
+          <td>Select elements with a SKU attribute</td>
+          <td><code>[data-sku]</code></td>
+         </tr>
+         <tr>
+          <td>Select product links by URL structure</td>
+          <td><code>a[href^="/product/"]</code></td>
+         </tr>
+         <tr>
+          <td>Select a button by visible text</td>
+          <td><code>button:contains("Load more")</code></td>
+         </tr>
+         <tr>
+          <td>Select wrappers containing a price</td>
+          <td><code>.product-card:has(.price)</code></td>
+         </tr>
+         <tr>
+          <td>Exclude wrappers containing a sponsored marker</td>
+          <td><code>.product-card:not(:has(.sponsored))</code></td>
+         </tr>
+        </tbody>
+       </table>
+       <h2>Choose selectors that survive website changes</h2>
+       <ul>
+        <li>Prefer meaningful classes, stable IDs and <code>data-*</code> attributes.</li>
+        <li>Prefer a short selector scoped by a parent Element selector over a long page-level selector.</li>
+        <li>Avoid generated class names or IDs that change between sessions or deployments.</li>
+        <li>Avoid relying on an element's position when a stable class, attribute or relationship is available.</li>
+        <li>Avoid copying a complete selector path from the page root when only part of the path is required.</li>
+        <li>Use Element Preview to confirm that the selector matches the intended elements before scraping.</li>
+       </ul>
+       <h2>When a selector returns no elements</h2>
+       <ol>
+        <li>Confirm that the target element exists in the rendered DOM.</li>
+        <li>Test a shorter part of the selector to find where matching stops.</li>
+        <li>Confirm that the selector is running under the intended parent selector.</li>
+        <li>Check whether the target appears only after scrolling, pagination, a click or a delay.</li>
+        <li>Check whether the content is inside an iframe or shadow root.</li>
+        <li>Check whether classes or attributes change between page loads.</li>
+       </ol>
+       <h2>When a selector returns too many elements</h2>
+       <ul>
+        <li>Add a stable parent class or attribute to narrow the match.</li>
+        <li>Use an Element selector to establish one repeated record as the parent context.</li>
+        <li>Add an attribute condition when elements share the same class but represent different states.</li>
+        <li>Use <code>:has()</code>, <code>:contains()</code> or <code>:not()</code> only when the required distinction is based on descendants or text.</li>
+       </ul>
+       <h2>When the wrong value is returned first</h2>
+       <p>When one selector expression matches more than one element, Web Scraper processes matches in document order. Reordering comma-separated selector expressions does not change the order of the matching elements in the HTML.</p>
+       <p>If you need a different result, make the selector more specific or adjust the selector's multiple-value configuration rather than relying on expression order.</p>
+       <h2>Rendered content and JavaScript</h2>
+       <p>Some websites add or replace elements after JavaScript runs. A selector can be correct but still return no data if it executes before the content exists or if the Cloud driver does not render the required JavaScript.</p>
+       <p>For dynamic content, identify whether the page requires scrolling, pagination, clicking, a selector delay or the Full Cloud driver. Selector syntax cannot make unavailable content appear.</p>
+       <h2>What this guide deliberately avoids</h2>
+       <p>Web Scraper supports a broad range of browser CSS and jQuery selector syntax, but not every technically possible selector is a good scraping selector. This documentation focuses on stable patterns that are useful across real scraping projects.</p>
+       <ul>
+        <li>Avoid positional selectors when a stable class, attribute or structural relationship is available.</li>
+        <li>Avoid selector expressions that depend on generated page structure.</li>
+        <li>Avoid unnecessarily complex chains when parent and child selectors can express the same structure more clearly.</li>
+       </ul>
+       <h2>Related</h2>
+       <ul>
+        <li><a href="/documentation/sitemaps/selecting-elements">Select elements on a page</a></li>
+        <li><a href="/documentation/css-selector">CSS selectors</a></li>
+        <li><a href="/documentation/selectors">Selector reference</a></li>
+        <li><a href="/documentation/guides/iframes-and-shadow-dom">Scrape iframes and shadow DOM</a></li>
+       </ul>
+      </div>
+     </div>
+    </div>
+    <div class="container feedback-form">
+     <hr class="full-hr">
+     <form action="" method="POST">
+      <div class="row helpful">
+       <div class="col-lg-12">
+        <p>Was this page helpful?</p>
+       </div>
+       <div class="col-lg-6">
+        <div class="radiolistdiv">
+         <ul class="radiolist">
+          <li><label class="form-label"> <input type="radio" name="helpful" value="yes" checked>
+            <p>YES</p></label></li>
+          <li><label class="form-label"> <input type="radio" name="helpful" value="no">
+            <p>NO</p></label></li>
+         </ul>
+        </div>
+       </div>
+      </div>
+      <div class="row feedback">
+       <div class="col-lg-6">
+        <textarea name="feedback" placeholder="How should we improve this page? (optional)" id="feedback-text"></textarea>
+       </div>
+      </div>
+      <div class="row">
+       <div class="col-lg-12 form-success hide">
+        <div class="alert alert-success" role="alert">
+         <strong>Success!</strong> Your feedback has been sent.
+        </div>
+       </div>
+      </div>
+      <div class="row">
+       <div class="col-lg-12 form-error hide">
+        <div class="alert alert-danger" role="alert">
+         <strong>Warning!</strong> An error occurred while submitting feedback. 
+         <ul></ul>
+        </div>
+       </div>
+      </div>
+      <div class="row submit">
+       <div class="col-lg-12 submit-button">
+        <button type="button" class="send-page-feedback-btn">Submit</button>
+       </div>
+      </div>
+     </form>
+    </div>
+   </main>
+  </div>
+  <footer class="v2-footer">
+   <div class="container">
+    <a href="/" class="v2-footer__logo v2-footer__logo--top d-lg-none"> <img src="/img/logo-v2.svg" alt="Web Scraper" width="116" height="38"> </a>
+    <div class="row v2-footer__columns">
+     <div class="col-lg-3 v2-footer__col">
+      <h2 class="v2-footer__heading">
+       <button class="v2-footer__toggle collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#v2-footer-products" aria-expanded="false" aria-controls="v2-footer-products">Products 
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+         <path d="M3 6L8.00081 10.58L13 6" stroke="#F4F9FC" stroke-opacity="0.7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg></button></h2>
+      <div id="v2-footer-products" class="collapse d-lg-block v2-footer__panel">
+       <ul class="v2-footer__links">
+        <li><a href="/web-scraper-extension"> Web Scraper browser extension </a></li>
+        <li><a href="/">Web Scraper Cloud</a></li>
+       </ul>
+      </div>
+     </div>
+     <div class="col-lg-3 v2-footer__col">
+      <h2 class="v2-footer__heading">
+       <button class="v2-footer__toggle collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#v2-footer-company" aria-expanded="false" aria-controls="v2-footer-company">Company 
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+         <path d="M3 6L8.00081 10.58L13 6" stroke="#F4F9FC" stroke-opacity="0.7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg></button></h2>
+      <div id="v2-footer-company" class="collapse d-lg-block v2-footer__panel">
+       <ul class="v2-footer__links">
+        <li><a href="/about-us">About us</a></li>
+        <li><a href="/contact">Contacts</a></li>
+        <li><a href="/privacy-policy">Website Privacy Policy</a></li>
+        <li><a href="/extension-privacy-policy">Browser Extension Privacy Policy</a></li>
+        <li><a href="https://webscraper.io/downloads/Web_Scraper_Media_Kit.zip">Media kit</a></li>
+       </ul>
+      </div>
+     </div>
+     <div class="col-lg-3 v2-footer__col">
+      <h2 class="v2-footer__heading">
+       <button class="v2-footer__toggle collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#v2-footer-resources" aria-expanded="false" aria-controls="v2-footer-resources">Resources 
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+         <path d="M3 6L8.00081 10.58L13 6" stroke="#F4F9FC" stroke-opacity="0.7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg></button></h2>
+      <div id="v2-footer-resources" class="collapse d-lg-block v2-footer__panel">
+       <ul class="v2-footer__links">
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/documentation">Documentation</a></li>
+        <li><a href="/tutorials">Video Tutorials</a></li>
+        <li><a href="/test-sites">Test Sites</a></li>
+        <li><a href="https://forum.webscraper.io/" target="_blank" rel="noopener">Forum</a></li>
+        <li><a href="https://status.webscraper.io/" target="_blank" rel="noopener">Status</a></li>
+       </ul>
+      </div>
+     </div>
+     <div class="col-lg-3 v2-footer__col">
+      <h2 class="v2-footer__heading">
+       <button class="v2-footer__toggle collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#v2-footer-contact" aria-expanded="false" aria-controls="v2-footer-contact">Contact us 
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+         <path d="M3 6L8.00081 10.58L13 6" stroke="#F4F9FC" stroke-opacity="0.7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+        </svg></button></h2>
+      <div id="v2-footer-contact" class="collapse d-lg-block v2-footer__panel">
+       <ul class="v2-footer__links">
+        <li><a href="mailto:info@webscraper.io">info@webscraper.io</a></li>
+        <li class="v2-footer__address">Ubelu 5-71,<br>
+         Adazi, Latvia, LV-2164</li>
+       </ul>
+       <div class="v2-footer__social d-none d-lg-flex">
+        <a href="https://www.facebook.com/webscraperio/" target="_blank" rel="noopener" aria-label="Web Scraper on Facebook"> <i class="ws-icon ws-icon-facebook-f"></i> </a> <a href="https://lv.linkedin.com/company/web-scraper" target="_blank" rel="noopener" aria-label="Web Scraper on LinkedIn"> <i class="ws-icon ws-icon-linkedin"></i> </a> <a href="https://youtube.com/@WebScraper/videos" target="_blank" rel="noopener" aria-label="Web Scraper on Youtube"> <i class="ws-icon ws-icon-youtube"></i> </a> <a class="install-extension" href="https://chromewebstore.google.com/detail/web-scraper-free-web-scra/jnhgnonknehpejjnehehllkliplmbmhn?hl=en" target="_blank" rel="noopener" aria-label="Download the Web Scraper extension"> <i class="ws-icon ws-icon-chrome-dark browser-icon"></i> </a>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="v2-footer__social d-flex d-lg-none">
+     <a href="https://www.facebook.com/webscraperio/" target="_blank" rel="noopener" aria-label="Web Scraper on Facebook"> <i class="ws-icon ws-icon-facebook-f"></i> </a> <a href="https://lv.linkedin.com/company/web-scraper" target="_blank" rel="noopener" aria-label="Web Scraper on LinkedIn"> <i class="ws-icon ws-icon-linkedin"></i> </a> <a href="https://youtube.com/@WebScraper/videos" target="_blank" rel="noopener" aria-label="Web Scraper on Youtube"> <i class="ws-icon ws-icon-youtube"></i> </a> <a class="install-extension" href="https://chromewebstore.google.com/detail/web-scraper-free-web-scra/jnhgnonknehpejjnehehllkliplmbmhn?hl=en" target="_blank" rel="noopener" aria-label="Download the Web Scraper extension"> <i class="ws-icon ws-icon-chrome-dark browser-icon"></i> </a>
+    </div>
+    <div class="v2-footer__bottom">
+     <a href="/" class="v2-footer__logo d-none d-lg-inline-block"> <img src="/img/logo-v2.svg" alt="Web Scraper" width="116" height="38"> </a>
+     <p class="v2-footer__copyright">Copyright © 2026 Web Scraper | All rights reserved</p>
+    </div>
+   </div>
+  </footer>
+  <script type="text/javascript" nonce="YBvHNzCECrtjYuTYDHEVF3YXvtJcrfmb">
+	(function () {
+		var userAgent = navigator.userAgent;
+		var browser;
+
+		if (userAgent.match(/firefox|fxios/i)) {
+			browser = {
+				url: "https://addons.mozilla.org/en-US/firefox/addon/web-scraper/",
+				name: "Firefox",
+				icon: "firefox",
+			};
+		} else if (userAgent.match(/edg/i)) {
+			browser = {
+				url: "https://microsoftedge.microsoft.com/addons/detail/web-scraper-free-web-sc/jfmdjnnfminejadhegajcjbpgjofnkaj",
+				name: "Edge",
+				icon: "edge",
+			};
+		} else {
+			browser = {
+				url: "https://chromewebstore.google.com/detail/web-scraper/jnhgnonknehpejjnehehllkliplmbmhn?hl=en",
+				name: "Chrome",
+				icon: "chrome",
+			};
+		}
+
+		document.querySelectorAll(".install-extension").forEach(function (button) {
+			button.setAttribute("href", browser.url);
+
+			var icon = button.querySelector(".browser-icon");
+			if (icon) {
+				icon.className = icon.className.replace(/ws-icon-chrome-(500|dark)/g, "ws-icon-" + browser.icon + "-$1");
+			}
+		});
+
+		document.querySelectorAll(".browser-name").forEach(function (el) {
+			el.textContent = browser.name;
+		});
+	})();
+</script>
+ </body>
+</html>

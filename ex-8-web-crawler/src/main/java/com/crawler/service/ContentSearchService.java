@@ -1,5 +1,6 @@
 package com.crawler.service;
 
+import com.crawler.dto.MatchOccurrenceDetail;
 import com.crawler.dto.SearchResponse;
 import com.crawler.dto.SearchResult;
 import com.crawler.model.PageMetadata;
@@ -9,6 +10,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -20,7 +25,8 @@ import java.util.stream.Collectors;
 /**
  * Advanced Information Retrieval & Content Discovery Indexing Engine.
  * Implements Okapi BM25 ranking, Google PageRank integration, multi-field inverted indexing,
- * stemming, phrase matching, vocabulary autocomplete, and corpus-wide topic discovery.
+ * stemming, phrase matching, vocabulary autocomplete, corpus-wide topic discovery,
+ * and exact line & location breakdown (Content-Title, Content Line Numbers, Metadata).
  */
 @Slf4j
 @Service
@@ -146,6 +152,7 @@ public class ContentSearchService {
 
     /**
      * Executes advanced content discovery search. Supports sorting by relevance, PageRank, or BM25.
+     * Evaluates exact locations (Content-Title, Content Line Numbers, Metadata) for every hit.
      */
     public SearchResponse search(String query, String sortBy, String filterCategory) {
         long start = System.currentTimeMillis();
@@ -248,7 +255,6 @@ public class ContentSearchService {
             double baseComp = compositeScores.getOrDefault(url, 0.0);
             double totalScore = Math.round((baseComp * (1.0 + (pageRank / 20.0))) * 100.0) / 100.0;
 
-            String snippet = generateSnippet(pm.getCleanText(), queryTokens);
             int occurrences = matchOccurrencesMap.getOrDefault(url, 0);
             String cat = pm.getCategory() != null ? pm.getCategory() : "General";
 
@@ -260,10 +266,65 @@ public class ContentSearchService {
             String breakdown = String.format("BM25: %.2f | PageRank: %.1f | Field Boost: %.2f | Occurrences: %d",
                     bm25, pageRank, Math.max(0.0, baseComp - bm25), occurrences);
 
+            // Extract exact occurrences (Content-Title, Content Lines, Metadata)
+            List<MatchOccurrenceDetail> matchDetails = extractMatchOccurrences(pm, queryTokens, expandedTerms);
+
+            boolean inTitle = matchDetails.stream().anyMatch(d -> "content-title".equalsIgnoreCase(d.getSection()));
+            boolean inContent = matchDetails.stream().anyMatch(d -> "content".equalsIgnoreCase(d.getSection()));
+            boolean inMetadata = matchDetails.stream().anyMatch(d -> "metadata".equalsIgnoreCase(d.getSection()));
+
+            List<String> locTags = new ArrayList<>();
+            if (inTitle) locTags.add("Content-Title");
+
+            List<Integer> contentLines = matchDetails.stream()
+                    .filter(d -> "content".equalsIgnoreCase(d.getSection()) && d.getLineNumber() > 0)
+                    .map(MatchOccurrenceDetail::getLineNumber)
+                    .distinct()
+                    .sorted()
+                    .collect(Collectors.toList());
+
+            if (!contentLines.isEmpty()) {
+                if (contentLines.size() <= 4) {
+                    locTags.add("Content (Line " + contentLines.stream().map(String::valueOf).collect(Collectors.joining(", ")) + ")");
+                } else {
+                    locTags.add("Content (Lines " + contentLines.get(0) + "-" + contentLines.get(contentLines.size() - 1) + ")");
+                }
+            } else if (inContent) {
+                locTags.add("Content (Body)");
+            }
+
+            if (inMetadata) {
+                List<String> metaLabels = matchDetails.stream()
+                        .filter(d -> "metadata".equalsIgnoreCase(d.getSection()))
+                        .map(MatchOccurrenceDetail::getLocationLabel)
+                        .distinct()
+                        .collect(Collectors.toList());
+                locTags.addAll(metaLabels);
+            }
+
+            String titleSnippet = highlightText(pm.getTitle(), expandedTerms);
+            String primarySnippet = generateSnippet(pm.getCleanText(), queryTokens);
+
+            // If we have content match, make sure snippet is relevant
+            if (!matchDetails.isEmpty()) {
+                Optional<MatchOccurrenceDetail> firstContent = matchDetails.stream()
+                        .filter(d -> "content".equalsIgnoreCase(d.getSection()))
+                        .findFirst();
+                if (firstContent.isPresent()) {
+                    primarySnippet = firstContent.get().getSnippet();
+                }
+            }
+
+            String linesSummary = String.format("Title: %s | Content: %s | Metadata: %s",
+                    inTitle ? "Matched" : "None",
+                    contentLines.isEmpty() ? (inContent ? "Detected" : "None") : "Lines " + contentLines.stream().map(String::valueOf).collect(Collectors.joining(", ")),
+                    inMetadata ? "Detected" : "None");
+
             results.add(SearchResult.builder()
                     .url(url)
                     .title(pm.getTitle())
-                    .snippet(snippet)
+                    .titleSnippet(titleSnippet)
+                    .snippet(primarySnippet)
                     .metaDescription(pm.getMetaDescription())
                     .relevanceScore(totalScore)
                     .bm25Score(bm25)
@@ -276,6 +337,12 @@ public class ContentSearchService {
                     .depth(pm.getDepth())
                     .matchedTerms(new ArrayList<>(matchedTermsMap.getOrDefault(url, Collections.emptySet())))
                     .crawledAt(pm.getCrawledAt())
+                    .matchedInTitle(inTitle)
+                    .matchedInContent(inContent)
+                    .matchedInMetadata(inMetadata)
+                    .locationTags(locTags)
+                    .occurrences(matchDetails)
+                    .matchedLinesSummary(linesSummary)
                     .build());
         }
 
@@ -294,6 +361,11 @@ public class ContentSearchService {
             results.sort(Comparator.comparingDouble(SearchResult::getRelevanceScore).reversed());
         }
 
+        // Assign 1-based ranks
+        for (int i = 0; i < results.size(); i++) {
+            results.get(i).setRank(i + 1);
+        }
+
         // Filter out search terms from related keywords
         coOccurringKeywords.removeAll(queryTokens);
         List<String> topRelated = coOccurringKeywords.stream().limit(8).collect(Collectors.toList());
@@ -309,6 +381,166 @@ public class ContentSearchService {
                 .relatedKeywords(topRelated)
                 .results(results)
                 .build();
+    }
+
+    /**
+     * Extracts structured match occurrences across Content-Title, Content Lines, and Metadata.
+     */
+    private List<MatchOccurrenceDetail> extractMatchOccurrences(PageMetadata pm, List<String> queryTokens, Set<String> expandedTerms) {
+        List<MatchOccurrenceDetail> details = new ArrayList<>();
+        if (pm == null) return details;
+
+        // 1. Content-Title
+        if (pm.getTitle() != null && !pm.getTitle().trim().isEmpty()) {
+            int titleMatches = countMatches(pm.getTitle(), expandedTerms);
+            if (titleMatches > 0) {
+                details.add(MatchOccurrenceDetail.builder()
+                        .locationType("CONTENT_TITLE")
+                        .locationLabel("Content-Title")
+                        .section("content-title")
+                        .lineNumber(1)
+                        .snippet(highlightText(pm.getTitle(), expandedTerms))
+                        .rawText(pm.getTitle())
+                        .matchCount(titleMatches)
+                        .build());
+            }
+        }
+
+        // 2. Metadata: Meta Description
+        if (pm.getMetaDescription() != null && !pm.getMetaDescription().trim().isEmpty()) {
+            int metaMatches = countMatches(pm.getMetaDescription(), expandedTerms);
+            if (metaMatches > 0) {
+                details.add(MatchOccurrenceDetail.builder()
+                        .locationType("METADATA_DESC")
+                        .locationLabel("Metadata (Description)")
+                        .section("metadata")
+                        .lineNumber(-1)
+                        .snippet(highlightText(pm.getMetaDescription(), expandedTerms))
+                        .rawText(pm.getMetaDescription())
+                        .matchCount(metaMatches)
+                        .build());
+            }
+        }
+
+        // 3. Metadata: Meta Keywords
+        if (pm.getMetaKeywords() != null && !pm.getMetaKeywords().trim().isEmpty()) {
+            int kwMatches = countMatches(pm.getMetaKeywords(), expandedTerms);
+            if (kwMatches > 0) {
+                details.add(MatchOccurrenceDetail.builder()
+                        .locationType("METADATA_KEYWORDS")
+                        .locationLabel("Metadata (Keywords)")
+                        .section("metadata")
+                        .lineNumber(-1)
+                        .snippet(highlightText(pm.getMetaKeywords(), expandedTerms))
+                        .rawText(pm.getMetaKeywords())
+                        .matchCount(kwMatches)
+                        .build());
+            }
+        }
+
+        // 4. Metadata: Headings
+        if (pm.getHeadings() != null) {
+            for (String h : pm.getHeadings()) {
+                if (h != null && !h.trim().isEmpty()) {
+                    int hMatches = countMatches(h, expandedTerms);
+                    if (hMatches > 0) {
+                        details.add(MatchOccurrenceDetail.builder()
+                                .locationType("HEADING")
+                                .locationLabel("Metadata (Heading)")
+                                .section("metadata")
+                                .lineNumber(-1)
+                                .snippet(highlightText(h, expandedTerms))
+                                .rawText(h)
+                                .matchCount(hMatches)
+                                .build());
+                    }
+                }
+            }
+        }
+
+        // 5. Content Body (with explicit line numbers)
+        List<String> contentLines = extractContentLines(pm);
+        int lineNum = 1;
+        int contentAdded = 0;
+        for (String line : contentLines) {
+            String trimmed = line.trim();
+            if (!trimmed.isEmpty()) {
+                int lineMatches = countMatches(trimmed, expandedTerms);
+                if (lineMatches > 0) {
+                    details.add(MatchOccurrenceDetail.builder()
+                            .locationType("CONTENT_BODY")
+                            .locationLabel("Content (Line " + lineNum + ")")
+                            .section("content")
+                            .lineNumber(lineNum)
+                            .snippet(highlightText(trimmed, expandedTerms))
+                            .rawText(trimmed)
+                            .matchCount(lineMatches)
+                            .build());
+                    contentAdded++;
+                    if (contentAdded >= 8) {
+                        break;
+                    }
+                }
+            }
+            lineNum++;
+        }
+
+        return details;
+    }
+
+    /**
+     * Extracts lines / paragraphs of body text from crawled page.
+     */
+    private List<String> extractContentLines(PageMetadata pm) {
+        List<String> lines = new ArrayList<>();
+        if (pm.getRawHtml() != null && !pm.getRawHtml().trim().isEmpty()) {
+            try {
+                Document doc = Jsoup.parse(pm.getRawHtml());
+                doc.select("nav, header, footer, script, style, aside, noscript, svg, form").remove();
+                Elements blocks = doc.select("h1, h2, h3, h4, h5, h6, p, li, blockquote, dt, dd, div.content, section, article");
+                for (Element block : blocks) {
+                    String txt = block.text().trim();
+                    if (!txt.isEmpty()) {
+                        lines.add(txt);
+                    }
+                }
+            } catch (Exception e) {
+                log.debug("Error parsing HTML blocks: {}", e.getMessage());
+            }
+        }
+        if (lines.isEmpty() && pm.getCleanText() != null && !pm.getCleanText().trim().isEmpty()) {
+            String[] split = pm.getCleanText().split("(?<=[.!?\\n])\\s+");
+            for (String s : split) {
+                if (!s.trim().isEmpty()) {
+                    lines.add(s.trim());
+                }
+            }
+        }
+        return lines;
+    }
+
+    private int countMatches(String text, Set<String> terms) {
+        if (text == null || terms == null || terms.isEmpty()) return 0;
+        int count = 0;
+        for (String term : terms) {
+            Pattern p = Pattern.compile("(?i)\\b" + Pattern.quote(term) + "[a-z]*\\b");
+            Matcher m = p.matcher(text);
+            while (m.find()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private String highlightText(String text, Set<String> terms) {
+        if (text == null) return "";
+        String result = text;
+        for (String term : terms) {
+            Pattern p = Pattern.compile("(?i)\\b(" + Pattern.quote(term) + "[a-z]*)\\b");
+            Matcher m = p.matcher(result);
+            result = m.replaceAll("<mark>$1</mark>");
+        }
+        return result;
     }
 
     public SearchResponse search(String query) {

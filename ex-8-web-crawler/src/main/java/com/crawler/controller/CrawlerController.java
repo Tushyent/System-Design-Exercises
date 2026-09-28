@@ -3,6 +3,7 @@ package com.crawler.controller;
 import com.crawler.dto.CrawlRequest;
 import com.crawler.dto.SearchResponse;
 import com.crawler.dto.SingleCrawlResponse;
+import com.crawler.dto.WorkerStatusDto;
 import com.crawler.model.CrawlStats;
 import com.crawler.model.CrawlTask;
 import com.crawler.model.DiscoveredWebsite;
@@ -18,6 +19,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.nio.file.Files;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.*;
 
 @Slf4j
@@ -78,6 +82,48 @@ public class CrawlerController {
             @RequestParam(required = false) String category) {
         SearchResponse response = crawlerEngine.searchContent(q, sortBy, category);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(value = "/search/export-pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Export Search Results as PDF Report", description = "Generates and downloads a formatted PDF report of the search query results, line occurrences, and rankings")
+    public ResponseEntity<byte[]> exportSearchPdf(
+            @RequestParam(defaultValue = "") String q,
+            @RequestParam(defaultValue = "COMPOSITE") String sortBy,
+            @RequestParam(required = false) String category) {
+        if (q == null || q.trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        SearchResponse response = crawlerEngine.searchContent(q, sortBy, category);
+        try {
+            File tempJson = File.createTempFile("search_res_", ".json");
+            File tempPdf = File.createTempFile("search_rep_", ".pdf");
+
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(tempJson, response);
+
+            ProcessBuilder pb = new ProcessBuilder("python", "scripts/export_search_pdf.py",
+                    "--json-input", tempJson.getAbsolutePath(),
+                    "--out", tempPdf.getAbsolutePath());
+            Process p = pb.start();
+            boolean finished = p.waitFor(20, java.util.concurrent.TimeUnit.SECONDS);
+
+            if (finished && p.exitValue() == 0 && tempPdf.exists()) {
+                byte[] pdfBytes = Files.readAllBytes(tempPdf.toPath());
+                tempJson.delete();
+                tempPdf.delete();
+
+                String safeFilename = q.replaceAll("[^a-zA-Z0-9_-]", "_");
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"search_report_" + safeFilename + ".pdf\"")
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .body(pdfBytes);
+            }
+            tempJson.delete();
+            tempPdf.delete();
+        } catch (Exception e) {
+            log.error("Failed to generate search PDF: {}", e.getMessage(), e);
+        }
+        return ResponseEntity.internalServerError().build();
     }
 
     @GetMapping("/autocomplete")
@@ -199,6 +245,12 @@ public class CrawlerController {
     @Operation(summary = "Get Crawl Status & Metrics", description = "Returns real-time crawling metrics including pages crawled, queue size, visited count, duplicates avoided, robots blocks, and throughput")
     public ResponseEntity<CrawlStats> getStatus() {
         return ResponseEntity.ok(crawlerEngine.getStats());
+    }
+
+    @GetMapping("/workers")
+    @Operation(summary = "Get Real-Time Worker Statuses", description = "Returns the real-time execution matrix for all concurrent worker threads")
+    public ResponseEntity<List<WorkerStatusDto>> getWorkerStatuses() {
+        return ResponseEntity.ok(crawlerEngine.getWorkerStatuses());
     }
 
     @GetMapping("/pages")

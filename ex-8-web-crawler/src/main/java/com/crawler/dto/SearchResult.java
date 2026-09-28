@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -13,13 +15,20 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Discovered web content search hit")
-public class SearchResult {
+public class SearchResult implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    @Schema(description = "Rank position in search results (1-based)")
+    private int rank;
 
     @Schema(description = "URL of the matching page")
     private String url;
 
     @Schema(description = "Title of the page")
     private String title;
+
+    @Schema(description = "Highlighted title with matches marked")
+    private String titleSnippet;
 
     @Schema(description = "Snippet excerpt highlighting matched terms")
     private String snippet;
@@ -59,4 +68,25 @@ public class SearchResult {
 
     @Schema(description = "Discovered timestamp")
     private long crawledAt;
+
+    // Location Specification Fields (content-title, content lines, metadata)
+    @Schema(description = "Whether the term matched in content-title")
+    private boolean matchedInTitle;
+
+    @Schema(description = "Whether the term matched in page body content")
+    private boolean matchedInContent;
+
+    @Schema(description = "Whether the term matched in metadata (meta description, keywords, headings)")
+    private boolean matchedInMetadata;
+
+    @Schema(description = "Summary list of matching location tags e.g. ['Content-Title', 'Content (Line 3)', 'Metadata (Description)']")
+    @Builder.Default
+    private List<String> locationTags = new ArrayList<>();
+
+    @Schema(description = "Detailed list of all exact occurrences, line numbers, and context snippets")
+    @Builder.Default
+    private List<MatchOccurrenceDetail> occurrences = new ArrayList<>();
+
+    @Schema(description = "Human-readable summary of matched lines/sections")
+    private String matchedLinesSummary;
 }

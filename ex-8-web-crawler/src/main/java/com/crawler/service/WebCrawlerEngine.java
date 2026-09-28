@@ -4,6 +4,7 @@ import com.crawler.config.CrawlerProperties;
 import com.crawler.dto.CrawlRequest;
 import com.crawler.dto.SearchResponse;
 import com.crawler.dto.SingleCrawlResponse;
+import com.crawler.dto.WorkerStatusDto;
 import com.crawler.model.CrawlStats;
 import com.crawler.model.CrawlTask;
 import com.crawler.model.DiscoveredWebsite;
@@ -52,13 +53,16 @@ public class WebCrawlerEngine {
     private String currentJobId = UUID.randomUUID().toString();
     private long startTime = 0;
     private long endTime = 0;
-    private int configuredMaxDepth = 3;
+    private int configuredMaxDepth = 7;
     private int configuredMaxPages = 50;
     private List<String> configuredAllowedDomains = new ArrayList<>();
     private long configuredPolitenessDelayMs = 50;
     private boolean configuredRespectRobotsTxt = true;
     private boolean configuredDiscoverSitemaps = true;
     private boolean configuredDetectDuplicateContent = true;
+
+    // Real-Time Worker Threads Live Tracking
+    private final Map<String, WorkerStatusDto> workerStatuses = new ConcurrentHashMap<>();
 
     public WebCrawlerEngine(CrawlerProperties properties,
                             UrlValidator urlValidator,
@@ -84,6 +88,7 @@ public class WebCrawlerEngine {
         this.contentSearchService = contentSearchService;
         this.pageRankService = pageRankService;
         this.dataStorageService = dataStorageService;
+        initWorkers(properties.getDefaultWorkers());
     }
 
     /**
@@ -171,7 +176,9 @@ public class WebCrawlerEngine {
             }
         }
 
-        // 4. Initialize thread pool and launch workers
+        // 4. Initialize worker tracking statuses and launch thread pool
+        initWorkers(workers);
+
         workerPool = Executors.newFixedThreadPool(workers, new ThreadFactory() {
             private int counter = 0;
             @Override
@@ -197,15 +204,18 @@ public class WebCrawlerEngine {
      * Background worker execution loop.
      */
     private void workerLoop() {
+        updateWorkerStatus("IDLE", "-", 0, "Worker thread active; polling frontier queue");
         while (isRunning.get()) {
             if (totalCrawled.get() >= configuredMaxPages) {
                 log.info("Reached maximum target page crawl limit ({}); terminating worker.", configuredMaxPages);
+                updateWorkerStatus("COMPLETED", "-", 0, "Target page limit reached (" + configuredMaxPages + ")");
                 stopCrawl();
                 break;
             }
 
             CrawlTask task = frontierQueue.dequeue();
             if (task == null) {
+                updateWorkerStatus("IDLE", "Queue empty / waiting...", 0, "Polling URL frontier queue");
                 if (activeWorkers.get() == 0 && frontierQueue.isEmpty()) {
                     try {
                         Thread.sleep(200);
@@ -213,6 +223,7 @@ public class WebCrawlerEngine {
 
                     if (activeWorkers.get() == 0 && frontierQueue.isEmpty()) {
                         log.info("URL frontier queue is depleted and all workers are idle. Crawl complete.");
+                        updateWorkerStatus("COMPLETED", "-", 0, "Frontier depleted; crawl completed");
                         stopCrawl();
                         break;
                     }
@@ -227,17 +238,20 @@ public class WebCrawlerEngine {
             }
 
             activeWorkers.incrementAndGet();
+            updateWorkerStatus("ACTIVE", task.getUrl(), task.getDepth(), "Dequeued URL from frontier (Depth " + task.getDepth() + ")");
             try {
                 processTask(task);
             } catch (Exception e) {
                 log.error("Unexpected worker exception on {}: {}", task.getUrl(), e.getMessage());
                 errorCount.incrementAndGet();
+                updateWorkerStatus("ERROR", task.getUrl(), task.getDepth(), "Error: " + e.getMessage());
             } finally {
                 activeWorkers.decrementAndGet();
             }
 
             // Politeness delay
             if (configuredPolitenessDelayMs > 0) {
+                updateWorkerStatus("IDLE", "-", 0, "Politeness delay (" + configuredPolitenessDelayMs + "ms)");
                 try {
                     Thread.sleep(configuredPolitenessDelayMs);
                 } catch (InterruptedException e) {
@@ -246,6 +260,7 @@ public class WebCrawlerEngine {
                 }
             }
         }
+        updateWorkerStatus("COMPLETED", "-", 0, "Worker loop terminated");
     }
 
     /**
@@ -270,8 +285,10 @@ public class WebCrawlerEngine {
      */
     private void processTask(CrawlTask task) {
         String url = task.getUrl();
+        updateWorkerStatus("ACTIVE", url, task.getDepth(), "Initiating crawl pipeline for URL");
 
         // 1. Robots.txt Compliance Check
+        updateWorkerStatus("CHECKING_ROBOTS", url, task.getDepth(), "Verifying robots.txt compliance");
         if (configuredRespectRobotsTxt && !robotsTxtService.isUrlAllowed(url, properties.getUserAgent())) {
             robotsDisallowedCount.incrementAndGet();
             DiscoveredWebsite dwDisallow = discoveredWebsites.get(url);
@@ -279,20 +296,26 @@ public class WebCrawlerEngine {
                 dwDisallow.setStatusCode(403);
             }
             log.info("Skipping URL disallowed by robots.txt: {}", url);
+            updateWorkerStatus("IDLE", url, task.getDepth(), "Skipped: Blocked by robots.txt (403)");
             return;
         }
 
         // 2. Atomic URL-level Duplicate Check using Redis Set
+        updateWorkerStatus("CHECKING_VISITED", url, task.getDepth(), "Checking Redis visited set for cycle prevention");
         boolean isNew = visitedUrlService.markVisitedIfAbsent(url);
         if (!isNew) {
             duplicatesAvoided.incrementAndGet();
             log.debug("Skipping already visited URL: {}", url);
+            updateWorkerStatus("IDLE", url, task.getDepth(), "Skipped: URL already visited (Cycle avoided)");
             return;
         }
 
         // 3. Fetch and parse web page (extracts clean text, raw HTML, headings, and metadata)
+        updateWorkerStatus("FETCHING", url, task.getDepth(), "Fetching HTML document via Jsoup HTTP GET");
         PageMetadata metadata = htmlParserService.fetchAndParse(
                 url, task.getDepth(), task.getParentUrl(), configuredAllowedDomains);
+
+        updateWorkerStatus("PARSING", url, task.getDepth(), "Parsed DOM: " + (metadata.getTitle() != null ? metadata.getTitle() : url) + " (" + metadata.getWordCount() + " words)");
 
         // Update discovered website registry entry with crawl results
         DiscoveredWebsite dw = discoveredWebsites.get(url);
@@ -313,6 +336,7 @@ public class WebCrawlerEngine {
         dw.setOutboundLinksCount(metadata.getOutboundLinksCount());
 
         // 4. Content Checksum & Near-Duplicate Detection
+        updateWorkerStatus("DEDUPLICATING", url, task.getDepth(), "Computing SHA-256 body hash for duplicate check");
         String contentHash = contentDedupService.computeContentHash(metadata.getCleanText());
         metadata.setContentHash(contentHash);
         dw.setContentHash(contentHash);
@@ -326,10 +350,12 @@ public class WebCrawlerEngine {
                 duplicateContentAvoided.incrementAndGet();
                 isContentDuplicate = true;
                 log.info("Duplicate content detected at {} (matches original {})", url, originalUrl);
+                updateWorkerStatus("DEDUPLICATING", url, task.getDepth(), "Duplicate content detected (Clone of " + originalUrl + ")");
             }
         }
 
         // 5. Cache page metadata in Redis and Memory, and persist to disk archive
+        updateWorkerStatus("ARCHIVING", url, task.getDepth(), "Indexing in BM25 index & persisting to disk archive");
         pageCacheService.cachePage(metadata);
         dataStorageService.savePage(metadata);
         totalCrawled.incrementAndGet();
@@ -344,12 +370,16 @@ public class WebCrawlerEngine {
             errorCount.incrementAndGet();
         }
 
+        recordWorkerPageProcessed();
+
         log.info("[Crawled #{}] Depth: {} | Status: {} | Words: {} | Links: {} | URL: {}",
                 totalCrawled.get(), metadata.getDepth(), metadata.getStatusCode(),
                 metadata.getWordCount(), metadata.getOutboundLinksCount(), url);
 
         // 7. Discover and enqueue new outbound links (skip if content is duplicate)
         if (!isContentDuplicate && task.getDepth() < configuredMaxDepth && totalCrawled.get() < configuredMaxPages) {
+            int newLinks = 0;
+            updateWorkerStatus("ENQUEUING", url, task.getDepth(), "Analyzing " + metadata.getDiscoveredLinks().size() + " outbound links");
             for (String link : metadata.getDiscoveredLinks()) {
                 registerDiscoveredWebsite(link, url, task.getDepth() + 1);
                 if (visitedUrlService.isVisited(link)) {
@@ -363,7 +393,11 @@ public class WebCrawlerEngine {
                         .parentUrl(url)
                         .build());
                 totalDiscovered.incrementAndGet();
+                newLinks++;
             }
+            updateWorkerStatus("ACTIVE", url, task.getDepth(), "Crawled successfully. Enqueued " + newLinks + " new child URLs");
+        } else {
+            updateWorkerStatus("ACTIVE", url, task.getDepth(), "Crawled successfully (" + metadata.getStatusCode() + " OK)");
         }
     }
 
@@ -375,6 +409,11 @@ public class WebCrawlerEngine {
             endTime = System.currentTimeMillis();
             if (workerPool != null) {
                 workerPool.shutdown();
+            }
+            for (WorkerStatusDto ws : workerStatuses.values()) {
+                ws.setState("STOPPED");
+                ws.setLastAction("Crawler engine stopped");
+                ws.setLastActiveTime(System.currentTimeMillis());
             }
             // Automatically execute PageRank authority scoring across discovered link graph
             try {
@@ -406,6 +445,18 @@ public class WebCrawlerEngine {
         pageRankService.clear();
         discoveredWebsites.clear();
         dataStorageService.clear();
+
+        for (WorkerStatusDto ws : workerStatuses.values()) {
+            ws.setState("IDLE");
+            ws.setCurrentUrl("-");
+            ws.setCurrentDepth(0);
+            ws.setPagesProcessed(0);
+            ws.setLastAction("Worker reset to initial idle state");
+            ws.setLastActiveTime(System.currentTimeMillis());
+        }
+        if (workerStatuses.isEmpty()) {
+            initWorkers(properties.getDefaultWorkers());
+        }
 
         totalDiscovered.set(0);
         totalCrawled.set(0);
@@ -544,7 +595,52 @@ public class WebCrawlerEngine {
                 .errorCount(errorCount.get())
                 .throughputPagesPerSec(Math.round(throughput * 100.0) / 100.0)
                 .storageMode(storage)
+                .workers(getWorkerStatuses())
                 .build();
+    }
+
+    private void initWorkers(int count) {
+        workerStatuses.clear();
+        for (int i = 1; i <= count; i++) {
+            String threadName = "CrawlerWorker-" + i;
+            workerStatuses.put(threadName, WorkerStatusDto.builder()
+                    .workerId(i)
+                    .threadName(threadName)
+                    .state("IDLE")
+                    .currentUrl("-")
+                    .currentDepth(0)
+                    .pagesProcessed(0)
+                    .lastAction("Worker initialized and standing by")
+                    .lastActiveTime(System.currentTimeMillis())
+                    .build());
+        }
+    }
+
+    private void updateWorkerStatus(String state, String currentUrl, Integer depth, String lastAction) {
+        String threadName = Thread.currentThread().getName();
+        WorkerStatusDto ws = workerStatuses.get(threadName);
+        if (ws != null) {
+            if (state != null) ws.setState(state);
+            if (currentUrl != null) ws.setCurrentUrl(currentUrl);
+            if (depth != null) ws.setCurrentDepth(depth);
+            if (lastAction != null) ws.setLastAction(lastAction);
+            ws.setLastActiveTime(System.currentTimeMillis());
+        }
+    }
+
+    private void recordWorkerPageProcessed() {
+        String threadName = Thread.currentThread().getName();
+        WorkerStatusDto ws = workerStatuses.get(threadName);
+        if (ws != null) {
+            ws.setPagesProcessed(ws.getPagesProcessed() + 1);
+            ws.setLastActiveTime(System.currentTimeMillis());
+        }
+    }
+
+    public List<WorkerStatusDto> getWorkerStatuses() {
+        List<WorkerStatusDto> list = new ArrayList<>(workerStatuses.values());
+        list.sort(Comparator.comparingInt(WorkerStatusDto::getWorkerId));
+        return list;
     }
 
     public List<PageMetadata> getAllCrawledPages() {

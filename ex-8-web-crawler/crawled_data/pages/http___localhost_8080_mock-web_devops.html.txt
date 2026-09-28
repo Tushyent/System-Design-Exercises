@@ -1,1 +1,0 @@
-DevOps and Continuous Integration Automated pipelines, Kubernetes clustering, and infrastructure as code. Docker Containerization Cloud Computing

@@ -10,6 +10,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     
+    <!-- PDF Report Generation Libraries -->
+    <script src="jspdf.umd.min.js"></script>
+    <script src="jspdf.plugin.autotable.min.js"></script>
+
     <style>
         :root {
             --bg: #090d16;
@@ -733,6 +737,83 @@
         .score-bm25 { background: var(--success-bg); color: var(--success); border: 1px solid var(--success-border); }
         .score-pagerank { background: var(--warning-bg); color: var(--warning); border: 1px solid var(--warning-border); }
 
+        /* Match Locations & Line Badges */
+        .loc-badge {
+            font-size: 0.67rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+        .loc-title {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.35);
+        }
+        .loc-content {
+            background: rgba(52, 211, 153, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.35);
+        }
+        .loc-meta {
+            background: rgba(251, 191, 36, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.35);
+        }
+        .loc-heading {
+            background: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.35);
+        }
+        .search-card-occurrences {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin: 8px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .occurrence-row {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            font-size: 0.76rem;
+            line-height: 1.4;
+        }
+        .occurrence-line-text {
+            color: var(--text-main);
+            flex: 1;
+            font-size: 0.76rem;
+        }
+        .occurrence-line-text mark {
+            background: #ca8a04;
+            color: #ffffff;
+            font-weight: 700;
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+        .rank-badge {
+            background: #1e293b;
+            color: #94a3b8;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 4px;
+            border: 1px solid #334155;
+            flex-shrink: 0;
+        }
+        .rank-badge-1 { background: #854d0e; color: #fef08a; border-color: #eab308; }
+        .rank-badge-2 { background: #334155; color: #e2e8f0; border-color: #64748b; }
+        .rank-badge-3 { background: #7c2d12; color: #fed7aa; border-color: #f97316; }
+
         /* Canvas */
         .graph-wrapper {
             background: #060910;
@@ -921,12 +1002,153 @@
             color: var(--primary-hover);
         }
 
-        /* Step Display Toggles */
-        .step-view {
-            display: none;
+        /* Worker Threads Real-Time Execution Matrix */
+        .workers-matrix {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
         }
-        .step-view.active {
-            display: block;
+        .worker-card {
+            background: #080c14;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            position: relative;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+        .worker-card.state-active, .worker-card.state-fetching {
+            border-color: rgba(56, 189, 248, 0.45);
+            background: linear-gradient(180deg, rgba(14, 165, 233, 0.05) 0%, #080c14 100%);
+            box-shadow: 0 0 15px -3px rgba(56, 189, 248, 0.15);
+        }
+        .worker-card.state-parsing {
+            border-color: rgba(99, 102, 241, 0.45);
+            background: linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, #080c14 100%);
+        }
+        .worker-card.state-dedup {
+            border-color: rgba(192, 132, 252, 0.45);
+        }
+        .worker-card.state-idle {
+            opacity: 0.88;
+        }
+        .worker-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .worker-title-box {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .worker-id-badge {
+            background: #1e293b;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .worker-thread-name {
+            font-weight: 600;
+            font-size: 0.82rem;
+            color: var(--text-main);
+        }
+        .worker-dot-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            background-color: var(--text-subtle);
+        }
+        .worker-dot-pulse.pulse-green {
+            background-color: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
+            animation: pulse-glow 1.5s infinite;
+        }
+        .worker-dot-pulse.pulse-blue {
+            background-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+            animation: pulse-glow 1.5s infinite;
+        }
+        .worker-dot-pulse.pulse-purple {
+            background-color: #c084fc;
+            box-shadow: 0 0 0 3px rgba(192, 132, 252, 0.25);
+            animation: pulse-glow 1.5s infinite;
+        }
+        .worker-dot-pulse.pulse-amber {
+            background-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25);
+        }
+        @keyframes pulse-glow {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .worker-url-box {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            color: #38bdf8;
+            background: #04070d;
+            border: 1px solid #1e293b;
+            border-radius: 4px;
+            padding: 6px 8px;
+            margin: 8px 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .worker-stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+        .worker-action-callout {
+            font-size: 0.73rem;
+            color: #cbd5e1;
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid var(--primary);
+            padding: 6px 9px;
+            border-radius: 0 4px 4px 0;
+            margin-top: 8px;
+            line-height: 1.4;
+            min-height: 32px;
+        }
+        /* Step 2 Mini KPIs */
+        .step2-kpis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        .step2-kpi {
+            background: #080c14;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 8px 10px;
+            text-align: center;
+        }
+        .step2-kpi-val {
+            font-size: 1.15rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-main);
+        }
+        .step2-kpi-lbl {
+            font-size: 0.67rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-subtle);
+            margin-top: 2px;
         }
     </style>
 </head>
@@ -1087,18 +1309,29 @@
                     </div>
                 </div>
 
+                <!--
+                Max Crawl Depth
+                7
+                Max Pages Limit
+                50
+                Concurrent Workers
+                4
+                Demonstration Pacing (Delay)
+                Pacing per request
+                -->
+                <!--
                 <div class="form-row">
                     <div class="form-group">
                         <div class="form-label"><span>Max Crawl Depth</span></div>
-                        <input type="number" id="input-depth" value="3" min="1" max="10">
+                        <input type="number" id="input-depth-commented" value="7" min="1" max="10">
                     </div>
                     <div class="form-group">
                         <div class="form-label"><span>Max Pages Limit</span></div>
-                        <input type="number" id="input-max-pages" value="50" min="1" max="200">
+                        <input type="number" id="input-max-pages-commented" value="50" min="1" max="200">
                     </div>
                     <div class="form-group">
                         <div class="form-label"><span>Concurrent Workers</span></div>
-                        <input type="number" id="input-workers" value="4" min="1" max="16">
+                        <input type="number" id="input-workers-commented" value="4" min="1" max="16">
                     </div>
                 </div>
 
@@ -1108,14 +1341,22 @@
                             <span>Demonstration Pacing (Delay)</span>
                             <span class="form-label-hint">Pacing per request</span>
                         </div>
-                        <select id="select-pacing">
-                            <option value="250" selected>Paced Demo: 250 ms delay (Step-by-step observation)</option>
-                            <option value="400">Slow Demo: 400 ms delay (Detailed viva examination)</option>
-                            <option value="30">High Speed: 30 ms delay (Immediate completion)</option>
+                        <select id="select-pacing-commented">
+                            <option value="50" selected>Paced Demo: 50 ms delay</option>
                         </select>
                     </div>
-                    <div class="form-group" style="grid-column: span 2;">
-                        <div class="form-label"><span>Crawler Rules & Politeness</span></div>
+                </div>
+                -->
+
+                <!-- Pre-tuned Defaults for Crawl Execution: Depth=7, Pages=50, Workers=4, Pacing=50ms -->
+                <input type="hidden" id="input-depth" value="7">
+                <input type="hidden" id="input-max-pages" value="50">
+                <input type="hidden" id="input-workers" value="4">
+                <input type="hidden" id="input-pacing" value="50">
+
+                <div class="form-row" style="margin-top: 10px;">
+                    <div class="form-group" style="grid-column: span 3;">
+                        <div class="form-label"><span>Crawler Rules & Politeness Policies</span></div>
                         <div class="options-row" style="margin-top: 6px;">
                             <label class="checkbox-item" title="Parse and obey robots.txt rules">
                                 <input type="checkbox" id="check-robots" checked>
@@ -1127,7 +1368,7 @@
                             </label>
                             <label class="checkbox-item" title="Compute SHA-256 body hash to detect duplicate articles">
                                 <input type="checkbox" id="check-dedup" checked>
-                                <span>Content Deduplication</span>
+                                <span>Content Deduplication (SHA-256)</span>
                             </label>
                         </div>
                     </div>
@@ -1181,47 +1422,226 @@
         </div>
 
         <!-- ======================================================= -->
-        <!-- STEP 2: Live Crawl & Frontier Queue Execution           -->
+        <!-- STEP 2: Live Crawl Controller & Multi-Threaded Execution -->
         <!-- ======================================================= -->
         <div class="step-view" id="view-step-2">
             <div class="step-callout">
                 <div class="step-callout-header">
-                    <span class="step-callout-title">Step 2: Frontier Queue & Multi-Threaded Crawl Execution</span>
-                    <span class="badge badge-info">Redis List FIFO</span>
+                    <span class="step-callout-title">Step 2: Live Crawl Controller & Multi-Threaded Worker Matrix</span>
+                    <span class="badge badge-info">Redis List FIFO &middot; Concurrent Workers</span>
                 </div>
                 <div class="step-callout-desc">
-                    Worker threads asynchronously pop tasks from the FIFO queue (`RPUSH`/`LPOP`). Each URL undergoes <b>visited-set check</b> (`SADD`), <b>robots.txt filter</b>, HTTP retrieval via <b>Jsoup</b>, and <b>SHA-256 deduplication</b>.
+                    Monitor real-time execution across concurrent worker threads (<code>CrawlerWorker-1</code> &hellip; <code>CrawlerWorker-4</code>). Each worker thread dequeues tasks from the frontier queue (<code>RPUSH</code>/<code>LPOP</code>), performs <b>robots.txt verification</b>, checks atomic visited status (<code>SADD</code>), parses DOM trees via <b>Jsoup</b>, validates near-duplicate <b>SHA-256 checksums</b>, and enqueues newly discovered hyperlinks.
                 </div>
                 <div class="step-callout-notes">
-                    <span><b>Observed Behavior:</b> Watch loops prevented in real-time, robots.txt exclusions, and throughput.</span>
+                    <span><b>Default Configuration:</b> Max Depth: 7 &bull; Max Pages Limit: 50 &bull; Workers: 4 &bull; Politeness: 50 ms.</span>
+                    <span><b>Thread Safety:</b> Atomic integers and Redis sets prevent race conditions across concurrent workers.</span>
                 </div>
             </div>
 
+            <!-- Master Controller Card -->
             <div class="card">
                 <div class="card-header">
                     <div>
                         <div class="card-title">Live Crawl Controller</div>
-                        <div class="card-desc">Monitor real-time execution across worker threads</div>
+                        <div class="card-desc">Real-time supervision across concurrent worker threads & frontier tasks</div>
                     </div>
-                    <div style="display: flex; gap: 6px;">
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                        <span id="ctrl-state-badge" class="badge badge-neutral" style="font-size: 0.75rem;">IDLE</span>
+                        <span id="ctrl-workers-count-badge" class="badge badge-info">4 Workers Initialized</span>
                         <button class="btn btn-primary btn-sm" onclick="startCrawl()">Run / Resume Crawl</button>
                         <button class="btn btn-danger btn-sm" onclick="stopCrawl()">Stop Engine</button>
                         <button class="btn btn-secondary btn-sm" onclick="resetCrawler()">Reset All</button>
+                        <button class="btn btn-secondary btn-sm" onclick="peekFrontierQueue()">Peek Queue</button>
                     </div>
                 </div>
 
+                <!-- Progress Bar -->
                 <div style="margin-bottom: 14px;">
                     <div style="display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 4px;">
-                        <span>Crawl Progress: <b id="progress-text">0 / 20 Pages</b></span>
+                        <span>Crawl Progress: <b id="progress-text">0 / 50 Pages</b></span>
                         <span id="progress-percent">0%</span>
                     </div>
-                    <div style="width: 100%; background: #080c14; border: 1px solid var(--border); border-radius: 4px; height: 8px; overflow: hidden;">
-                        <div id="progress-bar-fill" style="width: 0%; background: var(--primary); height: 8px; transition: width 0.3s ease;"></div>
+                    <div style="width: 100%; background: #080c14; border: 1px solid var(--border); border-radius: 4px; height: 10px; overflow: hidden;">
+                        <div id="progress-bar-fill" style="width: 0%; background: linear-gradient(90deg, var(--primary) 0%, var(--primary-hover) 100%); height: 10px; transition: width 0.3s ease;"></div>
                     </div>
                 </div>
 
-                <div class="terminal-box" id="log-box" style="max-height: 200px;">
-                    <div class="log-entry"><span class="log-time">[SYSTEM]</span> Ready to begin crawling.</div>
+                <!-- Step 2 Real-Time Mini KPIs -->
+                <div class="step2-kpis">
+                    <div class="step2-kpi">
+                        <div class="step2-kpi-val" id="step2-kpi-crawled" style="color: var(--primary);">0</div>
+                        <div class="step2-kpi-lbl">Pages Crawled</div>
+                    </div>
+                    <div class="step2-kpi">
+                        <div class="step2-kpi-val" id="step2-kpi-queue" style="color: var(--primary-hover);">0</div>
+                        <div class="step2-kpi-lbl">Queue Backlog</div>
+                    </div>
+                    <div class="step2-kpi">
+                        <div class="step2-kpi-val" id="step2-kpi-visited">0</div>
+                        <div class="step2-kpi-lbl">Visited Set</div>
+                    </div>
+                    <div class="step2-kpi">
+                        <div class="step2-kpi-val" id="step2-kpi-loops" style="color: var(--warning);">0</div>
+                        <div class="step2-kpi-lbl">Loops Prevented</div>
+                    </div>
+                    <div class="step2-kpi">
+                        <div class="step2-kpi-val" id="step2-kpi-robots" style="color: var(--danger);">0</div>
+                        <div class="step2-kpi-lbl">Robots Blocked</div>
+                    </div>
+                    <div class="step2-kpi">
+                        <div class="step2-kpi-val" id="step2-kpi-clones" style="color: var(--purple);">0</div>
+                        <div class="step2-kpi-lbl">Clone Content</div>
+                    </div>
+                    <div class="step2-kpi">
+                        <div class="step2-kpi-val" id="step2-kpi-speed" style="color: var(--success);">0.0</div>
+                        <div class="step2-kpi-lbl">Pages / Sec</div>
+                    </div>
+                </div>
+
+                <!-- Live Worker Threads Execution Matrix -->
+                <div style="margin-top: 14px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+                        <span>Worker Threads Execution Matrix</span>
+                        <span class="badge badge-info" id="active-threads-pill">4 Concurrent Threads</span>
+                    </div>
+                    <div style="font-size: 0.72rem; color: var(--text-subtle);">
+                        Real-time state tracking across JVM thread pool
+                    </div>
+                </div>
+
+                <div class="workers-matrix" id="workers-matrix-container">
+                    <!-- Populated dynamically by renderWorkerStatuses() -->
+                    <div class="worker-card state-idle">
+                        <div class="worker-card-header">
+                            <div class="worker-title-box">
+                                <span class="worker-id-badge">W1</span>
+                                <span class="worker-thread-name">CrawlerWorker-1</span>
+                            </div>
+                            <span class="badge badge-neutral"><span class="worker-dot-pulse"></span> IDLE</span>
+                        </div>
+                        <div class="worker-url-box">-</div>
+                        <div class="worker-stats-row">
+                            <span>Depth: <b>0</b></span>
+                            <span>Pages: <b>0</b></span>
+                        </div>
+                        <div class="worker-action-callout">Worker standing by</div>
+                    </div>
+                    <div class="worker-card state-idle">
+                        <div class="worker-card-header">
+                            <div class="worker-title-box">
+                                <span class="worker-id-badge">W2</span>
+                                <span class="worker-thread-name">CrawlerWorker-2</span>
+                            </div>
+                            <span class="badge badge-neutral"><span class="worker-dot-pulse"></span> IDLE</span>
+                        </div>
+                        <div class="worker-url-box">-</div>
+                        <div class="worker-stats-row">
+                            <span>Depth: <b>0</b></span>
+                            <span>Pages: <b>0</b></span>
+                        </div>
+                        <div class="worker-action-callout">Worker standing by</div>
+                    </div>
+                    <div class="worker-card state-idle">
+                        <div class="worker-card-header">
+                            <div class="worker-title-box">
+                                <span class="worker-id-badge">W3</span>
+                                <span class="worker-thread-name">CrawlerWorker-3</span>
+                            </div>
+                            <span class="badge badge-neutral"><span class="worker-dot-pulse"></span> IDLE</span>
+                        </div>
+                        <div class="worker-url-box">-</div>
+                        <div class="worker-stats-row">
+                            <span>Depth: <b>0</b></span>
+                            <span>Pages: <b>0</b></span>
+                        </div>
+                        <div class="worker-action-callout">Worker standing by</div>
+                    </div>
+                    <div class="worker-card state-idle">
+                        <div class="worker-card-header">
+                            <div class="worker-title-box">
+                                <span class="worker-id-badge">W4</span>
+                                <span class="worker-thread-name">CrawlerWorker-4</span>
+                            </div>
+                            <span class="badge badge-neutral"><span class="worker-dot-pulse"></span> IDLE</span>
+                        </div>
+                        <div class="worker-url-box">-</div>
+                        <div class="worker-stats-row">
+                            <span>Depth: <b>0</b></span>
+                            <span>Pages: <b>0</b></span>
+                        </div>
+                        <div class="worker-action-callout">Worker standing by</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dual Inspection Panels: URL Frontier Queue & Visited Stream -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 14px; margin-top: 14px;">
+                <!-- Left: Frontier Queue Inspector -->
+                <div class="card" style="margin-bottom: 0;">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Frontier Queue Inspector (FIFO)</div>
+                            <div class="card-desc">Pending crawl tasks waiting in Redis List / Memory Queue</div>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="peekFrontierQueue()">Refresh Queue</button>
+                    </div>
+                    <div class="table-responsive" style="max-height: 220px;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 35px;">#</th>
+                                    <th style="width: 50px;">Depth</th>
+                                    <th>Target URL</th>
+                                    <th>Parent Provenance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="queue-peek-body">
+                                <tr><td colspan="4" style="text-align: center; color: var(--text-subtle);">Frontier queue is empty or not started yet.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Right: Recent Visited / Crawled Event Stream -->
+                <div class="card" style="margin-bottom: 0;">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Live Crawled Stream</div>
+                            <div class="card-desc">Real-time stream of parsed pages, HTTP status, and deduplication</div>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="refreshPages()">Refresh Stream</button>
+                    </div>
+                    <div class="table-responsive" style="max-height: 220px;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 35px;">#</th>
+                                    <th>Crawled URL</th>
+                                    <th style="width: 55px;">Status</th>
+                                    <th style="width: 65px;">Deduplication</th>
+                                    <th style="width: 50px;">Inspect</th>
+                                </tr>
+                            </thead>
+                            <tbody id="visited-stream-body">
+                                <tr><td colspan="5" style="text-align: center; color: var(--text-subtle);">No pages crawled yet in this session.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Execution Terminal Box -->
+            <div class="card" style="margin-top: 14px;">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Live Activity Console</div>
+                        <div class="card-desc">Timestamped event log across worker threads, robots checks, and HTTP fetches</div>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="document.getElementById('log-box').innerHTML='<div class=\'log-entry\'><span class=\'log-time\'>[SYSTEM]</span> Log cleared.</div>'">Clear Console</button>
+                </div>
+                <div class="terminal-box" id="log-box" style="max-height: 160px;">
+                    <div class="log-entry"><span class="log-time">[SYSTEM]</span> Web Crawler Engine initialized. Ready to begin crawling.</div>
                 </div>
             </div>
 
@@ -1402,6 +1822,10 @@
                         <option value="NEWEST">Newest Crawled First</option>
                     </select>
                     <button class="btn btn-primary" onclick="executeSearch()">Search</button>
+                    <button class="btn btn-secondary" id="btn-export-pdf" onclick="exportSearchResultsPdf()" title="Download Search Summary as PDF Report" style="display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        Download PDF Summary
+                    </button>
                 </div>
 
                 <div class="categories-row" id="category-pills">
@@ -1419,10 +1843,14 @@
                         <div class="discovery-summary-query">
                             Query Analysis: "<span id="banner-query" style="color: var(--primary-hover);"></span>"
                         </div>
-                        <div style="display: flex; gap: 6px;">
+                        <div style="display: flex; gap: 6px; align-items: center;">
                             <span class="badge badge-info" id="banner-matches">0 Matches</span>
                             <span class="badge badge-purple" id="banner-occurrences">0 Mentions</span>
                             <span class="badge badge-success" id="banner-time">0 ms</span>
+                            <button class="btn btn-secondary" onclick="exportSearchResultsPdf()" style="padding: 2px 10px; font-size: 0.72rem; border-color: var(--primary-border); color: var(--primary-hover); display: inline-flex; align-items: center; gap: 4px;" title="Export Search Report as PDF">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                Export PDF
+                            </button>
                         </div>
                     </div>
                     <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 4px;">
@@ -1564,6 +1992,7 @@
         let crawledPagesData = [];
         let currentCategoryFilter = '';
         let autocompleteDebounceTimer = null;
+        let lastSearchResults = null;
 
         function setAppMode(mode) {
             currentAppMode = mode;
@@ -1615,6 +2044,8 @@
             // Trigger relevant data operations when entering specific steps
             if (step === 2) {
                 updateStatus();
+                peekFrontierQueue();
+                refreshPages();
             } else if (step === 3) {
                 refreshPages();
             } else if (step === 4) {
@@ -1663,8 +2094,30 @@
                 document.getElementById('stat-throughput').innerText = data.throughputPagesPerSec.toFixed(1);
                 document.getElementById('storage-badge').innerText = data.storageMode + ' ACTIVE';
 
+                // Step 2 Controller Badges & KPIs
+                const ctrlBadge = document.getElementById('ctrl-state-badge');
+                if (ctrlBadge) {
+                    ctrlBadge.innerText = data.status;
+                    ctrlBadge.className = 'badge ' + (data.status === 'RUNNING' ? 'badge-success' : (data.status === 'COMPLETED' ? 'badge-info' : 'badge-neutral'));
+                }
+                const kpiCrawled = document.getElementById('step2-kpi-crawled');
+                if (kpiCrawled) kpiCrawled.innerText = data.totalCrawled;
+                const kpiQueue = document.getElementById('step2-kpi-queue');
+                if (kpiQueue) kpiQueue.innerText = data.queueSize;
+                const kpiVisited = document.getElementById('step2-kpi-visited');
+                if (kpiVisited) kpiVisited.innerText = data.visitedCount;
+                const kpiLoops = document.getElementById('step2-kpi-loops');
+                if (kpiLoops) kpiLoops.innerText = data.duplicateUrlsAvoided;
+                const kpiRobots = document.getElementById('step2-kpi-robots');
+                if (kpiRobots) kpiRobots.innerText = data.robotsDisallowedCount || 0;
+                const kpiClones = document.getElementById('step2-kpi-clones');
+                if (kpiClones) kpiClones.innerText = data.duplicateContentAvoided || 0;
+                const kpiSpeed = document.getElementById('step2-kpi-speed');
+                if (kpiSpeed) kpiSpeed.innerText = data.throughputPagesPerSec.toFixed(1);
+
                 // Progress Bar
-                const maxP = parseInt(document.getElementById('input-max-pages').value) || 20;
+                const maxPagesEl = document.getElementById('input-max-pages');
+                const maxP = (maxPagesEl ? parseInt(maxPagesEl.value) : null) || 50;
                 const progress = Math.min(100, Math.round((data.totalCrawled / maxP) * 100));
                 const pBar = document.getElementById('progress-bar-fill');
                 if (pBar) pBar.style.width = progress + '%';
@@ -1680,17 +2133,128 @@
                 } else {
                     document.getElementById('stat-status').style.color = 'var(--text-subtle)';
                 }
+
+                // Render Worker Threads Real-Time Matrix
+                if (data.workers && data.workers.length > 0) {
+                    renderWorkerStatuses(data.workers);
+                }
+
+                // If currently on Step 2, peek frontier queue
+                if (currentStep === 2) {
+                    peekFrontierQueue();
+                }
             } catch (e) {
                 console.error(e);
             }
         }
 
+        function renderWorkerStatuses(workers) {
+            const container = document.getElementById('workers-matrix-container');
+            if (!container || !workers || workers.length === 0) return;
+
+            let activeCount = 0;
+            container.innerHTML = workers.map(w => {
+                const state = (w.state || 'IDLE').toUpperCase();
+                let stateClass = 'state-idle';
+                let dotPulse = '';
+                let badgeClass = 'badge-neutral';
+
+                if (state === 'ACTIVE' || state === 'FETCHING') {
+                    stateClass = 'state-active';
+                    dotPulse = 'pulse-green';
+                    badgeClass = 'badge-success';
+                    activeCount++;
+                } else if (state === 'PARSING') {
+                    stateClass = 'state-parsing';
+                    dotPulse = 'pulse-blue';
+                    badgeClass = 'badge-info';
+                    activeCount++;
+                } else if (state === 'DEDUPLICATING' || state === 'ARCHIVING') {
+                    stateClass = 'state-dedup';
+                    dotPulse = 'pulse-purple';
+                    badgeClass = 'badge-purple';
+                    activeCount++;
+                } else if (state === 'CHECKING_ROBOTS' || state === 'CHECKING_VISITED' || state === 'ENQUEUING') {
+                    stateClass = 'state-active';
+                    dotPulse = 'pulse-amber';
+                    badgeClass = 'badge-warning';
+                    activeCount++;
+                } else if (state === 'COMPLETED' || state === 'STOPPED') {
+                    badgeClass = 'badge-neutral';
+                }
+
+                const urlText = (w.currentUrl && w.currentUrl !== '-') ? w.currentUrl : '(Frontier queue idle / awaiting tasks)';
+                const safeUrl = w.currentUrl && w.currentUrl.startsWith('http')
+                    ? `<a href="${w.currentUrl}" target="_blank" style="color: #38bdf8; text-decoration: none;" title="${w.currentUrl}">${w.currentUrl}</a>`
+                    : urlText;
+
+                return `
+                    <div class="worker-card ${stateClass}">
+                        <div class="worker-card-header">
+                            <div class="worker-title-box">
+                                <span class="worker-id-badge">W${w.workerId}</span>
+                                <span class="worker-thread-name">${w.threadName}</span>
+                            </div>
+                            <span class="badge ${badgeClass}">
+                                <span class="worker-dot-pulse ${dotPulse}"></span>&nbsp;${state}
+                            </span>
+                        </div>
+                        <div class="worker-url-box" title="${w.currentUrl || ''}">${safeUrl}</div>
+                        <div class="worker-stats-row">
+                            <span>Depth: <b style="color: var(--text-main);">${w.currentDepth || 0}</b></span>
+                            <span>Crawled: <b style="color: var(--primary-hover);">${w.pagesProcessed || 0} pgs</b></span>
+                        </div>
+                        <div class="worker-action-callout" title="${w.lastAction || ''}">
+                            ${w.lastAction || 'Worker standing by'}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const pill = document.getElementById('active-threads-pill');
+            if (pill) {
+                pill.innerText = `${activeCount} / ${workers.length} Threads Busy`;
+                pill.className = activeCount > 0 ? 'badge badge-success' : 'badge badge-info';
+            }
+            const countBadge = document.getElementById('ctrl-workers-count-badge');
+            if (countBadge) {
+                countBadge.innerText = `${workers.length} Workers Initialized`;
+            }
+        }
+
+        async function peekFrontierQueue() {
+            try {
+                const res = await fetch('/api/crawler/queue?limit=15');
+                const data = await res.json();
+                const tbody = document.getElementById('queue-peek-body');
+                if (!tbody) return;
+                if (!data.tasks || data.tasks.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-subtle);">Frontier queue is empty.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = data.tasks.slice(0, 10).map((t, idx) => `
+                    <tr>
+                        <td><b>${idx + 1}</b></td>
+                        <td><span class="badge badge-neutral">D${t.depth}</span></td>
+                        <td class="url-cell" title="${t.url}">${t.url}</td>
+                        <td class="url-cell" style="color: var(--text-subtle);" title="${t.parentUrl}">${t.parentUrl || 'SEED'}</td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                console.error('Queue peek error:', e);
+            }
+        }
+
         async function startCrawl() {
             const seed = document.getElementById('input-seed').value.trim();
-            const depth = parseInt(document.getElementById('input-depth').value) || 3;
-            const maxPages = parseInt(document.getElementById('input-max-pages').value) || 50;
-            const workers = parseInt(document.getElementById('input-workers').value) || 4;
-            const delay = parseInt(document.getElementById('select-pacing').value) || 250;
+            const depthEl = document.getElementById('input-depth');
+            const depth = (depthEl ? parseInt(depthEl.value) : null) || 7;
+            const maxPagesEl = document.getElementById('input-max-pages');
+            const maxPages = (maxPagesEl ? parseInt(maxPagesEl.value) : null) || 50;
+            const workersEl = document.getElementById('input-workers');
+            const workers = (workersEl ? parseInt(workersEl.value) : null) || 4;
+            const pacingEl = document.getElementById('input-pacing') || document.getElementById('select-pacing');
+            const delay = (pacingEl ? parseInt(pacingEl.value) : null) || 50;
             const respectRobots = document.getElementById('check-robots').checked;
             const discoverSitemaps = document.getElementById('check-sitemaps').checked;
             const detectDedup = document.getElementById('check-dedup').checked;
@@ -1714,7 +2278,7 @@
                 body: JSON.stringify(payload)
             });
             const data = await res.json();
-            log(`Worker threads active. Crawl session: ${data.jobId}`);
+            log(`Worker threads active (${workers} workers). Crawl session: ${data.jobId}`);
 
             if (!pollTimer) {
                 pollTimer = setInterval(() => {
@@ -1858,6 +2422,8 @@
                 const res = await fetch(`/api/crawler/search?q=${encodeURIComponent(query)}&sortBy=${encodeURIComponent(sortBy)}${catParam}`);
                 const data = await res.json();
 
+                lastSearchResults = data;
+
                 const banner = document.getElementById('discovery-banner');
                 if (banner) {
                     document.getElementById('banner-query').innerText = data.query || (currentCategoryFilter ? `[Category: ${currentCategoryFilter}]` : '*');
@@ -1895,30 +2461,301 @@
                     return;
                 }
 
-                list.innerHTML = data.results.map(r => `
-                    <div class="search-card">
-                        <div class="search-card-header">
-                            <a href="${r.url}" target="_blank" class="search-card-title">${r.title}</a>
-                            <div style="display: flex; gap: 4px; flex-shrink: 0;">
-                                <span class="score-pill score-composite" title="Composite Ranking Score">Score ${r.relevanceScore.toFixed(2)}</span>
-                                <span class="score-pill score-bm25" title="Okapi BM25 Relevance">BM25 ${r.bm25Score.toFixed(2)}</span>
-                                <span class="score-pill score-pagerank" title="Google PageRank Authority">PR ${r.pageRankScore.toFixed(1)}</span>
+                list.innerHTML = data.results.map(r => {
+                    const rankClass = r.rank === 1 ? 'rank-badge-1' : (r.rank === 2 ? 'rank-badge-2' : (r.rank === 3 ? 'rank-badge-3' : ''));
+
+                    // Build location badges
+                    let locationBadgesHtml = '';
+                    if (r.locationTags && r.locationTags.length > 0) {
+                        locationBadgesHtml = r.locationTags.map(tag => {
+                            let cls = 'loc-content';
+                            if (tag.toLowerCase().includes('title')) cls = 'loc-title';
+                            else if (tag.toLowerCase().includes('meta') || tag.toLowerCase().includes('heading')) cls = 'loc-meta';
+                            return `<span class="loc-badge ${cls}">${tag}</span>`;
+                        }).join(' ');
+                    } else {
+                        locationBadgesHtml = '<span class="loc-badge loc-content">Body Content</span>';
+                    }
+
+                    // Build line-by-line occurrences breakdown
+                    let occurrencesHtml = '';
+                    if (r.occurrences && r.occurrences.length > 0) {
+                        occurrencesHtml = `
+                            <div class="search-card-occurrences">
+                                <div style="font-size: 0.68rem; font-weight: 700; color: var(--text-subtle); text-transform: uppercase; letter-spacing: 0.05em; display: flex; justify-content: space-between; margin-bottom: 2px;">
+                                    <span>Exact Word Occurrences & Line Specification</span>
+                                    <span>${r.occurrences.length} hit${r.occurrences.length > 1 ? 's' : ''} in document</span>
+                                </div>
+                                ${r.occurrences.map(occ => {
+                                    let pillClass = occ.section === 'content-title' ? 'loc-title' : (occ.section === 'metadata' ? 'loc-meta' : 'loc-content');
+                                    return `
+                                        <div class="occurrence-row">
+                                            <span class="loc-badge ${pillClass}" style="flex-shrink: 0;">${occ.locationLabel}</span>
+                                            <div class="occurrence-line-text">${occ.snippet || occ.rawText}</div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `;
+                    } else {
+                        occurrencesHtml = `<div class="search-card-snippet">${r.snippet}</div>`;
+                    }
+
+                    return `
+                        <div class="search-card">
+                            <div class="search-card-header">
+                                <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;">
+                                    <span class="rank-badge ${rankClass}">#${r.rank || 1}</span>
+                                    <a href="${r.url}" target="_blank" class="search-card-title" title="Open crawled webpage in new tab">${r.titleSnippet || r.title}</a>
+                                    <a href="${r.url}" target="_blank" title="Visit Page Link" style="color: var(--text-subtle); display: inline-flex; align-items: center; text-decoration: none;">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                    </a>
+                                </div>
+                                <div style="display: flex; gap: 4px; flex-shrink: 0;">
+                                    <span class="score-pill score-composite" title="Composite Score = BM25 * (1 + PR/20)">Score ${r.relevanceScore.toFixed(2)}</span>
+                                    <span class="score-pill score-bm25" title="Okapi BM25 Term Frequency & Document Length Score">BM25 ${r.bm25Score.toFixed(2)}</span>
+                                    <span class="score-pill score-pagerank" title="Google PageRank Authority Score (0-100)">PR ${r.pageRankScore.toFixed(1)}</span>
+                                </div>
+                            </div>
+
+                            <div class="search-card-url">
+                                <span style="color: var(--primary); font-weight: 600;">Page Link:</span> <a href="${r.url}" target="_blank" style="color: var(--text-subtle); text-decoration: underline;">${r.url}</a>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 4px 0 8px 0;">
+                                <span style="font-size: 0.68rem; color: var(--text-subtle); font-weight: 600;">Matched In:</span>
+                                ${locationBadgesHtml}
+                            </div>
+
+                            ${occurrencesHtml}
+
+                            <div class="search-card-meta">
+                                <span class="badge ${r.category ? 'badge-info' : 'badge-neutral'}">${r.category || 'General'}</span>
+                                <span>Words: <b>${r.wordCount}</b></span>
+                                <span>Read: ~<b>${r.readingTimeMinutes} min</b></span>
+                                <span>Depth: <b>${r.depth}</b></span>
+                                <span>Total Mentions: <b>${r.matchOccurrences || 1}&times;</b></span>
+                                <span style="color: var(--text-subtle); font-size: 0.7rem; margin-left: auto;">${r.scoreBreakdown || ''}</span>
                             </div>
                         </div>
-                        <div class="search-card-url">${r.url}</div>
-                        <div class="search-card-snippet">${r.snippet}</div>
-                        <div class="search-card-meta">
-                            <span class="badge ${r.category ? 'badge-info' : 'badge-neutral'}">${r.category || 'General'}</span>
-                            <span>Words: <b>${r.wordCount}</b></span>
-                            <span>Read: ~<b>${r.readingTimeMinutes} min</b></span>
-                            <span>Depth: <b>${r.depth}</b></span>
-                            <span>Mentions: <b>${r.matchOccurrences || 1}&times;</b></span>
-                        </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             } catch (e) {
                 console.error('Search error:', e);
             }
+        }
+
+        /* Export Search Report as PDF */
+        async function exportSearchResultsPdf() {
+            const query = document.getElementById('search-input').value.trim();
+            if (!lastSearchResults || !lastSearchResults.results || lastSearchResults.results.length === 0) {
+                alert('Please search for a keyword first to generate and download a search summary report.');
+                return;
+            }
+
+            const data = lastSearchResults;
+            const safeQuery = query ? query.replace(/[^a-zA-Z0-9_-]/g, '_') : 'search_report';
+            const filename = `WebCrawler_Search_Report_${safeQuery}.pdf`;
+
+            // Check if jsPDF is loaded
+            const jsPDFLib = window.jspdf ? window.jspdf.jsPDF : null;
+            if (jsPDFLib) {
+                try {
+                    const doc = new jsPDFLib({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+                    const pageWidth = doc.internal.pageSize.getWidth();
+                    const pageHeight = doc.internal.pageSize.getHeight();
+                    const margin = 40;
+
+                    // Header Banner (Dark Navy)
+                    doc.setFillColor(15, 23, 42); // #0f172a
+                    doc.rect(0, 0, pageWidth, 75, 'F');
+
+                    doc.setFillColor(14, 165, 233); // #0ea5e9 accent top bar
+                    doc.rect(0, 0, pageWidth, 4, 'F');
+
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(14);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('WEB CRAWLER SEARCH & CONTENT DISCOVERY REPORT', margin, 32);
+
+                    doc.setFontSize(8.5);
+                    doc.setFont('helvetica', 'normal');
+                    doc.setTextColor(186, 230, 253);
+                    doc.text('UCS3513 System Design Laboratory | Sri Sivasubramaniya Nadar College of Engineering', margin, 48);
+
+                    doc.setFontSize(7.5);
+                    doc.setTextColor(148, 163, 184);
+                    const nowStr = new Date().toLocaleString();
+                    doc.text(`Generated: ${nowStr}  |  Ranking Strategy: ${data.rankingMode || 'COMPOSITE'}  |  Engine: Okapi BM25 + Google PageRank`, margin, 64);
+
+                    let y = 90;
+
+                    // Executive Summary Box
+                    doc.setFillColor(248, 250, 252);
+                    doc.setDrawColor(226, 232, 240);
+                    doc.setLineWidth(1);
+                    doc.rect(margin, y, pageWidth - 2 * margin, 65, 'FD');
+
+                    doc.setFillColor(14, 165, 233);
+                    doc.rect(margin, y, 4, 65, 'F');
+
+                    doc.setTextColor(14, 165, 233);
+                    doc.setFontSize(8);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('SEARCH QUERY SUMMARY', margin + 12, y + 16);
+
+                    doc.setTextColor(15, 23, 42);
+                    doc.setFontSize(11);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text(`Searched Word: "${data.query || query}"`, margin + 12, y + 32);
+
+                    doc.setTextColor(71, 85, 105);
+                    doc.setFontSize(8);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text(`Total Matched Pages: ${data.totalMatches}    |    Total Mentions: ${data.totalOccurrencesInCorpus || 0}x    |    Latency: ${data.searchTimeMs} ms`, margin + 12, y + 46);
+
+                    const categoriesStr = data.categoryDistribution && Object.keys(data.categoryDistribution).length > 0 ?
+                        Object.entries(data.categoryDistribution).map(([c, n]) => `${c} (${n})`).join(', ') : 'None';
+                    doc.setTextColor(100, 116, 139);
+                    doc.setFontSize(7.5);
+                    doc.text(`Discovered Topics: ${categoriesStr}`, margin + 12, y + 58);
+
+                    y += 78;
+
+                    // Table: Overview Table using autotable
+                    if (doc.autoTable) {
+                        const tableRows = data.results.map(r => {
+                            const locs = (r.locationTags && r.locationTags.length > 0) ? r.locationTags.join(', ') : 'Content';
+                            return [
+                                `#${r.rank || 1}`,
+                                `${r.title || 'Untitled'}\n${r.url}`,
+                                `Score: ${r.relevanceScore.toFixed(2)}\nBM25: ${r.bm25Score.toFixed(2)} | PR: ${r.pageRankScore.toFixed(1)}`,
+                                r.category || 'General',
+                                locs
+                            ];
+                        });
+
+                        doc.autoTable({
+                            startY: y,
+                            margin: { left: margin, right: margin },
+                            head: [['Rank', 'Page Title & URL', 'Ranking Scores', 'Category', 'Matched Locations (Title/Lines/Meta)']],
+                            body: tableRows,
+                            theme: 'grid',
+                            headStyles: {
+                                fillColor: [15, 23, 42],
+                                textColor: [255, 255, 255],
+                                fontSize: 8,
+                                fontStyle: 'bold'
+                            },
+                            bodyStyles: {
+                                fontSize: 7.5,
+                                textColor: [51, 65, 85],
+                                cellPadding: 5
+                            },
+                            columnStyles: {
+                                0: { cellWidth: 32, fontStyle: 'bold' },
+                                1: { cellWidth: 180 },
+                                2: { cellWidth: 100 },
+                                3: { cellWidth: 80 },
+                                4: { cellWidth: 123 }
+                            },
+                            alternateRowStyles: {
+                                fillColor: [248, 250, 252]
+                            },
+                            didDrawPage: function (pageData) {
+                                const pageCount = doc.internal.getNumberOfPages();
+                                doc.setDrawColor(226, 232, 240);
+                                doc.setLineWidth(0.8);
+                                doc.line(margin, pageHeight - 25, pageWidth - margin, pageHeight - 25);
+
+                                doc.setFontSize(7);
+                                doc.setTextColor(148, 163, 184);
+                                doc.setFont('helvetica', 'normal');
+                                doc.text('UCS3513 System Design Lab — Web Content Discovery Report', margin, pageHeight - 14);
+                                doc.text(`Query: "${query}"`, pageWidth / 2 - 20, pageHeight - 14);
+                                doc.text(`Page ${pageData.pageNumber} of ${pageCount}`, pageWidth - margin - 45, pageHeight - 14);
+                            }
+                        });
+
+                        // Detailed Occurrences Section
+                        y = doc.lastAutoTable.finalY + 20;
+
+                        if (y > pageHeight - 100) {
+                            doc.addPage();
+                            y = 40;
+                        }
+
+                        doc.setTextColor(15, 23, 42);
+                        doc.setFontSize(10);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('Detailed Line-by-Line Occurrences & Extracted Snippets', margin, y);
+                        y += 12;
+
+                        const detailRows = [];
+                        data.results.forEach(r => {
+                            if (r.occurrences && r.occurrences.length > 0) {
+                                r.occurrences.forEach(occ => {
+                                    detailRows.push([
+                                        `#${r.rank} ${r.title.substring(0, 30)}`,
+                                        occ.locationLabel,
+                                        occ.rawText ? occ.rawText.substring(0, 110) : occ.snippet.replace(/<[^>]+>/g, '').substring(0, 110)
+                                    ]);
+                                });
+                            }
+                        });
+
+                        if (detailRows.length > 0) {
+                            doc.autoTable({
+                                startY: y,
+                                margin: { left: margin, right: margin },
+                                head: [['Document', 'Location / Line Number', 'Context Excerpt (Where Word Occurred)']],
+                                body: detailRows,
+                                theme: 'striped',
+                                headStyles: {
+                                    fillColor: [30, 41, 59],
+                                    textColor: [255, 255, 255],
+                                    fontSize: 8,
+                                    fontStyle: 'bold'
+                                },
+                                bodyStyles: {
+                                    fontSize: 7.2,
+                                    textColor: [51, 65, 85],
+                                    cellPadding: 4
+                                },
+                                columnStyles: {
+                                    0: { cellWidth: 120, fontStyle: 'bold' },
+                                    1: { cellWidth: 110 },
+                                    2: { cellWidth: 285 }
+                                },
+                                didDrawPage: function (pageData) {
+                                    const pageCount = doc.internal.getNumberOfPages();
+                                    doc.setDrawColor(226, 232, 240);
+                                    doc.setLineWidth(0.8);
+                                    doc.line(margin, pageHeight - 25, pageWidth - margin, pageHeight - 25);
+
+                                    doc.setFontSize(7);
+                                    doc.setTextColor(148, 163, 184);
+                                    doc.setFont('helvetica', 'normal');
+                                    doc.text('UCS3513 System Design Lab — Web Content Discovery Report', margin, pageHeight - 14);
+                                    doc.text(`Query: "${query}"`, pageWidth / 2 - 20, pageHeight - 14);
+                                    doc.text(`Page ${pageData.pageNumber} of ${pageCount}`, pageWidth - margin - 45, pageHeight - 14);
+                                }
+                            });
+                        }
+                    }
+
+                    doc.save(filename);
+                    log(`Downloaded search summary PDF report: ${filename}`);
+                    return;
+                } catch (pdfErr) {
+                    console.error('jsPDF generation error, downloading via backend endpoint:', pdfErr);
+                }
+            }
+
+            // Fallback: download via backend endpoint
+            const sortBy = document.getElementById('search-sort').value;
+            const catParam = currentCategoryFilter ? `&category=${encodeURIComponent(currentCategoryFilter)}` : '';
+            window.location.href = `/api/crawler/search/export-pdf?q=${encodeURIComponent(query)}&sortBy=${encodeURIComponent(sortBy)}${catParam}`;
         }
 
         async function recomputePageRank() {
@@ -1970,28 +2807,49 @@
                 const pages = await res.json();
                 crawledPagesData = pages;
                 const tbody = document.getElementById('pages-table-body');
-                if (pages.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; color: var(--text-subtle);">No crawled pages found. Click \'Start Crawling\' in Step 1.</td></tr>';
-                    return;
+                if (tbody) {
+                    if (pages.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; color: var(--text-subtle);">No crawled pages found. Click \'Start Crawling\' in Step 1.</td></tr>';
+                    } else {
+                        tbody.innerHTML = pages.map((p, idx) => `
+                            <tr>
+                                <td>${idx + 1}</td>
+                                <td class="url-cell" title="${p.url}">${p.url}</td>
+                                <td style="font-weight: 500; color: var(--text-main);">${p.title}</td>
+                                <td><span class="badge ${p.statusCode === 200 ? 'badge-success' : 'badge-danger'}">${p.statusCode}</span></td>
+                                <td>${p.depth}</td>
+                                <td>${p.wordCount || 0}</td>
+                                <td>
+                                    ${p.duplicateContent 
+                                        ? '<span class="badge badge-purple" title="Clone of ' + p.duplicateOfUrl + '">CLONE</span>' 
+                                        : '<span class="badge badge-success">ORIGINAL</span>'}
+                                </td>
+                                <td><b>${p.outboundLinksCount}</b></td>
+                                <td>${p.crawlTimeMs} ms</td>
+                                <td><button class="btn btn-secondary btn-sm" onclick="inspectPage('${encodeURIComponent(p.url)}')">Inspect</button></td>
+                            </tr>
+                        `).join('');
+                    }
                 }
-                tbody.innerHTML = pages.map((p, idx) => `
-                    <tr>
-                        <td>${idx + 1}</td>
-                        <td class="url-cell" title="${p.url}">${p.url}</td>
-                        <td style="font-weight: 500; color: var(--text-main);">${p.title}</td>
-                        <td><span class="badge ${p.statusCode === 200 ? 'badge-success' : 'badge-danger'}">${p.statusCode}</span></td>
-                        <td>${p.depth}</td>
-                        <td>${p.wordCount || 0}</td>
-                        <td>
-                            ${p.duplicateContent 
-                                ? '<span class="badge badge-purple" title="Clone of ' + p.duplicateOfUrl + '">CLONE</span>' 
-                                : '<span class="badge badge-success">ORIGINAL</span>'}
-                        </td>
-                        <td><b>${p.outboundLinksCount}</b></td>
-                        <td>${p.crawlTimeMs} ms</td>
-                        <td><button class="btn btn-secondary btn-sm" onclick="inspectPage('${encodeURIComponent(p.url)}')">Inspect</button></td>
-                    </tr>
-                `).join('');
+
+                // Update Step 2 Live Crawled Stream
+                const streamBody = document.getElementById('visited-stream-body');
+                if (streamBody) {
+                    if (pages.length === 0) {
+                        streamBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-subtle);">No pages crawled yet in this session.</td></tr>';
+                    } else {
+                        streamBody.innerHTML = pages.slice(-8).reverse().map((p, idx) => `
+                            <tr>
+                                <td><b>${idx + 1}</b></td>
+                                <td class="url-cell" title="${p.url}"><b>${p.title || p.url}</b></td>
+                                <td><span class="badge ${p.statusCode === 200 ? 'badge-success' : 'badge-danger'}">${p.statusCode}</span></td>
+                                <td>${p.duplicateContent ? '<span class="badge badge-purple">CLONE</span>' : '<span class="badge badge-success">ORIGINAL</span>'}</td>
+                                <td><button class="btn btn-secondary btn-sm" style="padding: 2px 6px; font-size: 0.7rem;" onclick="inspectPage('${encodeURIComponent(p.url)}')">Inspect</button></td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+
                 drawGraph();
                 updatePageRankLeaderboard();
             } catch (e) {

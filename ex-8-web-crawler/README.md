@@ -120,21 +120,27 @@ Performs multi-field inverted index search across discovered web content:
 * **Porter Stemmer**: Normalizes inflected terms (e.g. `computing` -> `comput`, matching `computer`, `computational`).
 * **Field Weights**: Boosts document titles ($5.0\times$), headings ($3.0\times$), meta descriptions/keywords ($2.5\times$), and body text ($1.0\times$).
 * **Composite Ranking**: Blends BM25 textual relevance ($65\%$) with Google PageRank authority ($35\%$).
-* **"Fetch Everything" Aggregation**: Returns total occurrences across the entire corpus, category distribution breakdowns, and related entity co-occurrences.
+* **Exact Line Location Breakdown**: Flags whether terms appeared in `content-title`, exact body lines (`Line 1, 3...`), or `metadata` (Meta description, keywords, headings), with highlighted match snippets.
 
-### 9. `GET /api/crawler/autocomplete?prefix={term}&limit=8`
+### 9. `GET /api/crawler/search/export-pdf?q={query}&sortBy={COMPOSITE|PAGERANK|BM25}&category={cat}`
+Generates and downloads a publication-grade PDF search summary report containing:
+* Query analysis metrics (total matches, corpus frequency, search execution latency).
+* Executive ranking table with Page URLs, Composite, BM25, and PageRank authority scores.
+* Detailed section & line-by-line occurrence breakdowns with context snippets.
+
+### 10. `GET /api/crawler/autocomplete?prefix={term}&limit=8`
 Instant prefix suggestions from the crawled vocabulary index with corpus frequency counts in $< 1 \text{ ms}$.
 
-### 10. `GET /api/crawler/pagerank`
+### 11. `GET /api/crawler/pagerank`
 Returns Google PageRank authority distribution and leaderboard across all crawled nodes ($d=0.85$, power iteration convergence).
 
-### 11. `POST /api/crawler/pagerank/recompute`
+### 12. `POST /api/crawler/pagerank/recompute`
 Forces re-execution of PageRank power iteration across the link graph.
 
-### 12. `GET /api/crawler/topics`
+### 13. `GET /api/crawler/topics`
 Returns corpus category clustering and top discovered keyword entities with document counts.
 
-### 13. `GET /api/crawler/export?format=json|csv`
+### 14. `GET /api/crawler/export?format=json|csv`
 Exports all discovered web page content, headings, word counts, and metadata as structured JSON or CSV for downstream data pipelines or search indexers.
 
 ---

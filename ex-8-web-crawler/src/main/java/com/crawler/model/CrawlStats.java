@@ -1,11 +1,14 @@
 package com.crawler.model;
 
+import com.crawler.dto.WorkerStatusDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -33,4 +36,6 @@ public class CrawlStats implements Serializable {
     private double throughputPagesPerSec;
     @Builder.Default
     private String storageMode = "REDIS"; // REDIS or IN_MEMORY
+    @Builder.Default
+    private List<WorkerStatusDto> workers = new ArrayList<>();
 }
