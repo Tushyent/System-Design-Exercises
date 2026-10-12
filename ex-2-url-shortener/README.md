@@ -52,6 +52,7 @@ ex-2-url-shortener/
 
 ```powershell
 cd backend
+chmod +x mvnw
 ./mvnw spring-boot:run
 ```
 
