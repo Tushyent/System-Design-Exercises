@@ -1,0 +1,100 @@
+{
+  "1_member_registration": {
+    "status": "PASS",
+    "data": {
+      "token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxMDIxMjg5NTU2NDUxMDQxMjgiLCJtZW1iZXJJZCI6Ik1FTS0xMDQxMjgiLCJlbWFpbCI6InRlc3R1c2VyXzVjNDE4MUBzc24uZWR1LmluIiwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTc5MTU3NTA0MCwiZXhwIjoxNzkxNjYxNDQwfQ.7VTvz7mRWRz0Q10CwY56FA_skYZYhzNY-6PAAdX4WPGCB-ugmkup7Kr3dV0sA-HS",
+      "id": "102128955645104128",
+      "memberId": "MEM-104128",
+      "name": "Verification User",
+      "email": "testuser_5c4181@ssn.edu.in",
+      "role": "MEMBER"
+    }
+  },
+  "2_member_login": {
+    "status": "PASS",
+    "data": {
+      "token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxMDIxMjg5NTU2NDUxMDQxMjgiLCJtZW1iZXJJZCI6Ik1FTS0xMDQxMjgiLCJlbWFpbCI6InRlc3R1c2VyXzVjNDE4MUBzc24uZWR1LmluIiwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTc5MTU3NTA0MCwiZXhwIjoxNzkxNjYxNDQwfQ.7VTvz7mRWRz0Q10CwY56FA_skYZYhzNY-6PAAdX4WPGCB-ugmkup7Kr3dV0sA-HS",
+      "id": "102128955645104128",
+      "memberId": "MEM-104128",
+      "name": "testuser_5c4181@ssn.edu.in",
+      "email": "testuser_5c4181@ssn.edu.in",
+      "role": "MEMBER"
+    }
+  },
+  "3_authenticated_me": {
+    "status": "PASS",
+    "data": {
+      "token": null,
+      "id": "102128955645104128",
+      "memberId": "MEM-104128",
+      "name": "Verification User",
+      "email": "testuser_5c4181@ssn.edu.in",
+      "role": "MEMBER"
+    }
+  },
+  "4_book_listing": {
+    "status": "PASS",
+    "totalElements": 37,
+    "pageSize": 4
+  },
+  "5_book_search": {
+    "status": "PASS",
+    "resultsCount": 9
+  },
+  "6_book_details": {
+    "status": "PASS",
+    "availableCount": 1,
+    "copiesTotal": 3
+  },
+  "7_borrow_book": {
+    "status": "PASS",
+    "loanId": "LOAN-102128957104721920",
+    "copyId": "102122938425282560"
+  },
+  "8_my_loans": {
+    "status": "PASS",
+    "activeLoansCount": 1
+  },
+  "9_return_book": {
+    "status": "PASS",
+    "returnData": {
+      "loanId": "LOAN-102128957104721920",
+      "copyId": "102122938425282560",
+      "status": "RETURNED",
+      "returnedAt": "2026-10-09T19:44:00.881482200Z",
+      "overdueDays": 0,
+      "fineAmount": 0.0,
+      "fineId": null,
+      "assignedToReservationId": null,
+      "message": "Copy returned successfully"
+    }
+  },
+  "10_duplicate_return_protection": {
+    "status": "PASS",
+    "defense": "ALREADY_RETURNED",
+    "httpCode": 200
+  },
+  "11_reservation_creation": {
+    "status": "PASS",
+    "reservationId": "RES-102128957515763712"
+  },
+  "12_idempotent_payment": {
+    "status": "PASS (NO_UNPAID_FINE)",
+    "replayConfirmed": true
+  },
+  "13_concurrency_single_copy": {
+    "status": "PASS",
+    "successCount": 1,
+    "conflictCount": 9,
+    "zeroDoubleBorrowingVerified": true
+  },
+  "14_loan_renewal": {
+    "status": "PASS",
+    "loanId": "LOAN-102128970530689024",
+    "waitlistDefenseVerified": true,
+    "firstRenewalNewDue": "2026-11-06T19:44:04.039Z",
+    "secondRenewalNewDue": "2026-11-20T19:44:04.039Z",
+    "maxCapEnforced": true,
+    "rejectedHttpCode": 409
+  }
+}

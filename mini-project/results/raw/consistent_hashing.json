@@ -1,0 +1,30 @@
+{
+  "keyCount": 2000,
+  "virtualNodesPerPhysicalNode": 160,
+  "initialNodeCount": 3,
+  "expandedNodeCount": 4,
+  "consistentHashingInitialDistribution": {
+    "library-server-node-1": 644,
+    "library-server-node-2": 609,
+    "library-server-node-3": 747
+  },
+  "consistentHashingStdDev": 58.57379011886536,
+  "consistentHashingExpandedDistribution": {
+    "library-server-node-1": 471,
+    "library-server-node-2": 460,
+    "library-service-node-4": 566,
+    "library-server-node-3": 503
+  },
+  "consistentHashingKeysRemapped": 566,
+  "consistentHashingRemappingPercentage": 28.299999999999997,
+  "moduloHashingInitialDistribution": {
+    "library-server-node-1": 667,
+    "library-server-node-2": 666,
+    "library-server-node-3": 667
+  },
+  "moduloHashingStdDev": 0.4714045207910317,
+  "moduloHashingKeysRemapped": 1502,
+  "moduloHashingRemappingPercentage": 75.1,
+  "theoreticalExpectedChRemapPct": 25.0,
+  "theoreticalExpectedModRemapPct": 75.0
+}

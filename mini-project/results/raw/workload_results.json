@@ -1,0 +1,53 @@
+[
+  {
+    "level": "Low",
+    "concurrent_users": 10,
+    "total_requests": 200,
+    "duration_seconds": 0.726,
+    "throughput_req_per_sec": 275.56,
+    "avg_latency_ms": 32.12,
+    "median_latency_ms": 30.02,
+    "p95_latency_ms": 57.42,
+    "p99_latency_ms": 72.11,
+    "status_codes": {
+      "200": 200
+    },
+    "success_rate_pct": 100.0,
+    "rejection_rate_pct": 0.0,
+    "error_count": 0
+  },
+  {
+    "level": "Medium",
+    "concurrent_users": 50,
+    "total_requests": 500,
+    "duration_seconds": 0.992,
+    "throughput_req_per_sec": 504.0,
+    "avg_latency_ms": 66.33,
+    "median_latency_ms": 63.99,
+    "p95_latency_ms": 114.12,
+    "p99_latency_ms": 136.82,
+    "status_codes": {
+      "200": 500
+    },
+    "success_rate_pct": 100.0,
+    "rejection_rate_pct": 0.0,
+    "error_count": 0
+  },
+  {
+    "level": "High",
+    "concurrent_users": 100,
+    "total_requests": 1000,
+    "duration_seconds": 3.236,
+    "throughput_req_per_sec": 309.0,
+    "avg_latency_ms": 82.19,
+    "median_latency_ms": 73.77,
+    "p95_latency_ms": 176.81,
+    "p99_latency_ms": 223.47,
+    "status_codes": {
+      "200": 1000
+    },
+    "success_rate_pct": 100.0,
+    "rejection_rate_pct": 0.0,
+    "error_count": 0
+  }
+]

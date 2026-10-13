@@ -1,0 +1,49 @@
+{
+  "rateLimiter": {
+    "rejectionRatePercent": 46.98795180722892,
+    "avgOverheadMs": 38.48945542168675,
+    "rejectedRequests": 39,
+    "allowedRequests": 44,
+    "totalRequests": 83
+  },
+  "keyValueStore": {
+    "hitRatioPercent": 0.0,
+    "cacheMisses": 2,
+    "totalCacheRequests": 2,
+    "cacheHits": 0
+  },
+  "idGenerator": {
+    "algorithm": "64-bit Snowflake (Timestamp + Datacenter + Worker + Sequence)",
+    "collisionsObserved": 0,
+    "totalIdsGenerated": 69
+  },
+  "consistentHashing": {
+    "virtualNodesCount": 300,
+    "nodes": [
+      "library-service-node-1",
+      "library-service-node-2",
+      "library-service-node-3"
+    ],
+    "nodeCount": 3
+  },
+  "urlShortener": {
+    "averageLatencyMs": 12.57636,
+    "totalResolutions": 50
+  },
+  "autocomplete": {
+    "totalQueries": 5,
+    "averageLatencyMs": 11.2028
+  },
+  "crawler": {
+    "totalJobsExecuted": 3
+  },
+  "libraryStats": {
+    "totalUnpaidFinesAmount": 10.0,
+    "unpaidFinesCount": 1,
+    "totalCopies": 121,
+    "totalTitles": 39,
+    "activeLoans": 15,
+    "totalMembers": 140,
+    "pendingReservations": 0
+  }
+}

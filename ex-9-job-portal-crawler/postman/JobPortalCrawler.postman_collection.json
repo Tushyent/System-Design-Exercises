@@ -1,0 +1,357 @@
+{
+  "info": {
+    "name": "Job Portal Crawler - Postman Demo",
+    "description": "Q(a) crawl demo, Q(b) burst/429 demo, Q(c) analysis. Run folders in order.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "clientId",
+      "value": "demo-client"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Seeds",
+      "item": [
+        {
+          "name": "Mock jobs hub (browser)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/mock/jobs"
+          }
+        },
+        {
+          "name": "Seed URLs (API)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/mock-urls"
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. (a) Normal crawl",
+      "item": [
+        {
+          "name": "POST /api/crawl - hub seed",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/crawl",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedUrl\": \"http://localhost:8080/mock/jobs\"\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /api/queue",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/queue?limit=50"
+          }
+        },
+        {
+          "name": "GET /api/visited",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/visited"
+          }
+        },
+        {
+          "name": "GET /api/bucket/demo-client",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/bucket/{{clientId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. (a) Duplicate demo",
+      "item": [
+        {
+          "name": "POST /api/crawl - same hub again",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/crawl",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedUrl\": \"http://localhost:8080/mock/jobs\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. (b) Burst 8x (5x200 then 429)",
+      "item": [
+        {
+          "name": "Reset bucket first",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/bucket/burst-client"
+          }
+        },
+        {
+          "name": "Burst #1",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/crawl",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "burst-client"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedUrl\": \"http://localhost:8080/mock/jobs\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Burst #2",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/crawl",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "burst-client"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedUrl\": \"http://localhost:8080/mock/jobs\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Burst #3",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/crawl",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "burst-client"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedUrl\": \"http://localhost:8080/mock/jobs\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Burst #4",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/crawl",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "burst-client"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedUrl\": \"http://localhost:8080/mock/jobs\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Burst #5",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/crawl",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "burst-client"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedUrl\": \"http://localhost:8080/mock/jobs\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Burst #6",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/crawl",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "burst-client"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedUrl\": \"http://localhost:8080/mock/jobs\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Burst #7 - expect 429",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/crawl",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "burst-client"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedUrl\": \"http://localhost:8080/mock/jobs\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Burst #8 - expect 429 + Retry-After",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/crawl",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "burst-client"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedUrl\": \"http://localhost:8080/mock/jobs\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. (b) Refill + isolation",
+      "item": [
+        {
+          "name": "Retry after 6s wait - 200 again",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/crawl",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "burst-client"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedUrl\": \"http://localhost:8080/mock/jobs/category/engineering\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Fresh client - 200 (isolated bucket)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/crawl",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "fresh-client"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedUrl\": \"http://localhost:8080/mock/jobs\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Reset",
+      "item": [
+        {
+          "name": "POST /api/reset",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/reset"
+          }
+        },
+        {
+          "name": "DELETE /api/bucket/demo-client",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/bucket/demo-client"
+          }
+        }
+      ]
+    }
+  ]
+}

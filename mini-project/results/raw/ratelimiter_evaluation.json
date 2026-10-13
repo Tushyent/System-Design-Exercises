@@ -1,0 +1,18 @@
+{
+  "level": "Rate Limiter Throttling Stress",
+  "concurrent_users": 25,
+  "total_requests": 50,
+  "duration_seconds": 0.798,
+  "throughput_req_per_sec": 62.69,
+  "avg_latency_ms": 157.24,
+  "median_latency_ms": 78.49,
+  "p95_latency_ms": 509.8,
+  "p99_latency_ms": 599.05,
+  "status_codes": {
+    "429": 39,
+    "401": 11
+  },
+  "success_rate_pct": 0.0,
+  "rejection_rate_pct": 78.0,
+  "error_count": 0
+}

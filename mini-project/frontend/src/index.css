@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #0F172A;
+    background-color: #F8FAFC;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    color: #0F172A;
+    background-color: #F8FAFC;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #0C2340;
+    letter-spacing: -0.02em;
+  }
+
+  /* Accessible focus indicators */
+  :focus-visible {
+    outline: 2px solid #1460A3;
+    outline-offset: 2px;
+  }
+}
+
+/* Explicit high-contrast fail-safe tokens */
+.bg-athena-blue { background-color: #1460A3 !important; }
+.hover\:bg-athena-blue-hover:hover { background-color: #0E4B82 !important; }
+.bg-athena-navy { background-color: #0C2340 !important; }
+.text-athena-navy { color: #0C2340 !important; }
+.text-athena-blue { color: #1460A3 !important; }
+.bg-athena-blue-light { background-color: #E8F2FA !important; }
+.bg-athena-blue-surface { background-color: #F0F6FB !important; }
+.text-athena-text-main { color: #0F172A !important; }
+.text-athena-text-secondary { color: #334155 !important; }
+.text-athena-text-muted { color: #475569 !important; }
+.border-athena-border { border-color: #CBD5E1 !important; }
+.border-athena-divider { border-color: #E2E8F0 !important; }
+
+/* Tabular numerals for counters, amounts, and dates */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Subtle scrollbars for horizontal filter rows */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Smooth motion respecting user preference */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

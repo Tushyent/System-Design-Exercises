@@ -1,0 +1,30 @@
+services:
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-data:/data
+    restart: unless-stopped
+    networks:
+      - jobportal-net
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      RATELIMIT_CAPACITY: "5"
+      RATELIMIT_REFILL_PER_SECOND: "1"
+      CRAWLER_MAX_PAGES: "10"
+    depends_on:
+      - redis
+    networks:
+      - jobportal-net
+
+networks:
+  jobportal-net:
+    driver: bridge

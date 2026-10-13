@@ -1,0 +1,50 @@
+[
+  {
+    "id": "102129297363439616",
+    "jobId": "CRAWL-102129297359245312",
+    "sourceUrl": "http://localhost:8080/mock-external-library/books",
+    "status": "COMPLETED",
+    "recordsFetched": 7,
+    "recordsParsed": 7,
+    "recordsImported": 0,
+    "recordsDeduplicated": 7,
+    "recordsFailed": 0,
+    "durationMs": 162,
+    "throughputBooksPerSec": 43.20987654320987,
+    "errorMessage": null,
+    "startedAt": "2026-10-09T19:45:21.962Z",
+    "finishedAt": "2026-10-09T19:45:22.139Z"
+  },
+  {
+    "id": "102104476034404353",
+    "jobId": "CRAWL-102104476034404352",
+    "sourceUrl": "http://localhost:8080/mock-external-library/books",
+    "status": "COMPLETED",
+    "recordsFetched": 7,
+    "recordsParsed": 7,
+    "recordsImported": 2,
+    "recordsDeduplicated": 5,
+    "recordsFailed": 0,
+    "durationMs": 123,
+    "throughputBooksPerSec": 56.91056910569106,
+    "errorMessage": null,
+    "startedAt": "2026-10-09T18:06:44.096Z",
+    "finishedAt": "2026-10-09T18:06:44.222Z"
+  },
+  {
+    "id": "102104093568405504",
+    "jobId": "CRAWL-102104093564211200",
+    "sourceUrl": "http://localhost:8080/api/mock-external-library/books",
+    "status": "FAILED",
+    "recordsFetched": 0,
+    "recordsParsed": 0,
+    "recordsImported": 0,
+    "recordsDeduplicated": 0,
+    "recordsFailed": 0,
+    "durationMs": 154,
+    "throughputBooksPerSec": 0.0,
+    "errorMessage": "403 : [no body]",
+    "startedAt": "2026-10-09T18:05:12.909Z",
+    "finishedAt": "2026-10-09T18:05:13.107Z"
+  }
+]
