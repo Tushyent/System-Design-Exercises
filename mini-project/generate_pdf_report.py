@@ -33,7 +33,7 @@ class NumberedCanvas(canvas.Canvas):
         
         # Header (pages > 1)
         if self._pageNumber > 1:
-            self.drawString(54, 750, "Athena LMS — Scalable Library Management System | UCS3513 System Design Lab")
+            self.drawString(54, 750, "Vidya LMS — Scalable Library Management System | UCS3513 System Design Lab")
             self.setStrokeColor(colors.HexColor("#CBD5E1"))
             self.setLineWidth(0.5)
             self.line(54, 744, 558, 744)
@@ -155,7 +155,7 @@ def build_pdf_report():
 
     # Title & Metadata
     story.append(Paragraph("Scalable Library Management System: Architecture, Implementation, and Performance Evaluation", title_style))
-    story.append(Paragraph("<b>Coursework:</b> UCS3513 — System Design Laboratory | <b>Department:</b> CSE, SSN College of Engineering<br/><b>Problem Statement:</b> Problem Statement 3 — Scalable Library Management System (Athena LMS) | <b>Term:</b> V Semester", subtitle_style))
+    story.append(Paragraph("<b>Coursework:</b> UCS3513 — System Design Laboratory | <b>Department:</b> CSE, SSN College of Engineering<br/><b>Problem Statement:</b> Problem Statement 3 — Scalable Library Management System (Vidya LMS) | <b>Term:</b> V Semester", subtitle_style))
     story.append(HRFlowable(width="100%", thickness=1.5, color=colors.HexColor("#1460A3"), spaceBefore=2, spaceAfter=10))
 
     # Executive Summary
@@ -164,7 +164,7 @@ def build_pdf_report():
         "Modern institutional libraries handle exponentially growing traffic encompassing thousands of concurrent student requests, "
         "tens of thousands of catalogue titles, physical copy inventory, circulation lifecycles, waitlists, and fine transactions. "
         "This project presents the architecture, complete full-stack implementation, formal verification test suite, and empirical "
-        "performance benchmarks for <b>Athena LMS</b>, a distributed, horizontally scalable Library Management System. "
+        "performance benchmarks for <b>Vidya LMS</b>, a distributed, horizontally scalable Library Management System. "
         "The system incorporates all eight curriculum-mandated components: Token Bucket Rate Limiting, Database Sharding, "
         "Consistent Hashing, Key-Value Storage, Snowflake 64-bit ID Generation, URL Shortening, Asynchronous Web Crawling, and "
         "Prefix Trie Autocomplete. Comprehensive multi-tier benchmarks demonstrate sustained throughput up to 504 req/sec, "
@@ -361,8 +361,8 @@ def build_pdf_report():
     # Section 5: Frontend & Accessibility
     story.append(Paragraph("5. Frontend Design, Accessibility & Cover Imagery", h1_style))
     fe_text = (
-        "The Athena LMS frontend was refined to deliver a dignified, high-contrast academic experience:<br/>"
-        "• <b>Contrast & Visual Hierarchy:</b> Adopted Athena Navy (#0F2744), Deep Blue (#1460A3), and dark slate typography (#0F172A, #334155), achieving full WCAG AA contrast compliance.<br/>"
+        "The Vidya LMS frontend was refined to deliver a dignified, high-contrast academic experience:<br/>"
+        "• <b>Contrast & Visual Hierarchy:</b> Adopted Vidya Navy (#0F2744), Deep Blue (#1460A3), and dark slate typography (#0F172A, #334155), achieving full WCAG AA contrast compliance.<br/>"
         "• <b>Real Cover Imagery:</b> Enriched 28 catalogue titles with verified high-resolution Open Library ISBN covers. Remaining titles feature procedurally generated SVG category-themed covers.<br/>"
         "• <b>Multi-Discipline Breadth:</b> Expanded catalogue across 11 disciplines: Distributed Systems, System Design, Software Engineering, Computer Science, Electrical Engineering, Mechanical Engineering, Civil Engineering, Mathematics, Data Science, Humanities, and General Reading.<br/>"
         "• <b>Production Readiness:</b> Vite production build compiles with zero TypeScript errors into optimized static bundles."

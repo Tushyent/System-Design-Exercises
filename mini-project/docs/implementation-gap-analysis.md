@@ -1,5 +1,5 @@
 # Implementation Gap Analysis & Resolution Matrix
-## Athena LMS — Scalable Library Management System (UCS3513)
+## Vidya LMS — Scalable Library Management System (UCS3513)
 
 **Author:** System Design Laboratory Pair Programming Team  
 **Evaluation Date:** October 2026  
@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-This document presents the rigorous gap analysis conducted on the Athena LMS implementation for **Problem Statement 3: Scalable Library Management System**. Every requirement from the official lab curriculum, domain workflow specifications, and system design component rubrics was cross-examined against actual running source code, database structures, API routes, automated verification tests, and interactive user interfaces.
+This document presents the rigorous gap analysis conducted on the Vidya LMS implementation for **Problem Statement 3: Scalable Library Management System**. Every requirement from the official lab curriculum, domain workflow specifications, and system design component rubrics was cross-examined against actual running source code, database structures, API routes, automated verification tests, and interactive user interfaces.
 
 All identified architectural, functional, and accessibility gaps have been remediated, tested, and frozen for evaluation.
 
@@ -36,7 +36,7 @@ All identified architectural, functional, and accessibility gaps have been remed
 | **15. URL Shortener (Component 6)** | Missing shareable link generation for physical copies. | Base62 short URL engine (`/s/{code}`) redirecting to canonical book detail page with analytics counter and in-memory cache. | `ShortUrlService.java`; `run_benchmarks.py` (Avg latency 21.4ms) | **RESOLVED (PASS)** |
 | **16. Web Crawler (Component 7)** | Static seeding without simulated external ingestion. | Asynchronous multi-threaded crawler (`/api/crawler/crawl`) with crawler job queue, duplicate detection by ISBN, and automatic ingestion into the primary catalogue. | `BookCrawlerService.java`; `run_benchmarks.py` (Throughput 43.2 books/s) | **RESOLVED (PASS)** |
 | **17. Autocomplete (Component 8)** | Regex-based search query scanning MongoDB collection on every keystroke. | In-memory Prefix Trie with score-ranked traversal. Startup indexing of 37 catalogue titles. Mean search latency < 1.0 ms. | `Trie.java`; `run_benchmarks.py` (Latency 0.00ms, Precision@5 0.46) | **RESOLVED (PASS)** |
-| **18. Frontend Design & Contrast** | Poor color contrast, white-on-white buttons, illegible header items. | Complete UI polish: Deep Athena Blue (`#1460A3`) and Navy (`#0F2744`) palette, WCAG AA compliant text contrast (`#0F172A`, `#334155`), clean controls, responsive layout. | `01_catalogue_redesigned.png` through `09_category_humanities.png` | **RESOLVED (PASS)** |
+| **18. Frontend Design & Contrast** | Poor color contrast, white-on-white buttons, illegible header items. | Complete UI polish: Deep Vidya Blue (`#1460A3`) and Navy (`#0F2744`) palette, WCAG AA compliant text contrast (`#0F172A`, `#334155`), clean controls, responsive layout. | `01_catalogue_redesigned.png` through `09_category_humanities.png` | **RESOLVED (PASS)** |
 
 ---
 

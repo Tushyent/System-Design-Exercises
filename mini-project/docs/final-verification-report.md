@@ -9,7 +9,7 @@
 
 ## 1. Executive Verification Overview
 
-This report provides the final independent verification of Athena LMS, developed for **Problem Statement 3: Scalable Library Management System**. Every requirement from the problem specification, functional workflows, system design components, concurrency models, error-handling policies, and accessibility standards has been verified against runtime code execution and empirical benchmark measurements.
+This report provides the final independent verification of Vidya LMS, developed for **Problem Statement 3: Scalable Library Management System**. Every requirement from the problem specification, functional workflows, system design components, concurrency models, error-handling policies, and accessibility standards has been verified against runtime code execution and empirical benchmark measurements.
 
 ---
 
@@ -75,7 +75,7 @@ Multi-threaded workload evaluation conducted using `benchmarks/run_benchmarks.py
 
 ## 5. User Interface & Accessibility Verification
 
-1. **Brand Identity & Color Contrast**: Replaced low-contrast elements with high-contrast Athena Navy (`#0F2744`), Deep Blue (`#1460A3`), and Slate Text (`#0F172A`, `#334155`). All button text and badges meet WCAG AA contrast standards.
+1. **Brand Identity & Color Contrast**: Replaced low-contrast elements with high-contrast Vidya Navy (`#0F2744`), Deep Blue (`#1460A3`), and Slate Text (`#0F172A`, `#334155`). All button text and badges meet WCAG AA contrast standards.
 2. **Book Covers**: Ingested 28 verified Open Library cover images (`/b/isbn/{isbn}-M.jpg`) into MongoDB. All other titles feature procedurally generated category-themed SVG covers.
 3. **Multi-Discipline Catalogue**: 37 verified titles covering 11 engineering and academic categories (Distributed Systems, System Design, Software Eng, Computer Science, Electrical Eng, Mechanical Eng, Civil Eng, Mathematics, Data Science, Humanities, General Reading).
 4. **Loan Renewal Interface**: Added "Renew (+14d)" button with renewal counter badges (`Renewals: 0/2`, `1/2`, `2/2`), live loading spinners, and clear error banners explaining waitlist locks or cap exhaustion.

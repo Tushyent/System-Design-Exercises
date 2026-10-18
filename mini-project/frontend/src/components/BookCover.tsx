@@ -56,7 +56,7 @@ export const BookCover: React.FC<Props> = ({
 
   return (
     <div
-      className={`relative overflow-hidden rounded-lg shadow-sm border border-athena-border/60 bg-athena-blue-surface flex-shrink-0 select-none ${className}`}
+      className={`relative overflow-hidden rounded-lg shadow-sm border border-vidya-border/60 bg-vidya-blue-surface flex-shrink-0 select-none ${className}`}
       style={{
         aspectRatio: aspectRatio === '2/3' ? '2 / 3' : '3 / 4',
       }}
@@ -95,7 +95,7 @@ export const BookCover: React.FC<Props> = ({
               className="text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded backdrop-blur-xs font-mono"
               style={{ backgroundColor: 'rgba(255, 255, 255, 0.15)', color: theme.text }}
             >
-              {category || 'Athena LMS'}
+              {category || 'Vidya LMS'}
             </span>
             <Bookmark className="w-3.5 h-3.5 opacity-60" style={{ color: theme.accent }} />
           </div>

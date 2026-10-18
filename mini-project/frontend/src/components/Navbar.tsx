@@ -52,7 +52,7 @@ export const Navbar: React.FC<Props> = ({
   });
 
   return (
-    <header className="bg-white border-b border-athena-border sticky top-0 z-40 shadow-subtle">
+    <header className="bg-white border-b border-vidya-border sticky top-0 z-40 shadow-subtle">
       {/* Top Bar: Brand, Search, Account Controls */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-4 sm:gap-8">
@@ -67,15 +67,15 @@ export const Navbar: React.FC<Props> = ({
               if (e.key === 'Enter' || e.key === ' ') setActiveTab('catalogue');
             }}
           >
-            <div className="w-10 h-10 rounded-control bg-athena-navy text-white flex items-center justify-center shadow-subtle group-hover:bg-athena-blue transition-colors">
+            <div className="w-10 h-10 rounded-control bg-vidya-navy text-white flex items-center justify-center shadow-subtle group-hover:bg-vidya-blue transition-colors">
               <Library className="w-5 h-5 text-white" />
             </div>
             <div>
-              <div className="flex items-center gap-1.5 font-display font-bold text-athena-navy text-lg tracking-tight">
-                <span>Athena</span>
-                <span className="text-athena-blue font-extrabold">LMS</span>
+              <div className="flex items-center gap-1.5 font-display font-bold text-vidya-navy text-lg tracking-tight">
+                <span>Vidya</span>
+                <span className="text-vidya-blue font-extrabold">LMS</span>
               </div>
-              <p className="text-[11px] text-athena-text-muted font-medium flex items-center gap-1 -mt-0.5">
+              <p className="text-[11px] text-vidya-text-muted font-medium flex items-center gap-1 -mt-0.5">
                 <span>University Library</span>
               </p>
             </div>
@@ -89,21 +89,21 @@ export const Navbar: React.FC<Props> = ({
           {/* User Account Controls */}
           <div className="flex items-center gap-3">
             {user ? (
-              <div className="flex items-center gap-3 bg-athena-blue-surface px-3 py-1.5 rounded-control border border-athena-border">
-                <div className="w-7 h-7 rounded-full bg-athena-blue-light text-athena-blue flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-3 bg-vidya-blue-surface px-3 py-1.5 rounded-control border border-vidya-border">
+                <div className="w-7 h-7 rounded-full bg-vidya-blue-light text-vidya-blue flex items-center justify-center shrink-0">
                   <UserIcon className="w-4 h-4" />
                 </div>
                 <div className="text-left hidden sm:block">
-                  <div className="text-xs font-bold text-athena-text-main leading-none truncate max-w-[120px]">
+                  <div className="text-xs font-bold text-vidya-text-main leading-none truncate max-w-[120px]">
                     {user.name}
                   </div>
-                  <div className="text-[10px] font-semibold text-athena-blue uppercase tracking-wider font-mono mt-0.5">
+                  <div className="text-[10px] font-semibold text-vidya-blue uppercase tracking-wider font-mono mt-0.5">
                     {user.role}
                   </div>
                 </div>
                 <button
                   onClick={onLogout}
-                  className="p-1.5 text-athena-text-muted hover:text-athena-error hover:bg-athena-error-bg rounded transition-colors ml-1"
+                  className="p-1.5 text-vidya-text-muted hover:text-vidya-error hover:bg-vidya-error-bg rounded transition-colors ml-1"
                   title="Sign Out"
                   aria-label="Sign Out"
                 >
@@ -123,7 +123,7 @@ export const Navbar: React.FC<Props> = ({
             {/* Mobile Hamburger Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-athena-text-secondary hover:text-athena-text-main md:hidden rounded-control border border-athena-border"
+              className="p-2 text-vidya-text-secondary hover:text-vidya-text-main md:hidden rounded-control border border-vidya-border"
               aria-label="Toggle navigation menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -138,7 +138,7 @@ export const Navbar: React.FC<Props> = ({
       </div>
 
       {/* Secondary Row: Navigation Tabs */}
-      <div className="border-t border-athena-divider bg-white">
+      <div className="border-t border-vidya-divider bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex space-x-1 overflow-x-auto scrollbar-none py-1.5" aria-label="Main Navigation">
             {visibleNavItems.map((item) => {
@@ -169,7 +169,7 @@ export const Navbar: React.FC<Props> = ({
 
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-athena-border bg-white p-4 space-y-2 shadow-elevated">
+        <div className="md:hidden border-t border-vidya-border bg-white p-4 space-y-2 shadow-elevated">
           {visibleNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -182,8 +182,8 @@ export const Navbar: React.FC<Props> = ({
                 }}
                 className={`w-full px-4 py-2.5 text-xs font-semibold rounded-control flex items-center gap-3 transition-colors ${
                   isActive
-                    ? 'bg-athena-blue-light text-athena-blue font-bold'
-                    : 'text-athena-text-secondary hover:bg-athena-blue-surface'
+                    ? 'bg-vidya-blue-light text-vidya-blue font-bold'
+                    : 'text-vidya-text-secondary hover:bg-vidya-blue-surface'
                 }`}
               >
                 <Icon className="w-4 h-4" />

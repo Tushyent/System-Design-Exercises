@@ -53,11 +53,20 @@ public class MetricsService {
         long misses = bookService.getCacheMisses();
         long totalCacheRequests = hits + misses;
         double hitRatio = totalCacheRequests > 0 ? ((double) hits / totalCacheRequests) * 100.0 : 0.0;
+
+        long searchHits = bookService.getSearchCacheHits();
+        long searchMisses = bookService.getSearchCacheMisses();
+        long totalSearchRequests = searchHits + searchMisses;
+        double searchHitRatio = totalSearchRequests > 0 ? ((double) searchHits / totalSearchRequests) * 100.0 : 0.0;
+
         metrics.put("keyValueStore", Map.of(
                 "cacheHits", hits,
                 "cacheMisses", misses,
                 "totalCacheRequests", totalCacheRequests,
-                "hitRatioPercent", hitRatio
+                "hitRatioPercent", hitRatio,
+                "searchCacheHits", searchHits,
+                "searchCacheMisses", searchMisses,
+                "searchHitRatioPercent", searchHitRatio
         ));
 
         // 3. Snowflake Unique ID Generator Metrics
@@ -96,7 +105,7 @@ public class MetricsService {
                 "totalTitles", bookRepository.count(),
                 "totalCopies", copyRepository.count(),
                 "activeLoans", loanRepository.findAll().stream().filter(l -> l.getStatus() == LoanStatus.ACTIVE).count(),
-                "pendingReservations", reservationRepository.countByBookIdAndStatus(null, ReservationStatus.PENDING),
+                "pendingReservations", reservationRepository.countByStatus(ReservationStatus.PENDING),
                 "unpaidFinesCount", unpaidFines.size(),
                 "totalUnpaidFinesAmount", totalUnpaidAmount
         ));

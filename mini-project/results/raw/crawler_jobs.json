@@ -1,5 +1,37 @@
 [
   {
+    "id": "105000623044431872",
+    "jobId": "CRAWL-105000623040237568",
+    "sourceUrl": "http://localhost:8080/mock-external-library/books",
+    "status": "COMPLETED",
+    "recordsFetched": 7,
+    "recordsParsed": 7,
+    "recordsImported": 0,
+    "recordsDeduplicated": 7,
+    "recordsFailed": 0,
+    "durationMs": 77,
+    "throughputBooksPerSec": 90.9090909090909,
+    "errorMessage": null,
+    "startedAt": "2026-10-17T17:54:59.351Z",
+    "finishedAt": "2026-10-17T17:54:59.459Z"
+  },
+  {
+    "id": "105000176724348929",
+    "jobId": "CRAWL-105000176724348928",
+    "sourceUrl": "http://localhost:8080/mock-external-library/books",
+    "status": "COMPLETED",
+    "recordsFetched": 7,
+    "recordsParsed": 7,
+    "recordsImported": 0,
+    "recordsDeduplicated": 7,
+    "recordsFailed": 0,
+    "durationMs": 88,
+    "throughputBooksPerSec": 79.54545454545455,
+    "errorMessage": null,
+    "startedAt": "2026-10-17T17:53:12.940Z",
+    "finishedAt": "2026-10-17T17:53:13.050Z"
+  },
+  {
     "id": "102129297363439616",
     "jobId": "CRAWL-102129297359245312",
     "sourceUrl": "http://localhost:8080/mock-external-library/books",

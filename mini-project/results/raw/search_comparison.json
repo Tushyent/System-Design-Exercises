@@ -3,12 +3,12 @@
     "level": "Baseline (Unoptimized)",
     "concurrent_users": 20,
     "total_requests": 150,
-    "duration_seconds": 0.797,
-    "throughput_req_per_sec": 188.3,
-    "avg_latency_ms": 87.61,
-    "median_latency_ms": 66.66,
-    "p95_latency_ms": 233.52,
-    "p99_latency_ms": 330.84,
+    "duration_seconds": 0.335,
+    "throughput_req_per_sec": 447.24,
+    "avg_latency_ms": 38.27,
+    "median_latency_ms": 38.71,
+    "p95_latency_ms": 49.52,
+    "p99_latency_ms": 53.01,
     "status_codes": {
       "200": 150
     },
@@ -20,12 +20,12 @@
     "level": "Optimized (Indexed)",
     "concurrent_users": 20,
     "total_requests": 150,
-    "duration_seconds": 0.734,
-    "throughput_req_per_sec": 204.24,
-    "avg_latency_ms": 46.42,
-    "median_latency_ms": 41.88,
-    "p95_latency_ms": 99.13,
-    "p99_latency_ms": 110.92,
+    "duration_seconds": 0.309,
+    "throughput_req_per_sec": 486.05,
+    "avg_latency_ms": 35.28,
+    "median_latency_ms": 34.93,
+    "p95_latency_ms": 49.44,
+    "p99_latency_ms": 54.36,
     "status_codes": {
       "200": 150
     },
@@ -33,6 +33,6 @@
     "rejection_rate_pct": 0.0,
     "error_count": 0
   },
-  "latency_speedup_x": 1.89,
-  "throughput_gain_pct": 8.47
+  "latency_speedup_x": 1.08,
+  "throughput_gain_pct": 8.68
 }

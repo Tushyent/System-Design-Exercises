@@ -30,18 +30,18 @@
 }
 
 /* Explicit high-contrast fail-safe tokens */
-.bg-athena-blue { background-color: #1460A3 !important; }
-.hover\:bg-athena-blue-hover:hover { background-color: #0E4B82 !important; }
-.bg-athena-navy { background-color: #0C2340 !important; }
-.text-athena-navy { color: #0C2340 !important; }
-.text-athena-blue { color: #1460A3 !important; }
-.bg-athena-blue-light { background-color: #E8F2FA !important; }
-.bg-athena-blue-surface { background-color: #F0F6FB !important; }
-.text-athena-text-main { color: #0F172A !important; }
-.text-athena-text-secondary { color: #334155 !important; }
-.text-athena-text-muted { color: #475569 !important; }
-.border-athena-border { border-color: #CBD5E1 !important; }
-.border-athena-divider { border-color: #E2E8F0 !important; }
+.bg-vidya-blue { background-color: #1460A3 !important; }
+.hover\:bg-vidya-blue-hover:hover { background-color: #0E4B82 !important; }
+.bg-vidya-navy { background-color: #0C2340 !important; }
+.text-vidya-navy { color: #0C2340 !important; }
+.text-vidya-blue { color: #1460A3 !important; }
+.bg-vidya-blue-light { background-color: #E8F2FA !important; }
+.bg-vidya-blue-surface { background-color: #F0F6FB !important; }
+.text-vidya-text-main { color: #0F172A !important; }
+.text-vidya-text-secondary { color: #334155 !important; }
+.text-vidya-text-muted { color: #475569 !important; }
+.border-vidya-border { border-color: #CBD5E1 !important; }
+.border-vidya-divider { border-color: #E2E8F0 !important; }
 
 /* Tabular numerals for counters, amounts, and dates */
 .tabular-nums {

@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        athena: {
+        vidya: {
           navy: '#0C2340',
           blue: '#1460A3',
           'blue-hover': '#0E4B82',

@@ -1,5 +1,5 @@
 # Comprehensive Action Workflow Checklist
-## Athena LMS — Scalable Library Management System (UCS3513)
+## Vidya LMS — Scalable Library Management System (UCS3513)
 
 **Document Version:** 2.0 (Post-Audit Hardening)  
 **Execution Environment:** Windows 11 / Java 17 / Spring Boot 3.3.0 / MongoDB 8.0 / React 18  

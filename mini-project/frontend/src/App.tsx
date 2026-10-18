@@ -54,7 +54,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-athena-bg text-athena-text-main flex flex-col font-sans selection:bg-athena-blue-light selection:text-athena-blue">
+    <div className="min-h-screen bg-vidya-bg text-vidya-text-main flex flex-col font-sans selection:bg-vidya-blue-light selection:text-vidya-blue">
       {/* 1. Global Navigation Bar */}
       <Navbar
         activeTab={activeTab}

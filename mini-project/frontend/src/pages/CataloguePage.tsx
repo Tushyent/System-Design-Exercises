@@ -90,45 +90,45 @@ export const CataloguePage: React.FC<Props> = ({ onSelectBook, externalSearchQue
   return (
     <div className="space-y-6">
       {/* 1. Page Introduction Header */}
-      <div className="bg-white rounded-card border border-athena-border p-6 sm:p-8 shadow-subtle">
+      <div className="bg-white rounded-card border border-vidya-border p-6 sm:p-8 shadow-subtle">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="max-w-2xl">
-            <span className="text-xs uppercase font-bold text-athena-blue tracking-wider font-mono">
+            <span className="text-xs uppercase font-bold text-vidya-blue tracking-wider font-mono">
               University Library Catalogue
             </span>
-            <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-athena-navy tracking-tight mt-1">
+            <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-vidya-navy tracking-tight mt-1">
               Discover your next great read
             </h1>
-            <p className="text-sm text-athena-text-secondary mt-1.5 leading-relaxed">
+            <p className="text-sm text-vidya-text-secondary mt-1.5 leading-relaxed">
               Explore books, technical references, and learning resources from the library catalogue.
             </p>
           </div>
 
           {/* Search Optimization Segmented Control (System Design Experiment) */}
-          <div className="bg-athena-blue-surface border border-athena-border p-1.5 rounded-control flex flex-col sm:flex-row items-start sm:items-center gap-2 self-stretch sm:self-auto">
+          <div className="bg-vidya-blue-surface border border-vidya-border p-1.5 rounded-control flex flex-col sm:flex-row items-start sm:items-center gap-2 self-stretch sm:self-auto">
             <div className="flex items-center gap-1 w-full sm:w-auto">
               <button
                 onClick={() => setSearchMode('optimized')}
                 className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-control-sm text-xs font-semibold transition-all ${
                   searchMode === 'optimized'
-                    ? 'bg-white text-athena-blue shadow-subtle font-bold'
-                    : 'text-athena-text-secondary hover:text-athena-text-main'
+                    ? 'bg-white text-vidya-blue shadow-subtle font-bold'
+                    : 'text-vidya-text-secondary hover:text-vidya-text-main'
                 }`}
                 title="Search using indexed database paths and cache-aside storage"
               >
-                <Sparkles className="w-3.5 h-3.5 text-athena-blue" />
+                <Sparkles className="w-3.5 h-3.5 text-vidya-blue" />
                 <span>Optimized Search</span>
               </button>
               <button
                 onClick={() => setSearchMode('baseline')}
                 className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-control-sm text-xs font-semibold transition-all ${
                   searchMode === 'baseline'
-                    ? 'bg-white text-athena-warning shadow-subtle font-bold'
-                    : 'text-athena-text-secondary hover:text-athena-text-main'
+                    ? 'bg-white text-vidya-warning shadow-subtle font-bold'
+                    : 'text-vidya-text-secondary hover:text-vidya-text-main'
                 }`}
                 title="Search using unindexed regex scan across titles and authors"
               >
-                <Database className="w-3.5 h-3.5 text-athena-warning" />
+                <Database className="w-3.5 h-3.5 text-vidya-warning" />
                 <span>Baseline Search</span>
               </button>
             </div>
@@ -136,7 +136,7 @@ export const CataloguePage: React.FC<Props> = ({ onSelectBook, externalSearchQue
         </div>
 
         {/* 2. Category Filters & Active Status */}
-        <div className="mt-6 pt-5 border-t border-athena-divider flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="mt-6 pt-5 border-t border-vidya-divider flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2 pt-1">
             <div className="flex items-center gap-1.5 text-xs text-slate-600 font-bold shrink-0 mr-1">
               <Filter className="w-3.5 h-3.5 text-[#1460A3]" />
@@ -165,14 +165,14 @@ export const CataloguePage: React.FC<Props> = ({ onSelectBook, externalSearchQue
           </div>
 
           {/* Result Count and Clear Filters */}
-          <div className="flex items-center gap-2 text-xs text-athena-text-muted shrink-0">
+          <div className="flex items-center gap-2 text-xs text-vidya-text-muted shrink-0">
             <span className="font-medium tabular-nums">
               Showing {books.length} of {totalElements} titles
             </span>
             {(selectedCategory !== 'All' || externalSearchQuery) && (
               <button
                 onClick={handleClearFilters}
-                className="flex items-center gap-1 text-athena-blue hover:text-athena-blue-hover font-semibold ml-1 transition-colors"
+                className="flex items-center gap-1 text-vidya-blue hover:text-vidya-blue-hover font-semibold ml-1 transition-colors"
               >
                 <X className="w-3 h-3" />
                 <span>Clear filters</span>
@@ -211,17 +211,17 @@ export const CataloguePage: React.FC<Props> = ({ onSelectBook, externalSearchQue
 
       {/* 4. Pagination */}
       {totalPages > 1 && !loading && (
-        <div className="bg-white rounded-card border border-athena-border p-4 shadow-subtle flex items-center justify-between">
-          <p className="text-xs text-athena-text-secondary">
-            Page <span className="font-bold text-athena-text-main">{page + 1}</span> of{' '}
-            <span className="font-bold text-athena-text-main">{totalPages}</span>
+        <div className="bg-white rounded-card border border-vidya-border p-4 shadow-subtle flex items-center justify-between">
+          <p className="text-xs text-vidya-text-secondary">
+            Page <span className="font-bold text-vidya-text-main">{page + 1}</span> of{' '}
+            <span className="font-bold text-vidya-text-main">{totalPages}</span>
           </p>
 
           <div className="flex items-center gap-2">
             <button
               disabled={page === 0}
               onClick={() => setPage((p) => Math.max(0, p - 1))}
-              className="px-3 py-1.5 rounded-control-sm bg-athena-blue-surface hover:bg-slate-200 border border-athena-border text-athena-text-main text-xs font-semibold disabled:opacity-40 disabled:pointer-events-none transition-colors flex items-center gap-1"
+              className="px-3 py-1.5 rounded-control-sm bg-vidya-blue-surface hover:bg-slate-200 border border-vidya-border text-vidya-text-main text-xs font-semibold disabled:opacity-40 disabled:pointer-events-none transition-colors flex items-center gap-1"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
               <span>Previous</span>
@@ -230,7 +230,7 @@ export const CataloguePage: React.FC<Props> = ({ onSelectBook, externalSearchQue
             <button
               disabled={page >= totalPages - 1}
               onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-              className="px-3 py-1.5 rounded-control-sm bg-athena-blue-surface hover:bg-slate-200 border border-athena-border text-athena-text-main text-xs font-semibold disabled:opacity-40 disabled:pointer-events-none transition-colors flex items-center gap-1"
+              className="px-3 py-1.5 rounded-control-sm bg-vidya-blue-surface hover:bg-slate-200 border border-vidya-border text-vidya-text-main text-xs font-semibold disabled:opacity-40 disabled:pointer-events-none transition-colors flex items-center gap-1"
             >
               <span>Next</span>
               <ChevronRight className="w-3.5 h-3.5" />

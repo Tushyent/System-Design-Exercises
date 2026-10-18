@@ -35,3 +35,21 @@ node_modules/
 
 # --- Others ---
 shared/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# --- Office temp / lock files ---
+~$*
+~WRL*.tmp
+*.docx.tmp
+
+# --- Redis runtime data (persist via Docker volumes instead) ---
+redis-data/
+
+# --- Local env overrides ---
+.env
+.env.local
+.env.*.local

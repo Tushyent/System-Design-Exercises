@@ -11,9 +11,9 @@ import com.library.idgenerator.SnowflakeIdGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,6 +30,7 @@ public class WebCrawlerService {
     private final BookRepository bookRepository;
     private final BookService bookService;
     private final SnowflakeIdGenerator idGenerator;
+    private final TaskExecutor taskExecutor;
     private final RestTemplate restTemplate = new RestTemplate();
 
     public CrawlerJob startCrawlJob(String sourceUrl) {
@@ -45,13 +46,12 @@ public class WebCrawlerService {
 
         CrawlerJob savedJob = jobRepository.save(job);
 
-        // Execute crawl asynchronously
-        executeCrawl(savedJob);
+        // Dispatch crawl to the application task executor (non-blocking)
+        taskExecutor.execute(() -> executeCrawl(savedJob));
 
         return savedJob;
     }
 
-    @Async
     public void executeCrawl(CrawlerJob job) {
         long startTime = System.currentTimeMillis();
         log.info("Starting crawl job {} for URL {}", job.getJobId(), job.getSourceUrl());

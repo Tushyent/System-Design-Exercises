@@ -121,67 +121,67 @@ export const MyLoansPage: React.FC<{ onNavigateToCatalogue?: () => void }> = ({ 
   return (
     <div className="space-y-6">
       {/* 1. Page Header */}
-      <div className="bg-white rounded-card border border-athena-border p-6 sm:p-8 shadow-subtle">
+      <div className="bg-white rounded-card border border-vidya-border p-6 sm:p-8 shadow-subtle">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <span className="text-xs uppercase font-bold text-athena-blue tracking-wider font-mono">
+            <span className="text-xs uppercase font-bold text-vidya-blue tracking-wider font-mono">
               Member Circulation Desk
             </span>
-            <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-athena-navy tracking-tight mt-1">
+            <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-vidya-navy tracking-tight mt-1">
               My Library
             </h1>
-            <p className="text-sm text-athena-text-secondary mt-1">
+            <p className="text-sm text-vidya-text-secondary mt-1">
               Manage borrowed books, due dates, and reservation queues.
             </p>
           </div>
         </div>
 
         {/* 2. Summary Metric Cards Row */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6 pt-6 border-t border-athena-divider">
-          <div className="bg-athena-blue-surface rounded-control p-4 border border-athena-border">
-            <span className="text-[11px] font-bold text-athena-text-muted uppercase tracking-wider block font-mono">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6 pt-6 border-t border-vidya-divider">
+          <div className="bg-vidya-blue-surface rounded-control p-4 border border-vidya-border">
+            <span className="text-[11px] font-bold text-vidya-text-muted uppercase tracking-wider block font-mono">
               Active Loans
             </span>
-            <div className="text-2xl font-display font-extrabold text-athena-navy mt-1 tabular-nums">
+            <div className="text-2xl font-display font-extrabold text-vidya-navy mt-1 tabular-nums">
               {loading ? '-' : loans.length}
             </div>
-            <span className="text-[11px] text-athena-text-secondary mt-0.5 block">
+            <span className="text-[11px] text-vidya-text-secondary mt-0.5 block">
               Copies in possession
             </span>
           </div>
 
-          <div className="bg-athena-blue-surface rounded-control p-4 border border-athena-border">
+          <div className="bg-vidya-blue-surface rounded-control p-4 border border-vidya-border">
             <span className="text-[11px] font-bold text-amber-800 uppercase tracking-wider block font-mono">
               Due Soon (≤ 3 Days)
             </span>
             <div className="text-2xl font-display font-extrabold text-amber-700 mt-1 tabular-nums">
               {loading ? '-' : dueSoonCount}
             </div>
-            <span className="text-[11px] text-athena-text-secondary mt-0.5 block">
+            <span className="text-[11px] text-vidya-text-secondary mt-0.5 block">
               Return before due date
             </span>
           </div>
 
-          <div className="bg-athena-blue-surface rounded-control p-4 border border-athena-border">
+          <div className="bg-vidya-blue-surface rounded-control p-4 border border-vidya-border">
             <span className="text-[11px] font-bold text-rose-800 uppercase tracking-wider block font-mono">
               Overdue Loans
             </span>
             <div className="text-2xl font-display font-extrabold text-rose-700 mt-1 tabular-nums">
               {loading ? '-' : overdueCount}
             </div>
-            <span className="text-[11px] text-athena-text-secondary mt-0.5 block">
+            <span className="text-[11px] text-vidya-text-secondary mt-0.5 block">
               Accrues ₹1.50/day fine
             </span>
           </div>
 
-          <div className="bg-athena-blue-surface rounded-control p-4 border border-athena-border">
-            <span className="text-[11px] font-bold text-athena-blue uppercase tracking-wider block font-mono">
+          <div className="bg-vidya-blue-surface rounded-control p-4 border border-vidya-border">
+            <span className="text-[11px] font-bold text-vidya-blue uppercase tracking-wider block font-mono">
               Reservations
             </span>
-            <div className="text-2xl font-display font-extrabold text-athena-blue mt-1 tabular-nums">
+            <div className="text-2xl font-display font-extrabold text-vidya-blue mt-1 tabular-nums">
               {loading ? '-' : reservations.length}
             </div>
-            <span className="text-[11px] text-athena-text-secondary mt-0.5 block">
+            <span className="text-[11px] text-vidya-text-secondary mt-0.5 block">
               FIFO waitlist queues
             </span>
           </div>
@@ -193,27 +193,27 @@ export const MyLoansPage: React.FC<{ onNavigateToCatalogue?: () => void }> = ({ 
         <div
           className={`p-4 rounded-control text-xs font-medium flex items-start gap-3 border shadow-subtle ${
             feedback.type === 'success'
-              ? 'bg-athena-success-bg text-athena-success border-emerald-200'
-              : 'bg-athena-error-bg text-athena-error border-rose-200'
+              ? 'bg-vidya-success-bg text-vidya-success border-emerald-200'
+              : 'bg-vidya-error-bg text-vidya-error border-rose-200'
           }`}
         >
           {feedback.type === 'success' ? (
-            <CheckCircle2 className="w-4 h-4 text-athena-success shrink-0 mt-0.5" />
+            <CheckCircle2 className="w-4 h-4 text-vidya-success shrink-0 mt-0.5" />
           ) : (
-            <AlertTriangle className="w-4 h-4 text-athena-error shrink-0 mt-0.5" />
+            <AlertTriangle className="w-4 h-4 text-vidya-error shrink-0 mt-0.5" />
           )}
           <span>{feedback.message}</span>
         </div>
       )}
 
       {/* 3. Navigation Sub-Tabs */}
-      <div className="flex items-center gap-2 border-b border-athena-divider pb-2">
+      <div className="flex items-center gap-2 border-b border-vidya-divider pb-2">
         <button
           onClick={() => setActiveSubTab('loans')}
           className={`px-4 py-2 text-xs font-semibold rounded-control transition-all ${
             activeSubTab === 'loans'
-              ? 'bg-white text-athena-blue border border-athena-border shadow-subtle font-bold'
-              : 'text-athena-text-secondary hover:text-athena-text-main hover:bg-white/60'
+              ? 'bg-white text-vidya-blue border border-vidya-border shadow-subtle font-bold'
+              : 'text-vidya-text-secondary hover:text-vidya-text-main hover:bg-white/60'
           }`}
         >
           Active Loans ({loans.length})
@@ -222,8 +222,8 @@ export const MyLoansPage: React.FC<{ onNavigateToCatalogue?: () => void }> = ({ 
           onClick={() => setActiveSubTab('reservations')}
           className={`px-4 py-2 text-xs font-semibold rounded-control transition-all ${
             activeSubTab === 'reservations'
-              ? 'bg-white text-athena-blue border border-athena-border shadow-subtle font-bold'
-              : 'text-athena-text-secondary hover:text-athena-text-main hover:bg-white/60'
+              ? 'bg-white text-vidya-blue border border-vidya-border shadow-subtle font-bold'
+              : 'text-vidya-text-secondary hover:text-vidya-text-main hover:bg-white/60'
           }`}
         >
           Reservation Queues ({reservations.length})
@@ -232,8 +232,8 @@ export const MyLoansPage: React.FC<{ onNavigateToCatalogue?: () => void }> = ({ 
           onClick={() => setActiveSubTab('history')}
           className={`px-4 py-2 text-xs font-semibold rounded-control transition-all ${
             activeSubTab === 'history'
-              ? 'bg-white text-athena-blue border border-athena-border shadow-subtle font-bold'
-              : 'text-athena-text-secondary hover:text-athena-text-main hover:bg-white/60'
+              ? 'bg-white text-vidya-blue border border-vidya-border shadow-subtle font-bold'
+              : 'text-vidya-text-secondary hover:text-vidya-text-main hover:bg-white/60'
           }`}
         >
           Borrowing History ({history.length})
@@ -265,7 +265,7 @@ export const MyLoansPage: React.FC<{ onNavigateToCatalogue?: () => void }> = ({ 
               return (
                 <div
                   key={loan.id}
-                  className="bg-white rounded-card border border-athena-border p-4 sm:p-5 shadow-subtle flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all"
+                  className="bg-white rounded-card border border-vidya-border p-4 sm:p-5 shadow-subtle flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all"
                 >
                   <div className="flex items-center gap-4 min-w-0">
                     <BookCover
@@ -277,16 +277,16 @@ export const MyLoansPage: React.FC<{ onNavigateToCatalogue?: () => void }> = ({ 
                     />
 
                     <div className="space-y-1 min-w-0">
-                      <h3 className="font-display font-bold text-athena-navy text-sm truncate">
+                      <h3 className="font-display font-bold text-vidya-navy text-sm truncate">
                         {loan.bookTitle}
                       </h3>
                       
-                      <div className="flex flex-wrap items-center gap-2 text-xs text-athena-text-secondary">
-                        <span className="font-mono bg-athena-blue-surface px-2 py-0.5 rounded border border-athena-border text-[11px] text-athena-text-main">
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-vidya-text-secondary">
+                        <span className="font-mono bg-vidya-blue-surface px-2 py-0.5 rounded border border-vidya-border text-[11px] text-vidya-text-main">
                           Barcode: {loan.barcode}
                         </span>
                         <span>•</span>
-                        <span className="font-mono text-[11px] text-athena-text-muted">
+                        <span className="font-mono text-[11px] text-vidya-text-muted">
                           ID: {loan.loanId}
                         </span>
                         <span>•</span>
@@ -300,11 +300,11 @@ export const MyLoansPage: React.FC<{ onNavigateToCatalogue?: () => void }> = ({ 
                       </div>
 
                       <div className="flex items-center gap-2 pt-1 text-xs">
-                        <Calendar className="w-3.5 h-3.5 text-athena-text-muted" />
-                        <span className="text-athena-text-muted">Due date:</span>
+                        <Calendar className="w-3.5 h-3.5 text-vidya-text-muted" />
+                        <span className="text-vidya-text-muted">Due date:</span>
                         <span
                           className={`font-semibold tabular-nums ${
-                            overdue ? 'text-athena-error font-bold' : 'text-athena-text-main'
+                            overdue ? 'text-vidya-error font-bold' : 'text-vidya-text-main'
                           }`}
                         >
                           {new Date(loan.dueDate).toLocaleDateString(undefined, {
@@ -322,7 +322,7 @@ export const MyLoansPage: React.FC<{ onNavigateToCatalogue?: () => void }> = ({ 
                   </div>
 
                   {/* Actions (Renew & Return) */}
-                  <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-athena-divider">
+                  <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-vidya-divider">
                     <button
                       onClick={() => handleRenew(loan.loanId, loan.bookTitle)}
                       disabled={isRenewing || maxRenewalsReached}
@@ -359,31 +359,31 @@ export const MyLoansPage: React.FC<{ onNavigateToCatalogue?: () => void }> = ({ 
             {reservations.map((res) => (
               <div
                 key={res.id}
-                className="bg-white rounded-card border border-athena-border p-4 sm:p-5 shadow-subtle flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                className="bg-white rounded-card border border-vidya-border p-4 sm:p-5 shadow-subtle flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
               >
                 <div className="space-y-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-[10px] font-bold uppercase tracking-wider bg-athena-blue-light text-athena-blue px-2 py-0.5 rounded">
+                    <span className="font-mono text-[10px] font-bold uppercase tracking-wider bg-vidya-blue-light text-vidya-blue px-2 py-0.5 rounded">
                       Position #{res.queuePosition}
                     </span>
-                    <span className="font-mono text-xs text-athena-text-muted">
+                    <span className="font-mono text-xs text-vidya-text-muted">
                       {res.reservationId}
                     </span>
                   </div>
 
-                  <h3 className="font-display font-bold text-athena-navy text-sm">
+                  <h3 className="font-display font-bold text-vidya-navy text-sm">
                     {res.bookTitle}
                   </h3>
 
-                  <p className="text-xs text-athena-text-secondary">
-                    Status: <span className="font-semibold text-athena-text-main">{res.status}</span> • Placed on{' '}
+                  <p className="text-xs text-vidya-text-secondary">
+                    Status: <span className="font-semibold text-vidya-text-main">{res.status}</span> • Placed on{' '}
                     {new Date(res.createdAt).toLocaleDateString()}
                   </p>
                 </div>
 
                 <button
                   onClick={() => handleCancelReservation(res.id)}
-                  className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-athena-error text-xs font-semibold rounded-control transition-colors flex items-center gap-1.5"
+                  className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-vidya-error text-xs font-semibold rounded-control transition-colors flex items-center gap-1.5"
                 >
                   <XCircle className="w-3.5 h-3.5" />
                   <span>Cancel Reservation</span>
@@ -401,10 +401,10 @@ export const MyLoansPage: React.FC<{ onNavigateToCatalogue?: () => void }> = ({ 
             description="Completed and returned loans will appear here."
           />
         ) : (
-          <div className="bg-white rounded-card border border-athena-border overflow-hidden shadow-subtle">
+          <div className="bg-white rounded-card border border-vidya-border overflow-hidden shadow-subtle">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-athena-blue-surface text-athena-text-muted uppercase text-[10px] font-bold font-mono tracking-wider border-b border-athena-border">
+                <thead className="bg-vidya-blue-surface text-vidya-text-muted uppercase text-[10px] font-bold font-mono tracking-wider border-b border-vidya-border">
                   <tr>
                     <th className="p-3.5">Title</th>
                     <th className="p-3.5">Barcode</th>
@@ -413,15 +413,15 @@ export const MyLoansPage: React.FC<{ onNavigateToCatalogue?: () => void }> = ({ 
                     <th className="p-3.5">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-athena-divider font-medium text-athena-text-main">
+                <tbody className="divide-y divide-vidya-divider font-medium text-vidya-text-main">
                   {history.map((h) => (
-                    <tr key={h.id} className="hover:bg-athena-blue-surface/40 transition-colors">
-                      <td className="p-3.5 font-bold text-athena-navy">{h.bookTitle}</td>
-                      <td className="p-3.5 font-mono text-athena-text-secondary">{h.barcode}</td>
-                      <td className="p-3.5 tabular-nums text-athena-text-muted">
+                    <tr key={h.id} className="hover:bg-vidya-blue-surface/40 transition-colors">
+                      <td className="p-3.5 font-bold text-vidya-navy">{h.bookTitle}</td>
+                      <td className="p-3.5 font-mono text-vidya-text-secondary">{h.barcode}</td>
+                      <td className="p-3.5 tabular-nums text-vidya-text-muted">
                         {new Date(h.borrowedAt).toLocaleDateString()}
                       </td>
-                      <td className="p-3.5 tabular-nums text-athena-text-muted">
+                      <td className="p-3.5 tabular-nums text-vidya-text-muted">
                         {h.returnedAt ? new Date(h.returnedAt).toLocaleDateString() : '—'}
                       </td>
                       <td className="p-3.5">

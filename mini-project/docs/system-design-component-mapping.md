@@ -1,5 +1,5 @@
 # System Design Component Mapping & Architectural Evaluation
-## Athena LMS — Scalable Library Management System (UCS3513)
+## Vidya LMS — Scalable Library Management System (UCS3513)
 
 **Author:** System Design Laboratory Pair Programming Team  
 **Evaluation Date:** October 2026  
@@ -9,7 +9,7 @@
 
 ## 1. Architectural Component Mapping Overview
 
-The Athena LMS integrates all eight system-design components required by the laboratory coursework. Each component addresses a specific scalability bottleneck in institutional library management.
+The Vidya LMS integrates all eight system-design components required by the laboratory coursework. Each component addresses a specific scalability bottleneck in institutional library management.
 
 ```mermaid
 flowchart TD

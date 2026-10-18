@@ -18,9 +18,9 @@ public class OpenApiConfig {
 
         return new OpenAPI()
                 .info(new Info()
-                        .title("Scalable Library Management System API")
+                        .title("Vidya LMS API")
                         .version("1.0.0")
-                        .description("REST API documentation for Scalable Library Management System with Rate Limiter, Sharding, Consistent Hashing, Key-Value Store, Snowflake ID Gen, URL Shortener, Web Crawler, and Autocomplete (UCS3513 Mini Project)")
+                        .description("REST API documentation for Vidya LMS (Scalable Library Management System) with Rate Limiter, Sharding, Consistent Hashing, Key-Value Store, Snowflake ID Generator, URL Shortener, Web Crawler, and Autocomplete (UCS3513 Mini Project)")
                         .contact(new Contact().name("Blastorz Team").email("3122245001189@ssn.edu.in")))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()

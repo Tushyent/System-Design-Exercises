@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -40,13 +41,20 @@ public class AuthController {
     private final SnowflakeIdGenerator snowflakeIdGenerator;
     private final TokenBucketRateLimiter rateLimiter;
 
+    /** Strict brute-force policy (see ratelimit.auth.* in application.properties). */
+    @Value("${ratelimit.auth.capacity:10}")
+    private int authBurstCapacity;
+
+    @Value("${ratelimit.auth.refill-per-second:2}")
+    private int authRefillPerSecond;
+
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<AuthResponse>> register(
             @Valid @RequestBody RegisterRequest request,
             HttpServletRequest httpRequest) {
 
         String clientIp = httpRequest.getRemoteAddr();
-        RateLimiterDecision decision = rateLimiter.tryAcquire("auth:" + clientIp, 10, 2);
+        RateLimiterDecision decision = rateLimiter.tryAcquire("auth:" + clientIp, authBurstCapacity, authRefillPerSecond);
         if (!decision.isAllowed()) {
             throw new RateLimitExceededException(
                     "Rate limit exceeded for authentication requests", decision.getRetryAfterSeconds());
@@ -99,7 +107,7 @@ public class AuthController {
             HttpServletRequest httpRequest) {
 
         String clientIp = httpRequest.getRemoteAddr();
-        RateLimiterDecision decision = rateLimiter.tryAcquire("auth:" + clientIp, 10, 2);
+        RateLimiterDecision decision = rateLimiter.tryAcquire("auth:" + clientIp, authBurstCapacity, authRefillPerSecond);
         if (!decision.isAllowed()) {
             throw new RateLimitExceededException(
                     "Too many login attempts. Please try again later.", decision.getRetryAfterSeconds());

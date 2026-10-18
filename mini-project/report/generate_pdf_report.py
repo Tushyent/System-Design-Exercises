@@ -83,7 +83,7 @@ def generate_pdf():
     # Executive Summary
     story.append(Paragraph("1. Executive Summary", h2_style))
     story.append(Paragraph(
-        "Athena LMS is a scalable, distributed Library Management System architected for high concurrency, zero "
+        "Vidya LMS is a scalable, distributed Library Management System architected for high concurrency, zero "
         "double-borrowing under peak loan contention, sub-millisecond autocomplete suggestions, and horizontal database scaling. "
         "The project incorporates all 8 mandated system design components: Token Bucket Rate Limiting, MongoDB Sharding, "
         "Consistent Hashing with Virtual Nodes, Redis Key-Value Caching, Snowflake 64-bit ID Generation, Base62 URL Shortening, "

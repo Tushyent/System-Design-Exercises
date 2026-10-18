@@ -1,21 +1,24 @@
 {
   "rateLimiter": {
-    "rejectionRatePercent": 46.98795180722892,
-    "avgOverheadMs": 38.48945542168675,
-    "rejectedRequests": 39,
-    "allowedRequests": 44,
-    "totalRequests": 83
+    "allowedRequests": 2014,
+    "totalRequests": 2054,
+    "rejectionRatePercent": 1.9474196689386565,
+    "avgOverheadMs": 2.577277215189873,
+    "rejectedRequests": 40
   },
   "keyValueStore": {
     "hitRatioPercent": 0.0,
-    "cacheMisses": 2,
-    "totalCacheRequests": 2,
+    "searchCacheMisses": 21,
+    "searchCacheHits": 1829,
+    "totalCacheRequests": 0,
+    "searchHitRatioPercent": 98.86486486486487,
+    "cacheMisses": 0,
     "cacheHits": 0
   },
   "idGenerator": {
     "algorithm": "64-bit Snowflake (Timestamp + Datacenter + Worker + Sequence)",
     "collisionsObserved": 0,
-    "totalIdsGenerated": 69
+    "totalIdsGenerated": 2
   },
   "consistentHashing": {
     "virtualNodesCount": 300,
@@ -27,23 +30,23 @@
     "nodeCount": 3
   },
   "urlShortener": {
-    "averageLatencyMs": 12.57636,
+    "averageLatencyMs": 1.116146,
     "totalResolutions": 50
   },
   "autocomplete": {
-    "totalQueries": 5,
-    "averageLatencyMs": 11.2028
+    "averageLatencyMs": 2.3156,
+    "totalQueries": 5
   },
   "crawler": {
-    "totalJobsExecuted": 3
+    "totalJobsExecuted": 5
   },
   "libraryStats": {
-    "totalUnpaidFinesAmount": 10.0,
-    "unpaidFinesCount": 1,
-    "totalCopies": 121,
-    "totalTitles": 39,
-    "activeLoans": 15,
-    "totalMembers": 140,
-    "pendingReservations": 0
+    "unpaidFinesCount": 2,
+    "totalCopies": 124,
+    "totalTitles": 42,
+    "activeLoans": 17,
+    "totalMembers": 173,
+    "pendingReservations": 2,
+    "totalUnpaidFinesAmount": 20.0
   }
 }

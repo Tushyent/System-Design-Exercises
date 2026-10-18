@@ -1,4 +1,4 @@
-# Athena LMS: Demonstration Checklist & Step-by-Step Script
+# Vidya LMS: Demonstration Checklist & Step-by-Step Script
 
 **Coursework**: SSN CSE V Semester UCS3513 System Design Laboratory  
 **Project**: Scalable Library Management System (Problem Statement 3)  

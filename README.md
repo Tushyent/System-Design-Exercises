@@ -24,3 +24,10 @@
 | 5 | [ex-5-consistent-hashing](./ex-5-consistent-hashing/) | Application-Level Consistent Hashing — Spring Boot hash ring over standalone MongoDB nodes |
 | 6 | [ex-6-rate-limiter](./ex-6-rate-limiter/) | Token Bucket API Rate Limiter — Spring Boot + Redis + Lua atomic script, HTTP 429 with Retry-After |
 | 7 | [ex-7-autocomplete](./ex-7-autocomplete/) | Autocomplete Search System — Trie-based prefix tree matching in Java + Redis JSON cache + dynamic cache invalidation |
+| 8 | [ex-8-web-crawler](./ex-8-web-crawler/) | Distributed Web Crawler — Redis-backed frontier queue + visited-set dedup, Jsoup link discovery, metadata caching |
+
+## Mini Project
+
+| Folder | Description |
+|--------|-------------|
+| [mini-project](./mini-project/) | **Vidya LMS** — Scalable Library Management System (PS3): Spring Boot + MongoDB + Redis + React, implementing all 8 system-design building blocks, with benchmarks, verification artifacts, and full report |

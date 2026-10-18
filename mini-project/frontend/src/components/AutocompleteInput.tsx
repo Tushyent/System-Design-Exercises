@@ -103,7 +103,7 @@ export const AutocompleteInput: React.FC<Props> = ({
         }}
         className="relative flex items-center"
       >
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-athena-text-muted pointer-events-none" />
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-vidya-text-muted pointer-events-none" />
         <input
           type="text"
           value={query}
@@ -114,14 +114,14 @@ export const AutocompleteInput: React.FC<Props> = ({
           }}
           placeholder={placeholder}
           aria-label="Search catalogue"
-          className="w-full pl-10 pr-24 py-2 bg-athena-blue-surface hover:bg-white focus:bg-white border border-athena-border focus:border-athena-blue rounded-control text-sm text-athena-text-main placeholder:text-athena-text-muted focus:outline-none focus:ring-2 focus:ring-athena-blue-light transition-all shadow-subtle"
+          className="w-full pl-10 pr-24 py-2 bg-vidya-blue-surface hover:bg-white focus:bg-white border border-vidya-border focus:border-vidya-blue rounded-control text-sm text-vidya-text-main placeholder:text-vidya-text-muted focus:outline-none focus:ring-2 focus:ring-vidya-blue-light transition-all shadow-subtle"
         />
 
         {query && (
           <button
             type="button"
             onClick={handleClear}
-            className="absolute right-14 top-1/2 -translate-y-1/2 p-1 text-athena-text-muted hover:text-athena-text-main rounded transition-colors"
+            className="absolute right-14 top-1/2 -translate-y-1/2 p-1 text-vidya-text-muted hover:text-vidya-text-main rounded transition-colors"
             title="Clear search"
           >
             <X className="w-3.5 h-3.5" />
@@ -141,8 +141,8 @@ export const AutocompleteInput: React.FC<Props> = ({
 
       {/* Autocomplete Dropdown */}
       {isOpen && suggestions.length > 0 && (
-        <div className="absolute z-50 left-0 right-0 mt-1.5 bg-white border border-athena-border rounded-control shadow-elevated overflow-hidden divide-y divide-athena-divider animate-in fade-in duration-150">
-          <div className="px-3 py-1.5 bg-athena-blue-surface text-[10px] font-bold text-athena-text-muted uppercase tracking-wider flex justify-between items-center">
+        <div className="absolute z-50 left-0 right-0 mt-1.5 bg-white border border-vidya-border rounded-control shadow-elevated overflow-hidden divide-y divide-vidya-divider animate-in fade-in duration-150">
+          <div className="px-3 py-1.5 bg-vidya-blue-surface text-[10px] font-bold text-vidya-text-muted uppercase tracking-wider flex justify-between items-center">
             <span>Autocomplete Matches</span>
             <span className="font-mono">{suggestions.length} suggestions</span>
           </div>
@@ -156,11 +156,11 @@ export const AutocompleteInput: React.FC<Props> = ({
                   onClick={() => handleSelect(item)}
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`px-3 py-2.5 cursor-pointer flex items-center justify-between text-xs transition-colors ${
-                    isSelected ? 'bg-athena-blue-light text-athena-blue' : 'hover:bg-athena-blue-surface text-athena-text-main'
+                    isSelected ? 'bg-vidya-blue-light text-vidya-blue' : 'hover:bg-vidya-blue-surface text-vidya-text-main'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 truncate pr-2">
-                    {item.type === 'TITLE' && <Book className="w-3.5 h-3.5 text-athena-blue shrink-0" />}
+                    {item.type === 'TITLE' && <Book className="w-3.5 h-3.5 text-vidya-blue shrink-0" />}
                     {item.type === 'AUTHOR' && <User className="w-3.5 h-3.5 text-amber-600 shrink-0" />}
                     {item.type === 'CATEGORY' && <Tag className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
                     <span className="font-medium truncate">{item.text}</span>
@@ -169,7 +169,7 @@ export const AutocompleteInput: React.FC<Props> = ({
                   <span
                     className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider font-mono shrink-0 ${
                       item.type === 'TITLE'
-                        ? 'bg-blue-50 text-athena-blue border border-blue-200'
+                        ? 'bg-blue-50 text-vidya-blue border border-blue-200'
                         : item.type === 'AUTHOR'
                         ? 'bg-amber-50 text-amber-800 border border-amber-200'
                         : 'bg-emerald-50 text-emerald-800 border border-emerald-200'

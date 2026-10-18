@@ -125,17 +125,17 @@ export const BookDetailModal: React.FC<Props> = ({
       aria-modal="true"
       aria-labelledby="modal-title"
     >
-      <div className="bg-white rounded-dialog max-w-2xl w-full shadow-elevated border border-athena-border overflow-hidden relative my-6 animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-dialog max-w-2xl w-full shadow-elevated border border-vidya-border overflow-hidden relative my-6 animate-in fade-in zoom-in-95 duration-200">
         
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-athena-divider bg-athena-blue-surface">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-athena-blue font-mono">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-vidya-divider bg-vidya-blue-surface">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-vidya-blue font-mono">
             <BookOpen className="w-4 h-4" />
             <span>Catalogue Item Details</span>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-control-sm text-athena-text-muted hover:text-athena-text-main hover:bg-white transition-colors"
+            className="p-1 rounded-control-sm text-vidya-text-muted hover:text-vidya-text-main hover:bg-white transition-colors"
             aria-label="Close dialog"
           >
             <X className="w-5 h-5" />
@@ -145,7 +145,7 @@ export const BookDetailModal: React.FC<Props> = ({
         {/* Modal Content */}
         <div className="p-6 sm:p-8">
           {loading ? (
-            <div className="py-16 text-center text-athena-text-muted text-sm animate-pulse">
+            <div className="py-16 text-center text-vidya-text-muted text-sm animate-pulse">
               Loading book metadata and inventory availability...
             </div>
           ) : data ? (
@@ -156,14 +156,14 @@ export const BookDetailModal: React.FC<Props> = ({
                 <div
                   className={`p-4 rounded-control text-xs font-medium flex items-start gap-3 border ${
                     feedback.type === 'success'
-                      ? 'bg-athena-success-bg text-athena-success border-emerald-200'
-                      : 'bg-athena-error-bg text-athena-error border-rose-200'
+                      ? 'bg-vidya-success-bg text-vidya-success border-emerald-200'
+                      : 'bg-vidya-error-bg text-vidya-error border-rose-200'
                   }`}
                 >
                   {feedback.type === 'success' ? (
-                    <CheckCircle2 className="w-4 h-4 text-athena-success shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-vidya-success shrink-0 mt-0.5" />
                   ) : (
-                    <AlertCircle className="w-4 h-4 text-athena-error shrink-0 mt-0.5" />
+                    <AlertCircle className="w-4 h-4 text-vidya-error shrink-0 mt-0.5" />
                   )}
                   <span>{feedback.message}</span>
                 </div>
@@ -186,19 +186,19 @@ export const BookDetailModal: React.FC<Props> = ({
 
                   {/* Shareable Base62 Short URL Box */}
                   {data.shareableShortUrl && (
-                    <div className="bg-athena-blue-surface border border-athena-border rounded-control p-2.5 space-y-1.5">
-                      <div className="flex items-center justify-between text-[10px] font-bold text-athena-text-muted uppercase tracking-wider font-mono">
+                    <div className="bg-vidya-blue-surface border border-vidya-border rounded-control p-2.5 space-y-1.5">
+                      <div className="flex items-center justify-between text-[10px] font-bold text-vidya-text-muted uppercase tracking-wider font-mono">
                         <span>Shareable Link</span>
-                        <span className="text-athena-blue">Base62</span>
+                        <span className="text-vidya-blue">Base62</span>
                       </div>
-                      <div className="flex items-center gap-1.5 bg-white px-2 py-1.5 rounded border border-athena-border">
-                        <span className="text-[11px] font-mono text-athena-text-main truncate flex-1">
+                      <div className="flex items-center gap-1.5 bg-white px-2 py-1.5 rounded border border-vidya-border">
+                        <span className="text-[11px] font-mono text-vidya-text-main truncate flex-1">
                           {data.shareableShortUrl}
                         </span>
                         <button
                           type="button"
                           onClick={handleCopyShortUrl}
-                          className="p-1 text-athena-blue hover:text-athena-blue-hover transition-colors rounded"
+                          className="p-1 text-vidya-blue hover:text-vidya-blue-hover transition-colors rounded"
                           title="Copy short link"
                         >
                           {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
@@ -220,55 +220,55 @@ export const BookDetailModal: React.FC<Props> = ({
                       {data.book.categories?.map((cat, i) => (
                         <span
                           key={i}
-                          className="text-[10px] font-bold uppercase tracking-wider text-athena-blue bg-athena-blue-light px-2 py-0.5 rounded font-mono"
+                          className="text-[10px] font-bold uppercase tracking-wider text-vidya-blue bg-vidya-blue-light px-2 py-0.5 rounded font-mono"
                         >
                           {cat}
                         </span>
                       ))}
                     </div>
 
-                    <h2 id="modal-title" className="text-xl sm:text-2xl font-display font-extrabold text-athena-navy leading-snug">
+                    <h2 id="modal-title" className="text-xl sm:text-2xl font-display font-extrabold text-vidya-navy leading-snug">
                       {data.book.title}
                     </h2>
 
-                    <p className="text-sm font-medium text-athena-text-secondary mt-1">
+                    <p className="text-sm font-medium text-vidya-text-secondary mt-1">
                       by {data.book.authors?.join(', ') || 'Unknown Author'}
                     </p>
                   </div>
 
                   {/* Metadata Attributes */}
-                  <div className="grid grid-cols-2 gap-3 py-3 border-y border-athena-divider text-xs">
+                  <div className="grid grid-cols-2 gap-3 py-3 border-y border-vidya-divider text-xs">
                     <div>
-                      <span className="text-athena-text-muted block text-[11px]">ISBN-13</span>
-                      <span className="font-mono font-medium text-athena-text-main">{data.book.isbn}</span>
+                      <span className="text-vidya-text-muted block text-[11px]">ISBN-13</span>
+                      <span className="font-mono font-medium text-vidya-text-main">{data.book.isbn}</span>
                     </div>
 
                     <div>
-                      <span className="text-athena-text-muted block text-[11px]">Availability</span>
-                      <span className="font-semibold text-athena-navy">
+                      <span className="text-vidya-text-muted block text-[11px]">Availability</span>
+                      <span className="font-semibold text-vidya-navy">
                         {data.availableCount} of {data.book.totalCopies} copies available
                       </span>
                     </div>
 
                     {data.book.publisher && (
                       <div>
-                        <span className="text-athena-text-muted block text-[11px]">Publisher</span>
-                        <span className="font-medium text-athena-text-main">{data.book.publisher}</span>
+                        <span className="text-vidya-text-muted block text-[11px]">Publisher</span>
+                        <span className="font-medium text-vidya-text-main">{data.book.publisher}</span>
                       </div>
                     )}
 
                     {Boolean(data.book.publicationYear && data.book.publicationYear > 1000) && (
                       <div>
-                        <span className="text-athena-text-muted block text-[11px]">Year Published</span>
-                        <span className="font-medium text-athena-text-main font-mono">{data.book.publicationYear}</span>
+                        <span className="text-vidya-text-muted block text-[11px]">Year Published</span>
+                        <span className="font-medium text-vidya-text-main font-mono">{data.book.publicationYear}</span>
                       </div>
                     )}
                   </div>
 
                   {/* Book Description */}
                   {data.book.description && (
-                    <div className="text-xs text-athena-text-secondary leading-relaxed space-y-1">
-                      <span className="font-bold text-athena-navy text-[11px] uppercase tracking-wider block">
+                    <div className="text-xs text-vidya-text-secondary leading-relaxed space-y-1">
+                      <span className="font-bold text-vidya-navy text-[11px] uppercase tracking-wider block">
                         Overview
                       </span>
                       <p className="line-clamp-4">{data.book.description}</p>
@@ -310,25 +310,25 @@ export const BookDetailModal: React.FC<Props> = ({
 
               {/* Physical Copy Inventory Table */}
               {data.copies && data.copies.length > 0 && (
-                <div className="pt-4 border-t border-athena-divider space-y-2">
-                  <div className="flex items-center justify-between text-xs font-bold text-athena-navy">
+                <div className="pt-4 border-t border-vidya-divider space-y-2">
+                  <div className="flex items-center justify-between text-xs font-bold text-vidya-navy">
                     <span className="flex items-center gap-1.5">
-                      <Barcode className="w-3.5 h-3.5 text-athena-blue" />
+                      <Barcode className="w-3.5 h-3.5 text-vidya-blue" />
                       <span>Physical Inventory Barcodes ({data.copies.length})</span>
                     </span>
-                    <span className="text-[11px] font-mono text-athena-text-muted">
+                    <span className="text-[11px] font-mono text-vidya-text-muted">
                       Atomic copy tracking
                     </span>
                   </div>
 
-                  <div className="bg-athena-blue-surface rounded-control border border-athena-border overflow-hidden">
-                    <div className="max-h-36 overflow-y-auto divide-y divide-athena-divider">
+                  <div className="bg-vidya-blue-surface rounded-control border border-vidya-border overflow-hidden">
+                    <div className="max-h-36 overflow-y-auto divide-y divide-vidya-divider">
                       {data.copies.map((copy) => (
                         <div
                           key={copy.id}
                           className="px-3.5 py-2 text-xs flex items-center justify-between"
                         >
-                          <span className="font-mono text-athena-text-main font-medium">
+                          <span className="font-mono text-vidya-text-main font-medium">
                             {copy.barcode}
                           </span>
                           <span
@@ -348,7 +348,7 @@ export const BookDetailModal: React.FC<Props> = ({
               )}
             </div>
           ) : (
-            <div className="py-12 text-center text-athena-text-muted text-sm">
+            <div className="py-12 text-center text-vidya-text-muted text-sm">
               Book information unavailable.
             </div>
           )}

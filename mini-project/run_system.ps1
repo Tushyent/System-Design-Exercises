@@ -1,6 +1,6 @@
-# One-Click Startup Script for Scalable Library Management System
+# One-Click Startup Script for Vidya LMS (Scalable Library Management System)
 Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host "  Starting Athena Scalable Library Management System      " -ForegroundColor Cyan
+Write-Host "  Starting Vidya LMS - Scalable Library System           " -ForegroundColor Cyan
 Write-Host "==========================================================" -ForegroundColor Cyan
 
 # 1. Verify MongoDB Port 27017

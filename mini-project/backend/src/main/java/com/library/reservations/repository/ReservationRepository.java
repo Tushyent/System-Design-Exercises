@@ -15,4 +15,5 @@ public interface ReservationRepository extends MongoRepository<Reservation, Stri
     List<Reservation> findByMemberIdOrderByCreatedAtDesc(String memberId);
     Optional<Reservation> findByBookIdAndMemberIdAndStatus(String bookId, String memberId, ReservationStatus status);
     int countByBookIdAndStatus(String bookId, ReservationStatus status);
+    long countByStatus(ReservationStatus status);
 }

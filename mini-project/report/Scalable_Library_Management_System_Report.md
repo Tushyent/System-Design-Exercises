@@ -12,7 +12,7 @@
 
 Modern institutional libraries handle exponentially growing datasets encompassing thousands of concurrent student and faculty requests, tens of thousands of catalogue titles, hundreds of thousands of physical copies, circulation records, reservation queues, and financial transactions. Traditional monolithic architectures built on single relational database instances encounter severe concurrency bottlenecks, database lock contention during checkouts, cache stampedes, and cascading failures under peak academic traffic.
 
-This project delivers the architecture, full-stack prototype implementation, formal test suite, and quantitative benchmark evaluation for **Athena LMS**, a distributed, fault-tolerant, horizontally scalable Library Management System. The architecture systematically integrates all eight core system design components mandated by the curriculum:
+This project delivers the architecture, full-stack prototype implementation, formal test suite, and quantitative benchmark evaluation for **Vidya LMS**, a distributed, fault-tolerant, horizontally scalable Library Management System. The architecture systematically integrates all eight core system design components mandated by the curriculum:
 
 1. **Token Bucket Rate Limiter**: Redis Lua-backed sliding token bucket safeguarding authentication and search endpoints against denial-of-service and brute-force abuse.
 2. **Database Sharding**: Hashed and range-based partitioning schema across books and members ensuring horizontal database scaling.

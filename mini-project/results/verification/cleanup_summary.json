@@ -1,0 +1,23 @@
+{
+  "books_matched": [
+    "Strict Concurrency Verification Book",
+    "Strict Concurrency Verification Book",
+    "Strict Concurrency Verification Book",
+    "Loan Renewal Lifecycle Verification Book",
+    "Concurrency Test Book 1792259376413",
+    "Strict Concurrency Verification Book",
+    "Loan Renewal Lifecycle Verification Book"
+  ],
+  "members_matched": 168,
+  "payments_deleted": 0,
+  "fines_deleted": 0,
+  "loans_deleted": 27,
+  "reservations_deleted": 4,
+  "copies_deleted": 7,
+  "books_deleted": 7,
+  "members_deleted": 168,
+  "copies_released": 0,
+  "real_books_recounted": 11,
+  "books_remaining": 35,
+  "members_remaining": 5
+}

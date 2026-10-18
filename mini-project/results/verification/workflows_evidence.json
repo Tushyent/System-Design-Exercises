@@ -2,22 +2,22 @@
   "1_member_registration": {
     "status": "PASS",
     "data": {
-      "token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxMDIxMjg5NTU2NDUxMDQxMjgiLCJtZW1iZXJJZCI6Ik1FTS0xMDQxMjgiLCJlbWFpbCI6InRlc3R1c2VyXzVjNDE4MUBzc24uZWR1LmluIiwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTc5MTU3NTA0MCwiZXhwIjoxNzkxNjYxNDQwfQ.7VTvz7mRWRz0Q10CwY56FA_skYZYhzNY-6PAAdX4WPGCB-ugmkup7Kr3dV0sA-HS",
-      "id": "102128955645104128",
-      "memberId": "MEM-104128",
+      "token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxMDUwMDAxMDQzNDc0MzkxMDQiLCJtZW1iZXJJZCI6Ik1FTS00MzkxMDQiLCJlbWFpbCI6InRlc3R1c2VyXzNhMDczZkBzc24uZWR1LmluIiwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTc5MjI1OTU3NSwiZXhwIjoxNzkyMzQ1OTc1fQ.WlI1jA6ICtcHPbSrA9u8fWsI_yJMuNuR6KO9jK_nL7wqOFu0TMePNAqsdmy7PqU1",
+      "id": "105000104347439104",
+      "memberId": "MEM-439104",
       "name": "Verification User",
-      "email": "testuser_5c4181@ssn.edu.in",
+      "email": "testuser_3a073f@ssn.edu.in",
       "role": "MEMBER"
     }
   },
   "2_member_login": {
     "status": "PASS",
     "data": {
-      "token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxMDIxMjg5NTU2NDUxMDQxMjgiLCJtZW1iZXJJZCI6Ik1FTS0xMDQxMjgiLCJlbWFpbCI6InRlc3R1c2VyXzVjNDE4MUBzc24uZWR1LmluIiwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTc5MTU3NTA0MCwiZXhwIjoxNzkxNjYxNDQwfQ.7VTvz7mRWRz0Q10CwY56FA_skYZYhzNY-6PAAdX4WPGCB-ugmkup7Kr3dV0sA-HS",
-      "id": "102128955645104128",
-      "memberId": "MEM-104128",
-      "name": "testuser_5c4181@ssn.edu.in",
-      "email": "testuser_5c4181@ssn.edu.in",
+      "token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxMDUwMDAxMDQzNDc0MzkxMDQiLCJtZW1iZXJJZCI6Ik1FTS00MzkxMDQiLCJlbWFpbCI6InRlc3R1c2VyXzNhMDczZkBzc24uZWR1LmluIiwicm9sZSI6Ik1FTUJFUiIsImlhdCI6MTc5MjI1OTU3NiwiZXhwIjoxNzkyMzQ1OTc2fQ.8OPpMLE3xA_ib1YQiL3WQAS7PTV5kwgLEiP_IrD93GgMigjUzd2Ew1KSOK5DVCyv",
+      "id": "105000104347439104",
+      "memberId": "MEM-439104",
+      "name": "testuser_3a073f@ssn.edu.in",
+      "email": "testuser_3a073f@ssn.edu.in",
       "role": "MEMBER"
     }
   },
@@ -25,31 +25,31 @@
     "status": "PASS",
     "data": {
       "token": null,
-      "id": "102128955645104128",
-      "memberId": "MEM-104128",
+      "id": "105000104347439104",
+      "memberId": "MEM-439104",
       "name": "Verification User",
-      "email": "testuser_5c4181@ssn.edu.in",
+      "email": "testuser_3a073f@ssn.edu.in",
       "role": "MEMBER"
     }
   },
   "4_book_listing": {
     "status": "PASS",
-    "totalElements": 37,
+    "totalElements": 40,
     "pageSize": 4
   },
   "5_book_search": {
     "status": "PASS",
-    "resultsCount": 9
+    "resultsCount": 10
   },
   "6_book_details": {
     "status": "PASS",
     "availableCount": 1,
-    "copiesTotal": 3
+    "copiesTotal": 1
   },
   "7_borrow_book": {
     "status": "PASS",
-    "loanId": "LOAN-102128957104721920",
-    "copyId": "102122938425282560"
+    "loanId": "LOAN-105000106771746816",
+    "copyId": "102128968903299072"
   },
   "8_my_loans": {
     "status": "PASS",
@@ -58,10 +58,10 @@
   "9_return_book": {
     "status": "PASS",
     "returnData": {
-      "loanId": "LOAN-102128957104721920",
-      "copyId": "102122938425282560",
+      "loanId": "LOAN-105000106771746816",
+      "copyId": "102128968903299072",
       "status": "RETURNED",
-      "returnedAt": "2026-10-09T19:44:00.881482200Z",
+      "returnedAt": "2026-10-17T17:52:56.333836Z",
       "overdueDays": 0,
       "fineAmount": 0.0,
       "fineId": null,
@@ -76,7 +76,7 @@
   },
   "11_reservation_creation": {
     "status": "PASS",
-    "reservationId": "RES-102128957515763712"
+    "reservationId": "RES-105000107463806976"
   },
   "12_idempotent_payment": {
     "status": "PASS (NO_UNPAID_FINE)",
@@ -90,10 +90,10 @@
   },
   "14_loan_renewal": {
     "status": "PASS",
-    "loanId": "LOAN-102128970530689024",
+    "loanId": "LOAN-105000117798572032",
     "waitlistDefenseVerified": true,
-    "firstRenewalNewDue": "2026-11-06T19:44:04.039Z",
-    "secondRenewalNewDue": "2026-11-20T19:44:04.039Z",
+    "firstRenewalNewDue": "2026-11-14T17:52:58.892Z",
+    "secondRenewalNewDue": "2026-11-28T17:52:58.892Z",
     "maxCapEnforced": true,
     "rejectedHttpCode": 409
   }

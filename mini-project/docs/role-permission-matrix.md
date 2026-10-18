@@ -1,5 +1,5 @@
 # Role-Based Permission & Security Matrix
-## Athena LMS — Scalable Library Management System (UCS3513)
+## Vidya LMS — Scalable Library Management System (UCS3513)
 
 **Document Version:** 2.0 (Post-Audit Hardening)  
 **Security Framework:** Spring Security 6 / Java JWT / Stateless Token Verification  
@@ -9,7 +9,7 @@
 
 ## 1. Overview of System Roles
 
-The Athena LMS implements Role-Based Access Control (RBAC) following the principle of least privilege:
+The Vidya LMS implements Role-Based Access Control (RBAC) following the principle of least privilege:
 
 1. **Anonymous (Public Visitor):** Unauthenticated guest user. Can browse the book catalogue, execute autocomplete prefix lookups, perform catalogue searches, view book details, and resolve short URLs.
 2. **Student / Faculty Member (`ROLE_MEMBER`):** Registered library member. Inherits all anonymous privileges plus the ability to borrow copies, renew loans, place reservations, cancel owned reservations, view personal borrowing history, review fine balances, and pay fines.
