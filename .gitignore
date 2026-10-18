@@ -53,3 +53,8 @@ redis-data/
 .env
 .env.local
 .env.*.local
+
+# --- Generated / runtime artifacts ---
+dist/
+crawled_data/
+mongo-data/
