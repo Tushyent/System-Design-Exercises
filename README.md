@@ -1,6 +1,6 @@
 # System Design Exercises
 
-**Course:** System Design Lab  
+**Course:** System Design Laboratory    
 **Subject Code:** UCS3513  
 **Team:** Blastorz  
 
