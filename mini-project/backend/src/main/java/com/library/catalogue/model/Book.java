@@ -54,6 +54,9 @@ public class Book {
     private int availableCopies = 0;
 
     @Builder.Default
+    private boolean archived = false;
+
+    @Builder.Default
     private Instant createdAt = Instant.now();
 
     @Builder.Default

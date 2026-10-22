@@ -30,6 +30,7 @@ public class ReservationService {
     private final BookCopyRepository copyRepository;
     private final MemberRepository memberRepository;
     private final SnowflakeIdGenerator idGenerator;
+    private final com.library.audit.service.AuditLogService auditLogService;
 
     public Reservation createReservation(CreateReservationRequest request, String memberId) {
         Member member = memberRepository.findById(memberId)
@@ -107,5 +108,71 @@ public class ReservationService {
 
         reservation.setStatus(ReservationStatus.CANCELLED);
         return reservationRepository.save(reservation);
+    }
+
+    public List<Reservation> getAllReservations(ReservationStatus status) {
+        if (status != null) {
+            return reservationRepository.findByStatusOrderByCreatedAtDesc(status);
+        }
+        return reservationRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    public Reservation fulfillReservation(String reservationId, String staffEmail) {
+        Reservation reservation = reservationRepository.findByReservationId(reservationId)
+                .or(() -> reservationRepository.findById(reservationId))
+                .orElseThrow(() -> new ResourceNotFoundException("Reservation not found: " + reservationId));
+
+        reservation.setStatus(ReservationStatus.FULFILLED);
+        Reservation saved = reservationRepository.save(reservation);
+
+        auditLogService.record(staffEmail, "STAFF", "RESERVATION_FULFILL", "RESERVATION", reservation.getReservationId(),
+                "Marked reservation as fulfilled for member: " + reservation.getMemberEmail());
+        return saved;
+    }
+
+    public Reservation cancelReservationByStaff(String reservationId, String reason, String staffEmail) {
+        Reservation reservation = reservationRepository.findByReservationId(reservationId)
+                .or(() -> reservationRepository.findById(reservationId))
+                .orElseThrow(() -> new ResourceNotFoundException("Reservation not found: " + reservationId));
+
+        if (reservation.getAllocatedCopyId() != null) {
+            BookCopy copy = copyRepository.findById(reservation.getAllocatedCopyId()).orElse(null);
+            if (copy != null) {
+                copy.setStatus(CopyStatus.AVAILABLE);
+                copy.setCurrentHolderId(null);
+                copy.setPickupDeadline(null);
+                copyRepository.save(copy);
+            }
+        }
+
+        reservation.setStatus(ReservationStatus.CANCELLED);
+        Reservation saved = reservationRepository.save(reservation);
+
+        auditLogService.record(staffEmail, "STAFF", "RESERVATION_CANCEL", "RESERVATION", reservation.getReservationId(),
+                "Staff cancelled reservation. Reason: " + reason);
+        return saved;
+    }
+
+    public Reservation expireReservation(String reservationId, String staffEmail) {
+        Reservation reservation = reservationRepository.findByReservationId(reservationId)
+                .or(() -> reservationRepository.findById(reservationId))
+                .orElseThrow(() -> new ResourceNotFoundException("Reservation not found: " + reservationId));
+
+        if (reservation.getAllocatedCopyId() != null) {
+            BookCopy copy = copyRepository.findById(reservation.getAllocatedCopyId()).orElse(null);
+            if (copy != null) {
+                copy.setStatus(CopyStatus.AVAILABLE);
+                copy.setCurrentHolderId(null);
+                copy.setPickupDeadline(null);
+                copyRepository.save(copy);
+            }
+        }
+
+        reservation.setStatus(ReservationStatus.EXPIRED);
+        Reservation saved = reservationRepository.save(reservation);
+
+        auditLogService.record(staffEmail, "STAFF", "RESERVATION_EXPIRE", "RESERVATION", reservation.getReservationId(),
+                "Marked unclaimed hold as expired for: " + reservation.getMemberEmail());
+        return saved;
     }
 }

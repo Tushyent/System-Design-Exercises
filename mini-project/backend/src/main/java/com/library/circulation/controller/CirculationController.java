@@ -83,5 +83,34 @@ public class CirculationController {
         List<Loan> history = circulationService.getMemberLoanHistory(principal.getId());
         return ResponseEntity.ok(ApiResponse.ok(history, "Loan history retrieved"));
     }
+
+    @PostMapping("/staff-checkout")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<BorrowResponse>> staffCheckout(
+            @Valid @RequestBody com.library.circulation.dto.StaffCheckoutRequest request,
+            Authentication authentication) {
+        String staffEmail = authentication != null ? authentication.getName() : "staff";
+        BorrowResponse response = circulationService.staffCheckout(request, staffEmail);
+        return ResponseEntity.ok(ApiResponse.ok(response, "Staff checkout completed"));
+    }
+
+    @PostMapping("/staff-return")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<ReturnResponse>> staffReturn(
+            @Valid @RequestBody com.library.circulation.dto.StaffReturnRequest request,
+            Authentication authentication) {
+        String staffEmail = authentication != null ? authentication.getName() : "staff";
+        ReturnResponse response = circulationService.staffReturn(request, staffEmail);
+        return ResponseEntity.ok(ApiResponse.ok(response, "Staff return processed"));
+    }
+
+    @GetMapping("/all-loans")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<List<Loan>>> getAllLoans(
+            @RequestParam(required = false) com.library.circulation.model.LoanStatus status,
+            @RequestParam(required = false) String search) {
+        List<Loan> loans = circulationService.getAllLoans(status, search);
+        return ResponseEntity.ok(ApiResponse.ok(loans, "All circulation loans retrieved"));
+    }
 }
 

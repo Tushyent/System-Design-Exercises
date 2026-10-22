@@ -18,7 +18,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/books")
@@ -89,6 +92,28 @@ public class BookController {
                 .body(ApiResponse.ok(created, "Book added to catalogue"));
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<Book>> updateBook(
+            @PathVariable String id,
+            @RequestBody com.library.catalogue.dto.UpdateBookRequest request,
+            Authentication authentication) {
+        String staffEmail = authentication != null ? authentication.getName() : "staff";
+        Book updated = bookService.updateBook(id, request, staffEmail);
+        return ResponseEntity.ok(ApiResponse.ok(updated, "Book updated successfully"));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> deleteBook(
+            @PathVariable String id,
+            @RequestParam(defaultValue = "false") boolean hardDelete,
+            Authentication authentication) {
+        String staffEmail = authentication != null ? authentication.getName() : "staff";
+        bookService.deleteOrArchiveBook(id, hardDelete, staffEmail);
+        return ResponseEntity.ok(ApiResponse.ok(null, hardDelete ? "Book deleted" : "Book archived"));
+    }
+
     @PostMapping("/{id}/copies")
     @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
     public ResponseEntity<ApiResponse<Book>> addCopies(
@@ -96,5 +121,43 @@ public class BookController {
             @RequestParam(defaultValue = "1") int count) {
         Book updated = bookService.addCopies(id, count);
         return ResponseEntity.ok(ApiResponse.ok(updated, count + " physical copies added"));
+    }
+
+    @GetMapping("/{id}/copies")
+    @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<List<com.library.catalogue.model.BookCopy>>> getBookCopies(@PathVariable String id) {
+        List<com.library.catalogue.model.BookCopy> copies = bookService.getCopiesByBookId(id);
+        return ResponseEntity.ok(ApiResponse.ok(copies, "Copies retrieved"));
+    }
+
+    @GetMapping("/copies/all")
+    @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<List<com.library.catalogue.dto.CopyDetailResponse>>> getAllCopiesDetailed(
+            @RequestParam(required = false) String bookId,
+            @RequestParam(required = false) com.library.catalogue.model.CopyStatus status,
+            @RequestParam(required = false) String barcode) {
+        List<com.library.catalogue.dto.CopyDetailResponse> list = bookService.getAllCopiesDetailed(bookId, status, barcode);
+        return ResponseEntity.ok(ApiResponse.ok(list, "Inventory copies retrieved"));
+    }
+
+    @PutMapping("/copies/{copyId}")
+    @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<com.library.catalogue.model.BookCopy>> updateCopy(
+            @PathVariable String copyId,
+            @RequestBody com.library.catalogue.dto.UpdateCopyRequest request,
+            Authentication authentication) {
+        String staffEmail = authentication != null ? authentication.getName() : "staff";
+        com.library.catalogue.model.BookCopy updated = bookService.updateCopy(copyId, request, staffEmail);
+        return ResponseEntity.ok(ApiResponse.ok(updated, "Copy updated successfully"));
+    }
+
+    @DeleteMapping("/copies/{copyId}")
+    @PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> deleteCopy(
+            @PathVariable String copyId,
+            Authentication authentication) {
+        String staffEmail = authentication != null ? authentication.getName() : "staff";
+        bookService.deleteCopy(copyId, staffEmail);
+        return ResponseEntity.ok(ApiResponse.ok(null, "Copy deleted"));
     }
 }

@@ -52,4 +52,43 @@ public class ReservationController {
         Reservation cancelled = reservationService.cancelReservation(reservationId, principal.getId());
         return ResponseEntity.ok(ApiResponse.ok(cancelled, "Reservation cancelled"));
     }
+
+    @GetMapping("/all")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<List<Reservation>>> getAllReservations(
+            @RequestParam(required = false) com.library.reservations.model.ReservationStatus status) {
+        List<Reservation> list = reservationService.getAllReservations(status);
+        return ResponseEntity.ok(ApiResponse.ok(list, "All library reservations retrieved"));
+    }
+
+    @PostMapping("/{reservationId}/fulfill")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<Reservation>> fulfillReservation(
+            @PathVariable String reservationId,
+            Authentication authentication) {
+        String staffEmail = authentication != null ? authentication.getName() : "staff";
+        Reservation fulfilled = reservationService.fulfillReservation(reservationId, staffEmail);
+        return ResponseEntity.ok(ApiResponse.ok(fulfilled, "Reservation fulfilled"));
+    }
+
+    @PostMapping("/{reservationId}/cancel-by-staff")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<Reservation>> cancelReservationByStaff(
+            @PathVariable String reservationId,
+            @RequestParam(defaultValue = "Cancelled by library staff") String reason,
+            Authentication authentication) {
+        String staffEmail = authentication != null ? authentication.getName() : "staff";
+        Reservation cancelled = reservationService.cancelReservationByStaff(reservationId, reason, staffEmail);
+        return ResponseEntity.ok(ApiResponse.ok(cancelled, "Reservation cancelled by staff"));
+    }
+
+    @PostMapping("/{reservationId}/expire")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('LIBRARIAN', 'ADMIN')")
+    public ResponseEntity<ApiResponse<Reservation>> expireReservation(
+            @PathVariable String reservationId,
+            Authentication authentication) {
+        String staffEmail = authentication != null ? authentication.getName() : "staff";
+        Reservation expired = reservationService.expireReservation(reservationId, staffEmail);
+        return ResponseEntity.ok(ApiResponse.ok(expired, "Unclaimed hold expired"));
+    }
 }

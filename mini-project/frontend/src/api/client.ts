@@ -1,4 +1,27 @@
-import { Book, BookDetailResponse, Loan, RenewResponse, Reservation, Fine, Payment, SystemMetrics, AutocompleteSuggestion, CrawlerJob } from '../types';
+import {
+  Book,
+  BookDetailResponse,
+  BookCopy,
+  CopyDetail,
+  Loan,
+  RenewResponse,
+  Reservation,
+  Fine,
+  Payment,
+  SystemMetrics,
+  AutocompleteSuggestion,
+  CrawlerJob,
+  Member,
+  MemberProfile360,
+  MemberEligibility,
+  AuditLog,
+  SystemConfig,
+  Role,
+  CopyStatus,
+  LoanStatus,
+  ReservationStatus,
+  FineStatus
+} from '../types';
 
 const API_BASE = '/api';
 
@@ -51,6 +74,61 @@ export const api = {
     },
   },
 
+  members: {
+    getAll: async (search?: string, status?: string, role?: string) => {
+      const params = new URLSearchParams();
+      if (search) params.append('search', search);
+      if (status) params.append('status', status);
+      if (role) params.append('role', role);
+      const res = await fetch(`${API_BASE}/members?${params.toString()}`, { headers: getAuthHeaders() });
+      return handleResponse<Member[]>(res);
+    },
+    getById: async (id: string) => {
+      const res = await fetch(`${API_BASE}/members/${id}`, { headers: getAuthHeaders() });
+      return handleResponse<Member>(res);
+    },
+    getProfile360: async (id: string) => {
+      const res = await fetch(`${API_BASE}/members/${id}/summary`, { headers: getAuthHeaders() });
+      return handleResponse<MemberProfile360>(res);
+    },
+    checkEligibility: async (id: string) => {
+      const res = await fetch(`${API_BASE}/members/${id}/eligibility`, { headers: getAuthHeaders() });
+      return handleResponse<MemberEligibility>(res);
+    },
+    register: async (data: { name: string; email: string; password: string; role?: Role; department?: string; phone?: string; maxBorrowLimit?: number }) => {
+      const res = await fetch(`${API_BASE}/members`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+      return handleResponse<Member>(res);
+    },
+    update: async (id: string, data: any) => {
+      const res = await fetch(`${API_BASE}/members/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+      return handleResponse<Member>(res);
+    },
+    updateStatus: async (id: string, status: string, reason?: string, suspendedUntil?: string) => {
+      const res = await fetch(`${API_BASE}/members/${id}/status`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ status, reason, suspendedUntil }),
+      });
+      return handleResponse<Member>(res);
+    },
+    resetPassword: async (id: string, newPassword: string) => {
+      const res = await fetch(`${API_BASE}/members/${id}/reset-password`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ newPassword }),
+      });
+      return handleResponse<void>(res);
+    },
+  },
+
   books: {
     getAll: async (page = 0, size = 12) => {
       const res = await fetch(`${API_BASE}/books?page=${page}&size=${size}`);
@@ -72,12 +150,54 @@ export const api = {
       });
       return handleResponse<Book>(res);
     },
+    update: async (id: string, data: any) => {
+      const res = await fetch(`${API_BASE}/books/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+      return handleResponse<Book>(res);
+    },
+    delete: async (id: string, hardDelete = false) => {
+      const res = await fetch(`${API_BASE}/books/${id}?hardDelete=${hardDelete}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+      return handleResponse<void>(res);
+    },
     addCopies: async (bookId: string, count: number) => {
       const res = await fetch(`${API_BASE}/books/${bookId}/copies?count=${count}`, {
         method: 'POST',
         headers: getAuthHeaders(),
       });
       return handleResponse<Book>(res);
+    },
+    getCopies: async (bookId: string) => {
+      const res = await fetch(`${API_BASE}/books/${bookId}/copies`, { headers: getAuthHeaders() });
+      return handleResponse<BookCopy[]>(res);
+    },
+    getAllCopies: async (bookId?: string, status?: string, barcode?: string) => {
+      const params = new URLSearchParams();
+      if (bookId) params.append('bookId', bookId);
+      if (status) params.append('status', status);
+      if (barcode) params.append('barcode', barcode);
+      const res = await fetch(`${API_BASE}/books/copies/all?${params.toString()}`, { headers: getAuthHeaders() });
+      return handleResponse<CopyDetail[]>(res);
+    },
+    updateCopy: async (copyId: string, data: { status?: CopyStatus; barcode?: string; location?: string; conditionNotes?: string }) => {
+      const res = await fetch(`${API_BASE}/books/copies/${copyId}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+      return handleResponse<BookCopy>(res);
+    },
+    deleteCopy: async (copyId: string) => {
+      const res = await fetch(`${API_BASE}/books/copies/${copyId}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+      return handleResponse<void>(res);
     },
   },
 
@@ -90,11 +210,27 @@ export const api = {
       });
       return handleResponse<any>(res);
     },
+    staffCheckout: async (data: { memberIdentifier: string; barcode: string; loanDays?: number; overrideLimit?: boolean; overrideReason?: string }) => {
+      const res = await fetch(`${API_BASE}/circulation/staff-checkout`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+      return handleResponse<any>(res);
+    },
     returnBook: async (copyIdOrBarcode: string) => {
       const res = await fetch(`${API_BASE}/circulation/return`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({ copyIdOrBarcode }),
+      });
+      return handleResponse<any>(res);
+    },
+    staffReturn: async (data: { barcode: string; condition?: string; damageFee?: number; staffNotes?: string }) => {
+      const res = await fetch(`${API_BASE}/circulation/staff-return`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
       });
       return handleResponse<any>(res);
     },
@@ -112,6 +248,13 @@ export const api = {
     },
     history: async () => {
       const res = await fetch(`${API_BASE}/circulation/my-history`, { headers: getAuthHeaders() });
+      return handleResponse<Loan[]>(res);
+    },
+    allLoans: async (status?: string, search?: string) => {
+      const params = new URLSearchParams();
+      if (status) params.append('status', status);
+      if (search) params.append('search', search);
+      const res = await fetch(`${API_BASE}/circulation/all-loans?${params.toString()}`, { headers: getAuthHeaders() });
       return handleResponse<Loan[]>(res);
     },
   },
@@ -136,12 +279,69 @@ export const api = {
       });
       return handleResponse<Reservation>(res);
     },
+    all: async (status?: string) => {
+      const params = new URLSearchParams();
+      if (status) params.append('status', status);
+      const res = await fetch(`${API_BASE}/reservations/all?${params.toString()}`, { headers: getAuthHeaders() });
+      return handleResponse<Reservation[]>(res);
+    },
+    fulfill: async (reservationId: string) => {
+      const res = await fetch(`${API_BASE}/reservations/${reservationId}/fulfill`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+      });
+      return handleResponse<Reservation>(res);
+    },
+    cancelByStaff: async (reservationId: string, reason: string) => {
+      const res = await fetch(`${API_BASE}/reservations/${reservationId}/cancel-by-staff?reason=${encodeURIComponent(reason)}`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+      });
+      return handleResponse<Reservation>(res);
+    },
+    expire: async (reservationId: string) => {
+      const res = await fetch(`${API_BASE}/reservations/${reservationId}/expire`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+      });
+      return handleResponse<Reservation>(res);
+    },
   },
 
   fines: {
     myFines: async () => {
       const res = await fetch(`${API_BASE}/fines/my-fines`, { headers: getAuthHeaders() });
       return handleResponse<{ unpaidFines: Fine[]; totalUnpaidAmount: number; unpaidCount: number }>(res);
+    },
+    all: async (status?: string) => {
+      const params = new URLSearchParams();
+      if (status) params.append('status', status);
+      const res = await fetch(`${API_BASE}/fines/all?${params.toString()}`, { headers: getAuthHeaders() });
+      return handleResponse<Fine[]>(res);
+    },
+    waive: async (fineId: string, reason: string) => {
+      const res = await fetch(`${API_BASE}/fines/${fineId}/waive`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ reason }),
+      });
+      return handleResponse<Fine>(res);
+    },
+    adjust: async (fineId: string, newAmount: number, reason: string) => {
+      const res = await fetch(`${API_BASE}/fines/${fineId}/adjust`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ newAmount, reason }),
+      });
+      return handleResponse<Fine>(res);
+    },
+    cashPayment: async (fineId: string, notes?: string) => {
+      const res = await fetch(`${API_BASE}/fines/${fineId}/cash-payment`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ notes }),
+      });
+      return handleResponse<Fine>(res);
     },
   },
 
@@ -157,6 +357,59 @@ export const api = {
     myHistory: async () => {
       const res = await fetch(`${API_BASE}/payments/my-history`, { headers: getAuthHeaders() });
       return handleResponse<Payment[]>(res);
+    },
+  },
+
+  admin: {
+    getConfig: async () => {
+      const res = await fetch(`${API_BASE}/admin/config`, { headers: getAuthHeaders() });
+      return handleResponse<SystemConfig>(res);
+    },
+    updateConfig: async (config: SystemConfig) => {
+      const res = await fetch(`${API_BASE}/admin/config`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(config),
+      });
+      return handleResponse<SystemConfig>(res);
+    },
+    getStaff: async () => {
+      const res = await fetch(`${API_BASE}/admin/staff`, { headers: getAuthHeaders() });
+      return handleResponse<Member[]>(res);
+    },
+    createStaff: async (data: { name: string; email: string; password: string; role: Role; department?: string; phone?: string }) => {
+      const res = await fetch(`${API_BASE}/admin/staff`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+      return handleResponse<Member>(res);
+    },
+    updateStaffRole: async (staffId: string, role: Role) => {
+      const res = await fetch(`${API_BASE}/admin/staff/${staffId}/role`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ role }),
+      });
+      return handleResponse<Member>(res);
+    },
+    toggleStaffStatus: async (staffId: string) => {
+      const res = await fetch(`${API_BASE}/admin/staff/${staffId}/toggle-status`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+      });
+      return handleResponse<Member>(res);
+    },
+  },
+
+  auditLogs: {
+    getRecent: async () => {
+      const res = await fetch(`${API_BASE}/audit-logs`, { headers: getAuthHeaders() });
+      return handleResponse<AuditLog[]>(res);
+    },
+    getPaged: async (page = 0, size = 30) => {
+      const res = await fetch(`${API_BASE}/audit-logs/paged?page=${page}&size=${size}`, { headers: getAuthHeaders() });
+      return handleResponse<{ content: AuditLog[]; totalPages: number; totalElements: number }>(res);
     },
   },
 

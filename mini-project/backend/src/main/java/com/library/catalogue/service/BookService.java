@@ -16,6 +16,11 @@ import com.library.catalogue.model.BookCopy;
 import com.library.catalogue.model.CopyStatus;
 import com.library.catalogue.repository.BookCopyRepository;
 import com.library.catalogue.repository.BookRepository;
+import com.library.audit.service.AuditLogService;
+import com.library.catalogue.dto.CopyDetailResponse;
+import com.library.catalogue.dto.UpdateBookRequest;
+import com.library.catalogue.dto.UpdateCopyRequest;
+import com.library.common.exception.ConflictException;
 import com.library.common.exception.ResourceNotFoundException;
 import com.library.idgenerator.SnowflakeIdGenerator;
 import com.library.shorturl.ShortUrl;
@@ -49,6 +54,7 @@ public class BookService {
     private final SnowflakeIdGenerator idGenerator;
     private final ShortUrlRepository shortUrlRepository;
     private final PrefixTrie prefixTrie;
+    private final AuditLogService auditLogService;
     private final ObjectMapper objectMapper = JsonMapper.builder()
             .addModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
@@ -381,5 +387,165 @@ public class BookService {
         cacheMisses.set(0);
         searchCacheHits.set(0);
         searchCacheMisses.set(0);
+    }
+
+    public Book updateBook(String id, UpdateBookRequest request, String staffEmail) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + id));
+
+        if (request.getTitle() != null && !request.getTitle().isBlank()) {
+            book.setTitle(request.getTitle());
+        }
+        if (request.getIsbn() != null && !request.getIsbn().isBlank()) {
+            book.setIsbn(request.getIsbn());
+        }
+        if (request.getAuthors() != null) {
+            book.setAuthors(request.getAuthors());
+        }
+        if (request.getCategories() != null) {
+            book.setCategories(request.getCategories());
+        }
+        if (request.getPublisher() != null) {
+            book.setPublisher(request.getPublisher());
+        }
+        if (request.getPublicationYear() != null && request.getPublicationYear() > 0) {
+            book.setPublicationYear(request.getPublicationYear());
+        }
+        if (request.getDescription() != null) {
+            book.setDescription(request.getDescription());
+        }
+        if (request.getCoverUrl() != null) {
+            book.setCoverUrl(request.getCoverUrl());
+        }
+        if (request.getArchived() != null) {
+            book.setArchived(request.getArchived());
+        }
+        book.setUpdatedAt(Instant.now());
+
+        Book saved = bookRepository.save(book);
+        invalidateAvailabilityCache(saved.getId());
+        indexInAutocomplete(saved);
+
+        auditLogService.record(staffEmail, "STAFF", "BOOK_UPDATE", "BOOK", saved.getId(),
+                "Updated metadata for book: " + saved.getTitle() + " (ISBN: " + saved.getIsbn() + ")");
+        return saved;
+    }
+
+    public void deleteOrArchiveBook(String id, boolean hardDelete, String staffEmail) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + id));
+
+        List<BookCopy> copies = copyRepository.findByBookId(id);
+        boolean hasActiveLoans = copies.stream().anyMatch(c -> c.getStatus() == CopyStatus.BORROWED);
+        if (hasActiveLoans) {
+            throw new ConflictException("Cannot delete or archive book: copies are currently borrowed on loan.");
+        }
+
+        if (hardDelete) {
+            copyRepository.deleteAll(copies);
+            bookRepository.delete(book);
+            auditLogService.record(staffEmail, "STAFF", "BOOK_DELETE", "BOOK", id,
+                    "Permanently deleted book: " + book.getTitle());
+        } else {
+            book.setArchived(true);
+            book.setUpdatedAt(Instant.now());
+            bookRepository.save(book);
+            auditLogService.record(staffEmail, "STAFF", "BOOK_ARCHIVE", "BOOK", id,
+                    "Archived book title: " + book.getTitle());
+        }
+        invalidateAvailabilityCache(id);
+    }
+
+    public List<BookCopy> getCopiesByBookId(String bookId) {
+        return copyRepository.findByBookId(bookId);
+    }
+
+    public List<CopyDetailResponse> getAllCopiesDetailed(String bookId, CopyStatus status, String barcodeQuery) {
+        List<BookCopy> copies;
+        if (bookId != null && !bookId.isBlank()) {
+            copies = copyRepository.findByBookId(bookId);
+        } else if (barcodeQuery != null && !barcodeQuery.isBlank()) {
+            copies = copyRepository.findByBarcodeContainingIgnoreCase(barcodeQuery.trim());
+        } else if (status != null) {
+            copies = copyRepository.findByStatus(status);
+        } else {
+            copies = copyRepository.findAll();
+        }
+
+        Map<String, Book> bookMap = new java.util.HashMap<>();
+        List<CopyDetailResponse> responses = new ArrayList<>();
+        for (BookCopy copy : copies) {
+            if (status != null && copy.getStatus() != status) {
+                continue;
+            }
+            Book book = bookMap.computeIfAbsent(copy.getBookId(), id -> bookRepository.findById(id).orElse(null));
+            responses.add(CopyDetailResponse.builder()
+                    .copy(copy)
+                    .bookId(copy.getBookId())
+                    .bookTitle(book != null ? book.getTitle() : "Unknown Title")
+                    .isbn(book != null ? book.getIsbn() : "-")
+                    .author(book != null && !book.getAuthors().isEmpty() ? book.getAuthors().get(0) : "-")
+                    .build());
+        }
+        return responses;
+    }
+
+    public BookCopy updateCopy(String copyId, UpdateCopyRequest request, String staffEmail) {
+        BookCopy copy = copyRepository.findById(copyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Copy not found with ID: " + copyId));
+
+        CopyStatus oldStatus = copy.getStatus();
+        if (request.getStatus() != null) {
+            copy.setStatus(request.getStatus());
+        }
+        if (request.getBarcode() != null && !request.getBarcode().isBlank()) {
+            copy.setBarcode(request.getBarcode());
+        }
+        if (request.getLocation() != null) {
+            copy.setLocation(request.getLocation());
+        }
+        if (request.getConditionNotes() != null) {
+            copy.setConditionNotes(request.getConditionNotes());
+        }
+
+        BookCopy saved = copyRepository.save(copy);
+
+        // Recount available copies for parent book
+        Book book = bookRepository.findById(saved.getBookId()).orElse(null);
+        if (book != null) {
+            int newAvailable = copyRepository.countByBookIdAndStatus(book.getId(), CopyStatus.AVAILABLE);
+            book.setAvailableCopies(newAvailable);
+            bookRepository.save(book);
+            invalidateAvailabilityCache(book.getId());
+        }
+
+        auditLogService.record(staffEmail, "STAFF", "COPY_UPDATE", "COPY", saved.getBarcode(),
+                String.format("Copy %s updated. Status: %s -> %s, Location: %s",
+                        saved.getBarcode(), oldStatus, saved.getStatus(), saved.getLocation()));
+        return saved;
+    }
+
+    public void deleteCopy(String copyId, String staffEmail) {
+        BookCopy copy = copyRepository.findById(copyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Copy not found with ID: " + copyId));
+
+        if (copy.getStatus() == CopyStatus.BORROWED) {
+            throw new ConflictException("Cannot delete copy: currently checked out on loan.");
+        }
+
+        copyRepository.delete(copy);
+
+        Book book = bookRepository.findById(copy.getBookId()).orElse(null);
+        if (book != null) {
+            int newTotal = copyRepository.countByBookId(book.getId());
+            int newAvailable = copyRepository.countByBookIdAndStatus(book.getId(), CopyStatus.AVAILABLE);
+            book.setTotalCopies(newTotal);
+            book.setAvailableCopies(newAvailable);
+            bookRepository.save(book);
+            invalidateAvailabilityCache(book.getId());
+        }
+
+        auditLogService.record(staffEmail, "STAFF", "COPY_DELETE", "COPY", copy.getBarcode(),
+                "Deleted physical copy barcode: " + copy.getBarcode());
     }
 }

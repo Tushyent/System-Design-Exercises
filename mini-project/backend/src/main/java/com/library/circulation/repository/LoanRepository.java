@@ -14,5 +14,8 @@ public interface LoanRepository extends MongoRepository<Loan, String> {
     Optional<Loan> findByCopyIdAndStatus(String copyId, LoanStatus status);
     List<Loan> findByMemberIdAndStatus(String memberId, LoanStatus status);
     List<Loan> findByMemberIdOrderByBorrowedAtDesc(String memberId);
+    List<Loan> findByStatusOrderByBorrowedAtDesc(LoanStatus status);
+    List<Loan> findAllByOrderByBorrowedAtDesc();
+    List<Loan> findByBookTitleContainingIgnoreCaseOrBarcodeContainingIgnoreCase(String bookTitle, String barcode);
     int countByMemberIdAndStatus(String memberId, LoanStatus status);
 }

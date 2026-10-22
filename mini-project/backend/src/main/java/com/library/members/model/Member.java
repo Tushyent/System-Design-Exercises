@@ -39,6 +39,11 @@ public class Member {
     @Builder.Default
     private int maxBorrowLimit = 5;
 
+    private String department;
+    private String phone;
+    private String suspensionReason;
+    private Instant suspendedUntil;
+
     @Builder.Default
     private Instant createdAt = Instant.now();
 }

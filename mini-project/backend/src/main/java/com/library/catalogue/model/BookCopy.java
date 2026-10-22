@@ -36,5 +36,9 @@ public class BookCopy {
     private Instant pickupDeadline;
 
     @Builder.Default
+    private String location = "Main Stacks - Central Library";
+    private String conditionNotes;
+
+    @Builder.Default
     private Instant createdAt = Instant.now();
 }

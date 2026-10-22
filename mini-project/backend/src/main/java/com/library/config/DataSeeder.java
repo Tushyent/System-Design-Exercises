@@ -270,6 +270,7 @@ public class DataSeeder implements CommandLineRunner {
                         .id(idGenerator.nextIdString())
                         .loanId(loanId)
                         .memberId(member.getId())
+                        .memberCode(member.getMemberId())
                         .bookId(book.getId())
                         .bookTitle(book.getTitle())
                         .copyId(copyToLoan.getId())

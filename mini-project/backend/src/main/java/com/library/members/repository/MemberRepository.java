@@ -11,4 +11,7 @@ public interface MemberRepository extends MongoRepository<Member, String> {
     Optional<Member> findByEmail(String email);
     Optional<Member> findByMemberId(String memberId);
     boolean existsByEmail(String email);
+    java.util.List<Member> findByNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrMemberIdContainingIgnoreCase(String name, String email, String memberId);
+    java.util.List<Member> findByRole(com.library.members.model.Role role);
+    java.util.List<Member> findByStatus(String status);
 }

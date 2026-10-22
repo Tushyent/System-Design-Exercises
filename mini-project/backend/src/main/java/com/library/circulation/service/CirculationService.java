@@ -6,6 +6,9 @@ import com.library.catalogue.model.CopyStatus;
 import com.library.catalogue.repository.BookCopyRepository;
 import com.library.catalogue.repository.BookRepository;
 import com.library.catalogue.service.BookService;
+import com.library.audit.service.AuditLogService;
+import com.library.circulation.dto.StaffCheckoutRequest;
+import com.library.circulation.dto.StaffReturnRequest;
 import com.library.circulation.dto.BorrowRequest;
 import com.library.circulation.dto.BorrowResponse;
 import com.library.circulation.dto.ReturnResponse;
@@ -38,6 +41,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -53,6 +58,7 @@ public class CirculationService {
     private final ReservationRepository reservationRepository;
     private final SnowflakeIdGenerator idGenerator;
     private final BookService bookService;
+    private final AuditLogService auditLogService;
 
     /**
      * Concurrency-Safe Atomic Borrowing Workflow.
@@ -112,6 +118,7 @@ public class CirculationService {
                 .id(idGenerator.nextIdString())
                 .loanId(loanId)
                 .memberId(memberId)
+                .memberCode(member.getMemberId())
                 .bookId(book.getId())
                 .bookTitle(book.getTitle())
                 .copyId(claimedCopy.getId())
@@ -333,5 +340,281 @@ public class CirculationService {
                 .status("RENEWED")
                 .message("Loan successfully renewed! Extended by " + RENEWAL_EXTENSION_DAYS + " days until " + newDueDate)
                 .build();
+    }
+
+    public BorrowResponse staffCheckout(StaffCheckoutRequest request, String staffEmail) {
+        Member member = memberRepository.findById(request.getMemberIdentifier())
+                .or(() -> memberRepository.findByEmail(request.getMemberIdentifier()))
+                .or(() -> memberRepository.findByMemberId(request.getMemberIdentifier()))
+                .orElseThrow(() -> new ResourceNotFoundException("Member not found: " + request.getMemberIdentifier()));
+
+        // Check eligibility
+        if (!request.isOverrideLimit()) {
+            if (!"ACTIVE".equalsIgnoreCase(member.getStatus())) {
+                throw new ConflictException("Member account status is " + member.getStatus() + ". Checkout blocked.");
+            }
+            int activeLoans = loanRepository.countByMemberIdAndStatus(member.getId(), LoanStatus.ACTIVE);
+            if (activeLoans >= member.getMaxBorrowLimit()) {
+                throw new ConflictException("Borrow limit reached (" + member.getMaxBorrowLimit() + "). Use staff override if authorized.");
+            }
+            List<Fine> unpaidFines = fineRepository.findByMemberIdAndStatus(member.getId(), FineStatus.UNPAID);
+            double totalUnpaid = unpaidFines.stream().mapToDouble(Fine::getAmount).sum();
+            if (totalUnpaid > 20.00) {
+                throw new ConflictException(String.format("Unpaid fines (INR %.2f) exceed INR 20.00 limit. Use staff override if authorized.", totalUnpaid));
+            }
+        }
+
+        // Find Copy by Barcode
+        BookCopy copy = copyRepository.findByBarcode(request.getBarcode().trim())
+                .orElseThrow(() -> new ResourceNotFoundException("Copy not found with barcode: " + request.getBarcode()));
+
+        if (copy.getStatus() == CopyStatus.BORROWED) {
+            throw new ConflictException("Copy barcode " + request.getBarcode() + " is currently on loan to another member!");
+        }
+        if (copy.getStatus() != CopyStatus.AVAILABLE && copy.getStatus() != CopyStatus.RESERVED_FOR_PICKUP) {
+            throw new ConflictException("Copy cannot be checked out in current status: " + copy.getStatus());
+        }
+        if (copy.getStatus() == CopyStatus.RESERVED_FOR_PICKUP && copy.getCurrentHolderId() != null
+                && !copy.getCurrentHolderId().equals(member.getId()) && !request.isOverrideLimit()) {
+            throw new ConflictException("Copy is reserved for pickup by another member.");
+        }
+
+        Book book = bookRepository.findById(copy.getBookId())
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found for copy: " + copy.getBookId()));
+
+        String loanId = idGenerator.nextPrefixedId("LOAN");
+        Instant now = Instant.now();
+        int days = request.getLoanDays() > 0 ? request.getLoanDays() : 14;
+        Instant dueDate = now.plus(Duration.ofDays(days));
+
+        // Update Copy
+        copy.setStatus(CopyStatus.BORROWED);
+        copy.setCurrentHolderId(member.getId());
+        copy.setCurrentLoanId(loanId);
+        copy.setPickupDeadline(null);
+        copyRepository.save(copy);
+
+        // Create Loan
+        Loan loan = Loan.builder()
+                .id(idGenerator.nextIdString())
+                .loanId(loanId)
+                .memberId(member.getId())
+                .memberCode(member.getMemberId())
+                .bookId(copy.getBookId())
+                .bookTitle(book.getTitle())
+                .copyId(copy.getId())
+                .barcode(copy.getBarcode())
+                .borrowedAt(now)
+                .dueDate(dueDate)
+                .status(LoanStatus.ACTIVE)
+                .build();
+        loanRepository.save(loan);
+
+        // Update Book Available Count
+        int newAvailable = copyRepository.countByBookIdAndStatus(book.getId(), CopyStatus.AVAILABLE);
+        book.setAvailableCopies(newAvailable);
+        bookRepository.save(book);
+        bookService.invalidateAvailabilityCache(book.getId());
+
+        // Audit Log
+        String auditDetail = String.format("Staff checkout barcode %s for %s (%s). Due: %s%s",
+                copy.getBarcode(), member.getName(), member.getMemberId(), dueDate,
+                request.isOverrideLimit() ? " [OVERRIDE: " + request.getOverrideReason() + "]" : "");
+        auditLogService.record(staffEmail, "STAFF", "CHECKOUT", "LOAN", loanId, auditDetail);
+
+        return BorrowResponse.builder()
+                .loanId(loanId)
+                .bookTitle(book.getTitle())
+                .borrowedAt(now)
+                .dueDate(dueDate)
+                .copyId(copy.getId())
+                .barcode(copy.getBarcode())
+                .message("Circulation checkout successful! " + (request.isOverrideLimit() ? "(Staff Override Applied)" : ""))
+                .build();
+    }
+
+    public ReturnResponse staffReturn(StaffReturnRequest request, String staffEmail) {
+        BookCopy copy = copyRepository.findByBarcode(request.getBarcode().trim())
+                .orElseThrow(() -> new ResourceNotFoundException("Copy not found with barcode: " + request.getBarcode()));
+
+        Loan loan = loanRepository.findByCopyIdAndStatus(copy.getId(), LoanStatus.ACTIVE).orElse(null);
+        Instant returnedAt = Instant.now();
+        int overdueDays = 0;
+        double fineAmount = 0.0;
+        String fineId = null;
+
+        if (loan != null) {
+            loan.setStatus(LoanStatus.RETURNED);
+            loan.setReturnedAt(returnedAt);
+
+            // Calculate overdue if any
+            if (returnedAt.isAfter(loan.getDueDate())) {
+                overdueDays = (int) ChronoUnit.DAYS.between(loan.getDueDate(), returnedAt);
+                fineAmount = overdueDays * 1.50;
+                fineId = idGenerator.nextPrefixedId("FINE");
+
+                Fine fine = Fine.builder()
+                        .id(idGenerator.nextIdString())
+                        .fineId(fineId)
+                        .loanId(loan.getLoanId())
+                        .memberId(loan.getMemberId())
+                        .overdueDays(overdueDays)
+                        .ratePerDay(1.50)
+                        .amount(fineAmount)
+                        .status(FineStatus.UNPAID)
+                        .createdAt(returnedAt)
+                        .build();
+                fineRepository.save(fine);
+                loan.setFineCalculated(true);
+            }
+            loanRepository.save(loan);
+        }
+
+        String condition = request.getCondition() != null ? request.getCondition().toUpperCase() : "NORMAL";
+        if ("DAMAGED".equals(condition)) {
+            copy.setStatus(CopyStatus.DAMAGED);
+            copy.setCurrentHolderId(null);
+            copy.setCurrentLoanId(null);
+            if (request.getStaffNotes() != null) {
+                copy.setConditionNotes("DAMAGED: " + request.getStaffNotes());
+            }
+            if (request.getDamageFee() != null && request.getDamageFee() > 0 && loan != null) {
+                String dmgFineId = idGenerator.nextPrefixedId("FINE");
+                Fine dmgFine = Fine.builder()
+                        .id(idGenerator.nextIdString())
+                        .fineId(dmgFineId)
+                        .loanId(loan.getLoanId())
+                        .memberId(loan.getMemberId())
+                        .overdueDays(0)
+                        .ratePerDay(0)
+                        .amount(request.getDamageFee())
+                        .status(FineStatus.UNPAID)
+                        .notes("Damage assessment: " + request.getStaffNotes())
+                        .createdAt(returnedAt)
+                        .build();
+                fineRepository.save(dmgFine);
+            }
+            copyRepository.save(copy);
+        } else if ("LOST".equals(condition)) {
+            copy.setStatus(CopyStatus.LOST);
+            copy.setCurrentHolderId(null);
+            copy.setCurrentLoanId(null);
+            if (request.getStaffNotes() != null) {
+                copy.setConditionNotes("LOST: " + request.getStaffNotes());
+            }
+            double fee = request.getDamageFee() != null && request.getDamageFee() > 0 ? request.getDamageFee() : 500.00;
+            if (loan != null) {
+                String lostFineId = idGenerator.nextPrefixedId("FINE");
+                Fine lostFine = Fine.builder()
+                        .id(idGenerator.nextIdString())
+                        .fineId(lostFineId)
+                        .loanId(loan.getLoanId())
+                        .memberId(loan.getMemberId())
+                        .overdueDays(0)
+                        .ratePerDay(0)
+                        .amount(fee)
+                        .status(FineStatus.UNPAID)
+                        .notes("Lost copy replacement fee: " + request.getStaffNotes())
+                        .createdAt(returnedAt)
+                        .build();
+                fineRepository.save(lostFine);
+            }
+            copyRepository.save(copy);
+        } else {
+            // NORMAL return: check reservation queue
+            Reservation pendingReservation = reservationRepository
+                    .findFirstByBookIdAndStatusOrderByQueuePositionAsc(copy.getBookId(), ReservationStatus.PENDING)
+                    .orElse(null);
+
+            if (pendingReservation != null) {
+                pendingReservation.setStatus(ReservationStatus.READY_FOR_PICKUP);
+                pendingReservation.setAllocatedCopyId(copy.getId());
+                pendingReservation.setReadyAt(returnedAt);
+                pendingReservation.setExpiresAt(returnedAt.plus(Duration.ofHours(48)));
+                reservationRepository.save(pendingReservation);
+
+                copy.setStatus(CopyStatus.RESERVED_FOR_PICKUP);
+                copy.setCurrentHolderId(pendingReservation.getMemberId());
+                copy.setCurrentLoanId(null);
+                copy.setPickupDeadline(pendingReservation.getExpiresAt());
+                copyRepository.save(copy);
+            } else {
+                copy.setStatus(CopyStatus.AVAILABLE);
+                copy.setCurrentHolderId(null);
+                copy.setCurrentLoanId(null);
+                copy.setPickupDeadline(null);
+                copyRepository.save(copy);
+            }
+        }
+
+        // Invalidate book cache
+        Book book = bookRepository.findById(copy.getBookId()).orElse(null);
+        if (book != null) {
+            int newAvailable = copyRepository.countByBookIdAndStatus(book.getId(), CopyStatus.AVAILABLE);
+            book.setAvailableCopies(newAvailable);
+            bookRepository.save(book);
+            bookService.invalidateAvailabilityCache(book.getId());
+        }
+
+        auditLogService.record(staffEmail, "STAFF", "RETURN", "COPY", copy.getBarcode(),
+                String.format("Returned barcode %s [Condition: %s, Fine: INR %.2f]. Staff Notes: %s",
+                        copy.getBarcode(), condition, fineAmount, request.getStaffNotes()));
+
+        return ReturnResponse.builder()
+                .loanId(loan != null ? loan.getLoanId() : "N/A")
+                .copyId(copy.getId())
+                .status("RETURNED")
+                .returnedAt(returnedAt)
+                .overdueDays(overdueDays)
+                .fineAmount(fineAmount)
+                .fineId(fineId)
+                .message("Return processed successfully. Copy condition: " + condition)
+                .build();
+    }
+
+    public List<Loan> getAllLoans(LoanStatus status, String search) {
+        List<Loan> list;
+        if (status != null) {
+            list = loanRepository.findByStatusOrderByBorrowedAtDesc(status);
+        } else {
+            list = loanRepository.findAllByOrderByBorrowedAtDesc();
+        }
+
+        Map<String, String> memberCodeMap = memberRepository.findAll().stream()
+                .filter(m -> m.getId() != null)
+                .collect(Collectors.toMap(
+                        Member::getId,
+                        m -> (m.getMemberId() != null && !m.getMemberId().isBlank())
+                                ? m.getMemberId()
+                                : ("MEM-" + m.getId().substring(Math.max(0, m.getId().length() - 4))),
+                        (a, b) -> a));
+
+        for (Loan l : list) {
+            String code = null;
+            if (l.getMemberCode() != null && l.getMemberCode().startsWith("MEM-")) {
+                code = l.getMemberCode();
+            } else if (l.getMemberId() != null && l.getMemberId().startsWith("MEM-")) {
+                code = l.getMemberId();
+            } else if (l.getMemberId() != null && memberCodeMap.containsKey(l.getMemberId())) {
+                code = memberCodeMap.get(l.getMemberId());
+            } else if (l.getMemberId() != null && !l.getMemberId().isBlank()) {
+                code = "MEM-" + l.getMemberId().substring(Math.max(0, l.getMemberId().length() - 4));
+            } else {
+                code = "MEM-0001";
+            }
+            l.setMemberCode(code);
+            l.setMemberId(code);
+        }
+
+        if (search != null && !search.isBlank()) {
+            String s = search.trim().toLowerCase();
+            list = list.stream()
+                    .filter(l -> (l.getBookTitle() != null && l.getBookTitle().toLowerCase().contains(s))
+                            || (l.getBarcode() != null && l.getBarcode().toLowerCase().contains(s))
+                            || (l.getMemberId() != null && l.getMemberId().toLowerCase().contains(s))
+                            || (l.getMemberCode() != null && l.getMemberCode().toLowerCase().contains(s)))
+                    .toList();
+        }
+        return list;
     }
 }

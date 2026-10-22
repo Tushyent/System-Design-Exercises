@@ -20,4 +20,5 @@ public class BorrowResponse {
     private Instant borrowedAt;
     private Instant dueDate;
     private String memberId;
+    private String message;
 }

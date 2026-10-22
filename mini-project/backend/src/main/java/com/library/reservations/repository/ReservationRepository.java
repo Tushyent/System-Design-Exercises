@@ -13,6 +13,8 @@ public interface ReservationRepository extends MongoRepository<Reservation, Stri
     Optional<Reservation> findByReservationId(String reservationId);
     Optional<Reservation> findFirstByBookIdAndStatusOrderByQueuePositionAsc(String bookId, ReservationStatus status);
     List<Reservation> findByMemberIdOrderByCreatedAtDesc(String memberId);
+    List<Reservation> findByStatusOrderByCreatedAtDesc(ReservationStatus status);
+    List<Reservation> findAllByOrderByCreatedAtDesc();
     Optional<Reservation> findByBookIdAndMemberIdAndStatus(String bookId, String memberId, ReservationStatus status);
     int countByBookIdAndStatus(String bookId, ReservationStatus status);
     long countByStatus(ReservationStatus status);

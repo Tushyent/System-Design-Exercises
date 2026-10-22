@@ -14,4 +14,6 @@ public interface FineRepository extends MongoRepository<Fine, String> {
     Optional<Fine> findByLoanId(String loanId);
     List<Fine> findByMemberIdAndStatus(String memberId, FineStatus status);
     List<Fine> findByMemberIdOrderByCreatedAtDesc(String memberId);
+    List<Fine> findByStatusOrderByCreatedAtDesc(FineStatus status);
+    List<Fine> findAllByOrderByCreatedAtDesc();
 }

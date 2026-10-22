@@ -5,5 +5,9 @@ public enum CopyStatus {
     BORROWED,
     RESERVED_FOR_PICKUP,
     MAINTENANCE,
-    LOST
+    LOST,
+    DAMAGED,
+    UNDER_REPAIR,
+    WITHDRAWN,
+    MISSING
 }

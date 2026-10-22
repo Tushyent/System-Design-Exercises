@@ -28,6 +28,8 @@ public class Loan {
     @Indexed
     private String memberId;
 
+    private String memberCode;
+
     @Indexed
     private String bookId;
 

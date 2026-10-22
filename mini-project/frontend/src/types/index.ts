@@ -1,8 +1,8 @@
 export type Role = 'MEMBER' | 'LIBRARIAN' | 'ADMIN';
-export type CopyStatus = 'AVAILABLE' | 'BORROWED' | 'RESERVED_FOR_PICKUP' | 'MAINTENANCE' | 'LOST';
+export type CopyStatus = 'AVAILABLE' | 'BORROWED' | 'RESERVED_FOR_PICKUP' | 'MAINTENANCE' | 'LOST' | 'DAMAGED' | 'UNDER_REPAIR' | 'WITHDRAWN' | 'MISSING';
 export type LoanStatus = 'ACTIVE' | 'RETURNED' | 'OVERDUE';
 export type ReservationStatus = 'PENDING' | 'READY_FOR_PICKUP' | 'FULFILLED' | 'CANCELLED' | 'EXPIRED';
-export type FineStatus = 'UNPAID' | 'PAID';
+export type FineStatus = 'UNPAID' | 'PAID' | 'WAIVED';
 
 export interface User {
   id: string;
@@ -11,6 +11,42 @@ export interface User {
   email: string;
   role: Role;
   token?: string;
+}
+
+export interface Member {
+  id: string;
+  memberId: string;
+  name: string;
+  email: string;
+  role: Role;
+  status: 'ACTIVE' | 'SUSPENDED' | 'INACTIVE';
+  maxBorrowLimit: number;
+  department?: string;
+  phone?: string;
+  suspensionReason?: string;
+  suspendedUntil?: string;
+  createdAt: string;
+}
+
+export interface MemberEligibility {
+  memberId: string;
+  memberName: string;
+  status: string;
+  eligible: boolean;
+  activeLoans: number;
+  maxBorrowLimit: number;
+  unpaidFinesAmount: number;
+  ineligibilityReason?: string;
+}
+
+export interface MemberProfile360 {
+  member: Member;
+  eligibility: MemberEligibility;
+  activeLoans: Loan[];
+  loanHistory: Loan[];
+  reservations: Reservation[];
+  unpaidFines: Fine[];
+  totalUnpaidFines: number;
 }
 
 export interface Book {
@@ -27,7 +63,9 @@ export interface Book {
   externalSource?: string;
   totalCopies: number;
   availableCopies: number;
+  archived?: boolean;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface BookCopy {
@@ -38,6 +76,17 @@ export interface BookCopy {
   currentLoanId?: string;
   currentHolderId?: string;
   pickupDeadline?: string;
+  location?: string;
+  conditionNotes?: string;
+  createdAt?: string;
+}
+
+export interface CopyDetail {
+  copy: BookCopy;
+  bookId: string;
+  bookTitle: string;
+  isbn: string;
+  author: string;
 }
 
 export interface BookDetailResponse {
@@ -53,6 +102,7 @@ export interface Loan {
   id: string;
   loanId: string;
   memberId: string;
+  memberCode?: string;
   bookId: string;
   bookTitle: string;
   copyId: string;
@@ -74,7 +124,6 @@ export interface RenewResponse {
   status: string;
   message: string;
 }
-
 
 export interface Reservation {
   id: string;
@@ -101,6 +150,11 @@ export interface Fine {
   amount: number;
   status: FineStatus;
   createdAt: string;
+  paidAt?: string;
+  waivedBy?: string;
+  waiverReason?: string;
+  paymentMethod?: string;
+  notes?: string;
 }
 
 export interface Payment {
@@ -113,6 +167,26 @@ export interface Payment {
   status: string;
   transactionRef: string;
   createdAt: string;
+}
+
+export interface AuditLog {
+  id: string;
+  staffEmail: string;
+  staffRole: string;
+  action: string;
+  targetResource: string;
+  targetId: string;
+  details: string;
+  timestamp: string;
+}
+
+export interface SystemConfig {
+  loanPeriodDays: number;
+  defaultBorrowLimit: number;
+  dailyFineRate: number;
+  holdExpiryHours: number;
+  maintenanceMode: boolean;
+  maxRenewalCount: number;
 }
 
 export interface AutocompleteSuggestion {

@@ -42,4 +42,8 @@ public class Fine {
     private Instant createdAt = Instant.now();
 
     private Instant paidAt;
+    private String waivedBy;
+    private String waiverReason;
+    private String paymentMethod; // ONLINE, CASH_OFFLINE, WAIVED
+    private String notes;
 }
